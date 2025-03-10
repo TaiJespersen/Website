@@ -20,9 +20,9 @@ You can view my resume [here](CV%20-%20Tai%20Jespersen%20(02_2025).pdf).
 
 ## 🛰️ Contact
 If you'd like to connect, feel free to reach out:
-- School Email: [tjespers@fandm.edu]
-- Personal Email: [tjespersen09@gmail.com]
-- LinkedIn: [https://www.linkedin.com/in/tai-jespersen/]
+- School Email: [tjespers@fandm.edu](tjespers@fandm.edu)
+- Personal Email: [tjespersen09@gmail.com](tjespersen09@gmail.com)
+- LinkedIn: [https://www.linkedin.com/in/tai-jespersen/](https://www.linkedin.com/in/tai-jespersen/)
 
 ---
 
