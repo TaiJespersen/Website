@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Astrophysics Research</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 0; }
+        .navbar { background-color: #333; padding: 15px; }
+        .navbar button {
+            background: none; border: none; color: white; font-size: 18px;
+            padding: 10px 20px; cursor: pointer; font-weight: bold;
+        }
+        .navbar button:hover { background-color: #575757; border-radius: 5px; }
+        .content { display: none; padding: 20px; }
+        .active { display: block; }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <button onclick="showTab('home')">Home</button>
+        <button onclick="showTab('projects')">Projects</button>
+        <button onclick="window.open('CV%20-%20Tai%20Jespersen%20(02_2025).pdf', '_blank')">Resume</button>
+    </div>
+
+    <!-- Home Content -->
+    <div id="home" class="content active">
+        <h1>Welcome to My Research Website</h1>
+        <p>This is the homepage where I introduce myself and my astrophysics research.</p>
+    </div>
+
+    <!-- Projects Content -->
+    <div id="projects" class="content">
+        <h1>Research Projects</h1>
+        <ul>
+            <li><strong>Project 1:</strong> Description of your first project.</li>
+            <li><strong>Project 2:</strong> Description of your second project.</li>
+            <li><strong>Project 3:</strong> Description of your third project.</li>
+        </ul>
+    </div>
+
+    <!-- JavaScript for Switching Tabs -->
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+
+</body>
+</html>
