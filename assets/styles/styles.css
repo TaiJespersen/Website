@@ -1,4 +1,11 @@
 body { font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 0; }
+.project img {
+    max-width: 600px;  /* Adjust as needed */
+    height: auto;  /* Keeps aspect ratio */
+    border-radius: 10px;
+    display: block;
+    margin: 10px auto;  /* Centers the image */
+}
 
 .navbar { 
     background-color: #333; 
