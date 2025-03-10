@@ -1,4 +1,4 @@
-# My Astrophysics Research Website 🌌
+# Tai Jespersen
 
 Welcome to my personal website! Here, you'll find information about my research projects, my resume, and a bit about me. This site is hosted using GitHub Pages.
 
@@ -18,9 +18,9 @@ You can view my resume [here](link-to-resume.pdf).
 
 ## 🛰️ Contact
 If you'd like to connect, feel free to reach out:
-- Email: [your email]
-- LinkedIn: [your LinkedIn link]
-- Twitter/X: [your Twitter handle, if applicable]
+- School Email: [tjespers@fandm.edu]
+- Personal Email: [tjespersen09@gmail.com]
+- LinkedIn: [https://www.linkedin.com/in/tai-jespersen/]
 
 ---
 
