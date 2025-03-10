@@ -16,7 +16,7 @@ Below are some of the research projects I have worked on:
 For more details, visit the **Research** section on my website.
 
 ## 📄 Resume
-You can view my resume [here](CV%20-%20Tai%20Jespersen%20(02_2025).pdf)..
+You can view my resume [here](CV%20-%20Tai%20Jespersen%20(02_2025).pdf).
 
 ## 🛰️ Contact
 If you'd like to connect, feel free to reach out:
