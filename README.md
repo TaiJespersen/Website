@@ -3,7 +3,9 @@
 Welcome to my personal website! Here, you'll find information about my research projects, my resume, and a bit about me. This site is hosted using GitHub Pages.
 
 ## 🔭 About Me
-I am an astrophysics researcher passionate about exploring the universe. My work focuses on [your specific research interests, e.g., exoplanets, galaxy formation, dark matter]. 
+I am interested in High Performance Computing, and using Magnetohydrodynamics (MHD) simulations to study compact objects and galaxy dynamics. I have a strong background in observational astrophysics and Python. I am currently leading a research group analyzing pulsar search surveys with the goal of discovering new pulsars to contribute to the pulsar timing array, and conducting research studying sulfur abundancies in planetary nebulae (PNe). 
+
+I have also conducted research projects searching for Fast Radio Bursts (FRBs) and Space Plasma Physics, and have spent a lot of time reading about simulation research. I started designing my own N-body and smooth particle hydrodynamics simulations in my free time. I am a captain of Franklin and Marshall’s DIII Mens rowing team and active in organizations such as the Student Athletic Leadership Council.
 
 ## 🚀 Research Projects
 Below are some of the research projects I have worked on:
