@@ -36,6 +36,18 @@
             margin: 100px auto 50px;
         }
 
+        .about-section {
+            position: relative;
+            z-index: 1;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            max-width: 800px;
+            margin: 50px auto 50px;
+        }
+
         /* Navbar Styling */
         .navbar {
             position: fixed;
@@ -76,62 +88,6 @@
             background-color: #fff;
             color: black;
         }
-
-        /* Vertical Line on Left */
-        .vertical-line {
-            position: fixed;
-            left: 150px; /* Adjust this to move the line further left or right */
-            top: 0;
-            height: 100%;
-            width: 6px; /* Width of the line */
-            background-color: #000; /* Line color */
-            z-index: 1;
-        }
-
-        /* Horizontal Lines coming out of the Vertical Line */
-        .horizontal-line {
-            position: absolute;
-            left: 140px; /* Adjust this value to control the horizontal line length */
-            width: 10px; /* Length of the horizontal line */
-            height: 4px;
-            background-color: #000; /* Line color */
-            z-index: 1;
-        }
-
-        /* Position the horizontal lines at intervals */
-        .line-1 { top: 200px; }
-        .line-2 { top: 400px; }
-        .line-3 { top: 600px; }
-        .line-4 { top: 800px; }
-        .line-5 { top: 1000px; }
-        .line-6 { top: 1200px; }
-        .line-7 { top: 1400px; }
-        .line-8 { top: 1600px; }
-        .line-9 { top: 1800px; }
-        .line-10 { top: 2000px; }
-
-        /* Number Labels */
-          .number-label {
-            position: absolute;
-            left: 60px; /* Adjust this value to position the number left of the vertical line */
-            font-size: 24px; /* Increase the font size */
-            font-family: 'Arial', sans-serif; /* Clean and readable font */
-            font-weight: bold; /* Make the numbers bold */
-            color: black; /* Set text color */
-            letter-spacing: 1px; /* Optional: Add some spacing between characters for readability */
-            line-height: 1.2; /* Optional: Adjust line height to make the numbers easier to read */
-        }
-
-        .number-1 { top: 190px; }
-        .number-2 { top: 390px; }
-        .number-3 { top: 590px; }
-        .number-4 { top: 790px; }
-        .number-5 { top: 990px; }
-        .number-6 { top: 1190px; }
-        .number-7 { top: 1390px; }
-        .number-8 { top: 1590px; }
-        .number-9 { top: 1790px; }
-        .number-10 { top: 1990px; }
     </style>
 </head>
 <body>
@@ -154,36 +110,13 @@
         </div>
     </div>
 
-    <!-- Vertical Line on Left -->
-    <div class="vertical-line"></div>
-
-    <!-- Horizontal Lines coming out of the Vertical Line -->
-    <div class="horizontal-line line-1"></div>
-    <div class="horizontal-line line-2"></div>
-    <div class="horizontal-line line-3"></div>
-    <div class="horizontal-line line-4"></div>
-    <div class="horizontal-line line-5"></div>
-    <div class="horizontal-line line-6"></div>
-    <div class="horizontal-line line-7"></div>
-    <div class="horizontal-line line-8"></div>
-    <div class="horizontal-line line-9"></div>
-    <div class="horizontal-line line-10"></div>
-
-    <!-- Number Labels -->
-    <div class="number-label number-1">1000</div>
-    <div class="number-label number-2">500</div>
-    <div class="number-label number-3">0</div>
-    <div class="number-label number-4">-500</div>
-    <div class="number-label number-5">-1000</div>
-    <div class="number-label number-6">-1500</div>
-    <div class="number-label number-7">-2000</div>
-    <div class="number-label number-8">-2500</div>
-    <div class="number-label number-9">-3000</div>
-    <div class="number-label number-10">-3500</div>
-
     <!-- Home Content -->
     <div class="content">
         <h1>Welcome</h1>
+    </div>
+
+    <!-- About Me Section Moved Below Video -->
+    <div class="about-section">
         <img src="assets/images/my_image.jpg" alt="Tai Jespersen" style="width: 200px; border-radius: 50%; margin-bottom: 20px;">
         <p>I am interested in High Performance Computing, and using Magnetohydrodynamics (MHD) simulations to study compact objects and galaxy dynamics. I have a strong background in observational astrophysics and Python. I am currently leading a research group analyzing pulsar search surveys with the goal of discovering new pulsars to contribute to the pulsar timing array, and conducting research studying sulfur abundancies in planetary nebulae (PNe).</p>
         <p>I have also conducted research projects searching for Fast Radio Bursts (FRBs) and Space Plasma Physics, and have spent a lot of time reading about simulation research. I started designing my own N-body and smooth particle hydrodynamics simulations in my free time. I am a captain of Franklin and Marshall’s DIII Mens rowing team and active in organizations such as the Student Athletic Leadership Council.</p>
