@@ -89,6 +89,29 @@
             background-color: #000; /* Line color */
             z-index: 1;
         }
+
+        /* Horizontal Lines coming out of the Vertical Line */
+        .horizontal-line {
+            position: absolute;
+            left: -50px; /* Adjust this value to control the horizontal line length */
+            width: 50px; /* Length of the horizontal line */
+            height: 2px;
+            background-color: #000; /* Line color */
+            z-index: 1;
+        }
+
+        /* Position the horizontal lines at intervals */
+        .line-1 { top: 100px; }
+        .line-2 { top: 200px; }
+        .line-3 { top: 300px; }
+        .line-4 { top: 400px; }
+        .line-5 { top: 500px; }
+        .line-6 { top: 600px; }
+        .line-7 { top: 700px; }
+        .line-8 { top: 800px; }
+        .line-9 { top: 900px; }
+        .line-10 { top: 1000px; }
+
     </style>
 </head>
 <body>
@@ -113,6 +136,18 @@
 
     <!-- Vertical Line on Left -->
     <div class="vertical-line"></div>
+
+    <!-- Horizontal Lines coming out of the Vertical Line -->
+    <div class="horizontal-line line-1"></div>
+    <div class="horizontal-line line-2"></div>
+    <div class="horizontal-line line-3"></div>
+    <div class="horizontal-line line-4"></div>
+    <div class="horizontal-line line-5"></div>
+    <div class="horizontal-line line-6"></div>
+    <div class="horizontal-line line-7"></div>
+    <div class="horizontal-line line-8"></div>
+    <div class="horizontal-line line-9"></div>
+    <div class="horizontal-line line-10"></div>
 
     <!-- Home Content -->
     <div class="content">
