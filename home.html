@@ -79,24 +79,15 @@
             color: black;
         }
 
-        /* Y-axis styling */
-        .y-axis {
+        /* Vertical Line on Left */
+        .vertical-line {
             position: fixed;
-            left: 0;
+            left: 30px; /* Adjust this to move the line further left or right */
             top: 0;
             height: 100%;
-            width: 5px;
-            background-color: #fff;
-            z-index: 3;
-        }
-
-        .y-axis .indicator {
-            position: absolute;
-            width: 100%;
-            height: 10px;
-            background-color: #f39c12;
-            left: 0;
-            border-radius: 5px;
+            width: 3px; /* Width of the line */
+            background-color: #fff; /* Line color */
+            z-index: 1;
         }
     </style>
 </head>
@@ -120,10 +111,8 @@
         </div>
     </div>
 
-    <!-- Y-Axis -->
-    <div class="y-axis">
-        <div class="indicator" id="indicator"></div>
-    </div>
+    <!-- Vertical Line on Left -->
+    <div class="vertical-line"></div>
 
     <!-- Home Content -->
     <div class="content">
@@ -138,12 +127,6 @@
         window.addEventListener('scroll', function() {
             let scrollPosition = window.scrollY;
             document.querySelector('.video-background').style.transform = `translateY(${scrollPosition * 0.5}px)`;
-
-            // Update the position of the Y-axis indicator
-            let axisIndicator = document.getElementById('indicator');
-            let axisHeight = document.querySelector('.y-axis').offsetHeight;
-            let indicatorPosition = (scrollPosition / (document.body.scrollHeight - window.innerHeight)) * axisHeight;
-            axisIndicator.style.top = `${indicatorPosition}px`;
         });
     </script>
 
