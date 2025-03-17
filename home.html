@@ -15,12 +15,14 @@
             height: 60%; /* Adjust height to not take up the whole screen */
             overflow: hidden;
         }
-
+        
         .video-background {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Ensure the video covers the area without stretching */
+            object-fit: cover; /* Ensures the video covers the container area */
+            object-position: center center; /* Centers the video (cropping edges) */
         }
+
 
         /* Ensures content is readable */
         .content {
