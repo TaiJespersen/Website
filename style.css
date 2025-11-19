@@ -7,3 +7,7 @@ body {
 .gray {
     color: gray;
   }
+
+.dashed {
+  border: 2px dashed red;
+}
