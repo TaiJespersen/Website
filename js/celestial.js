@@ -301,7 +301,8 @@ window.AstroCelestial = {
       color: 0xf8fafc,
       flatShading: true,
       metalness: 0.8,
-      roughness: 0.2
+      roughness: 0.2,
+      side: THREE.DoubleSide
     });
 
     const steelTrussMat = new THREE.MeshStandardMaterial({
@@ -365,7 +366,7 @@ window.AstroCelestial = {
     // Outer rim truss
     const rim = new THREE.Mesh(new THREE.TorusGeometry(7.9, 0.25, 4, 16), steelTrussMat);
     rim.rotation.x = Math.PI / 2;
-    rim.position.y = -1.2;
+    rim.position.y = 1.2;
     dishMesh.add(rim);
 
     // 4. Iconic Green Bank Cantilevered Off-Axis Boom Arm
