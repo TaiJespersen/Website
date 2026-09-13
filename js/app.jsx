@@ -320,23 +320,6 @@ function AstroApp() {
             </div>
           </div>
 
-          {/* Center Target Lock Reticle */}
-          {selectedTarget && (
-            <div className="target-reticle-box">
-              <div className="reticle-bracket top-left"></div>
-              <div className="reticle-bracket top-right"></div>
-              <div className="reticle-bracket btm-left"></div>
-              <div className="reticle-bracket btm-right"></div>
-              <div className="reticle-data">
-                <span className="target-icon">{selectedTarget.icon}</span>
-                <span className="target-name">{selectedTarget.name}</span>
-                <span className="target-dist">
-                  {selectedTarget.currentDistance ? `${Math.round(selectedTarget.currentDistance)} AU` : ''}
-                </span>
-              </div>
-            </div>
-          )}
-
           {/* Docking Proximity Banner */}
           {canDock && nearest && (
             <div className="docking-prompt-banner" onClick={() => openModal(nearest.modalId)}>
@@ -348,23 +331,7 @@ function AstroApp() {
             </div>
           )}
 
-          {/* Quick Nav Jump Bar (Bottom Center) */}
-          <div className="hud-nav-bar">
-            <div className="nav-title">HYPERDRIVE:</div>
-            <div className="nav-buttons">
-              {window.AstroData.destinations.map(dest => (
-                <button
-                  key={dest.id}
-                  className={`nav-jump-btn ${selectedTarget && selectedTarget.id === dest.id ? 'active' : ''}`}
-                  onClick={() => warpTo(dest)}
-                >
-                  <span className="jump-key">[{dest.key}]</span>
-                  <span className="jump-name">{dest.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
+          
           {/* Radar Minimap (Bottom Right) */}
           <div className="hud-radar-panel">
             <div className="radar-screen">
