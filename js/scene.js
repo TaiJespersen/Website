@@ -22,7 +22,7 @@ window.AstroScene = {
 
     // Scene
     this.scene = new THREE.Scene();
-    this.scene.fog = new THREE.FogExp2(0x05070f, 0.0018);
+    this.scene.fog = new THREE.FogExp2(0x05070f, 0.0004);
 
     // Camera
     this.camera = new THREE.PerspectiveCamera(
