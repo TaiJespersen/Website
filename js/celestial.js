@@ -103,7 +103,7 @@ window.AstroCelestial = {
 
     group.userData = {
       id: "j1713",
-      name: "PSR J1713+0747",
+      name: "Pulsar Timing",
       radius: 26,
       time: 0,
       update(delta) {
@@ -198,7 +198,7 @@ window.AstroCelestial = {
 
     group.userData = {
       id: "b1913",
-      name: "PSR B1913+16 (Binary)",
+      name: "Gravitational Waves",
       radius: 32,
       time: 0,
       orbitRadius: 18,
@@ -431,7 +431,7 @@ window.AstroCelestial = {
     // ------------------------------------------------------------------------
     group.userData = {
       id: "observatory",
-      name: "Green Bank Observatory",
+      name: "Radio Pulsar Searching",
       radius: 30,
       time: 0,
       update(delta) {
