@@ -5,12 +5,12 @@
 
 window.AstroData = {
   researcher: {
-    name: "Dr. Lyra Mercer",
+    name: "Tai Jespersen",
     callsign: "MERCER-PTA",
-    title: "Postdoctoral Research Fellow & NANOGrav Collaboration Scientist",
-    institution: "Center for Gravitational Wave Astronomy & Department of Astrophysics",
-    office: "Radio Astronomy Wing, Lab 304 // Green Bank Remote Center",
-    email: "lyra.mercer@pulsar-astronomy.org",
+    title: "PhD Student",
+    institution: "Center for Gravitational Cosmology and Astrophysics, Department of Astrophysics",
+    office: "KIRC 1190",
+    email: "jespers5@uwm.edu",
     tagline: "Unveiling the nanohertz gravitational wave universe using a galaxy-sized detector of millisecond pulsars.",
     status: "TIMING RUN IN PROGRESS: GBT 100M TELESCOPE & CHIME/PULSAR",
     bio: [
@@ -20,7 +20,7 @@ window.AstroData = {
     ],
     stats: [
       { label: "Citations", value: "2,450+" },
-      { label: "h-index", value: "21" },
+      //{ label: "h-index", value: "21" },
       { label: "Monitored Pulsars", value: "78 MSPs" },
       { label: "Timing Precision", value: "< 100 ns" },
       { label: "Telescope Hours (GBT / CHIME)", value: "320+ hrs" }
@@ -312,15 +312,15 @@ window.AstroData = {
       subtitle: "Interactive Physics: Hellings-Downs & DM",
       modalId: "modal-magnetar"
     },
-    {
+        {
       id: "observatory",
       key: "4",
       code: "SECTOR-04",
-      name: "Green Bank & Arecibo Array",
-      type: "Orbital Radio Telescope Array",
+      name: "Green Bank Observatory",
+      type: "Planetary Radio Observatory",
       coords: { x: -105, y: 35, z: 65 },
       color: "#a855f7",
-      icon: "🛰️",
+      icon: "🔭",
       subtitle: "Researcher Bio, CV & Telescope Grants",
       modalId: "modal-observatory"
     },
