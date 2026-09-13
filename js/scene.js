@@ -111,7 +111,7 @@ window.AstroScene = {
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const material = new THREE.PointsMaterial({
-      size: 2.2,
+      size: 6,
       vertexColors: true,
       transparent: true,
       opacity: 0.85
