@@ -112,7 +112,6 @@ window.AstroCelestial = {
         core.rotation.y += delta * 6.5;
         beamGroup.rotation.y += delta * 5.2;
         shell.rotation.x -= delta * 1.5;
-        navHalo.rotation.z += delta * 0.2;
       }
     };
 
@@ -213,7 +212,6 @@ window.AstroCelestial = {
 
         star1.rotation.y += delta * 4.0;
         star2.rotation.y += delta * 2.0;
-        navHalo.rotation.z -= delta * 0.15;
 
         // Animate gravitational wave ripples expanding outward
         gwRipples.forEach((r, idx) => {
@@ -441,7 +439,6 @@ window.AstroCelestial = {
 
         // Slow planet diurnal rotation
         planetGroup.rotation.y += delta * 0.04;
-        navHalo.rotation.z -= delta * 0.12;
 
         // GBT dish slow realistic tracking slew in azimuth and elevation
         alidadeTurret.rotation.y = Math.sin(this.time * 0.15) * 0.45;
