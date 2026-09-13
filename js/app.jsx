@@ -641,18 +641,18 @@ function AstroApp() {
                       ))}
                     </div>
                   </div>
-
+                  
                   <div className="cv-download-box">
                     <button
                       className="hud-btn neon-btn"
                       onClick={() =>
                         window.open(
-                          "/CV___Tai_Jespersen__Updated_Sep__2026_.pdf",
+                          "/Website/CV___Tai_Jespersen__Updated_Sep__2026_.pdf",
                           "_blank"
                         )
                       }
                     >
-                      📄 CHECK OUT MY CV
+                      📄 VIEW DOSSIER CV
                     </button>
                   </div>
                 </div>
