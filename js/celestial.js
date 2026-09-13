@@ -381,24 +381,25 @@ window.AstroCelestial = {
     // 4. Iconic Green Bank Cantilevered Off-Axis Boom Arm
     const boomGroup = new THREE.Group();
 
-    const boomLeg1 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.35, 9.5, 5), steelTrussMat);
-    boomLeg1.position.set(-1.2, 4.8, -3.4);
-    boomLeg1.rotation.x = 0.52;
-    boomLeg1.rotation.z = -0.12;
+    // Lengthened legs to span from the outer rim to the dish center
+    const boomLeg1 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.35, 11.5, 5), steelTrussMat);
+    boomLeg1.position.set(-0.8, 5.6, -3.6); 
+    boomLeg1.rotation.x = 0.75; // Leaning heavily forward
+    boomLeg1.rotation.z = -0.15; // Leaning inward
     boomGroup.add(boomLeg1);
 
-    const boomLeg2 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.35, 9.5, 5), steelTrussMat);
-    boomLeg2.position.set(1.2, 4.8, -3.4);
-    boomLeg2.rotation.x = 0.52;
-    boomLeg2.rotation.z = 0.12;
+    const boomLeg2 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.35, 11.5, 5), steelTrussMat);
+    boomLeg2.position.set(0.8, 5.6, -3.6);
+    boomLeg2.rotation.x = 0.75;
+    boomLeg2.rotation.z = 0.15;
     boomGroup.add(boomLeg2);
   
     // Focal Cabin & Gregorian Subreflector (Mounted directly to the main boom legs)
     const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.2, 1.6), steelTrussMat);
-    // Lifted slightly up and forward to sit flush on the ends of the poles
-    cabin.position.set(0, 9.4, -0.6); 
-    // Tilted downward so the receiver/subreflector stares into the center of the dish
-    cabin.rotation.x = -0.25;
+    
+    // Positioned perfectly over the very center of the dish bowl
+    cabin.position.set(0, 10.0, 0.2);  
+    cabin.rotation.x = -0.25; // Tilted downward so the receiver stares into the center of the dish
     
     const subReflector = new THREE.Mesh(new THREE.DodecahedronGeometry(0.8), dishPanelMat);
     subReflector.position.set(0, -0.8, 0);
@@ -411,7 +412,8 @@ window.AstroCelestial = {
     cabin.add(strobe);
     
     boomGroup.add(cabin);
-    dishMount.add(boomGroup);
+
+    dishMount.add(boomGroup); // Attaching it back to the dish!
 
     dishMount.rotation.x = 0.35;
     alidadeTurret.add(dishMount);
