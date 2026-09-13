@@ -392,29 +392,24 @@ window.AstroCelestial = {
     boomLeg2.rotation.x = 0.52;
     boomLeg2.rotation.z = 0.12;
     boomGroup.add(boomLeg2);
-
-  // Upper converging boom extending over dish center
-  const boomUpper = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.28, 6.5, 5), steelTrussMat);
-  boomUpper.position.set(0, 7.5, 2.1); // Slid forward and down so the back end meets the lower legs
-  boomUpper.rotation.x = 1.9; // Angled downward and forward over the dish
-  boomGroup.add(boomUpper);
   
-  // Focal Cabin & Gregorian Subreflector
-  const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.2, 1.6), steelTrussMat);
-  cabin.position.set(0, 6.5, 5.1);
-
+    // Focal Cabin & Gregorian Subreflector (Mounted directly to the main boom legs)
+    const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.2, 1.6), steelTrussMat);
+    // Positioned perfectly at the apex of the two lower legs
+    cabin.position.set(0, 8.8, -1.0); 
+    cabin.rotation.x = 0.52; // Tilt the cabin to match the angle of the legs
+    
     const subReflector = new THREE.Mesh(new THREE.DodecahedronGeometry(0.8), dishPanelMat);
     subReflector.position.set(0, -0.8, 0);
     cabin.add(subReflector);
-
+    
     // Active receiver laser strobe
     const strobeMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
     const strobe = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.4), strobeMat);
     strobe.position.set(0, -1.6, 0);
     cabin.add(strobe);
-
+    
     boomGroup.add(cabin);
-    dishMount.add(boomGroup);
 
     dishMount.rotation.x = 0.35;
     alidadeTurret.add(dishMount);
