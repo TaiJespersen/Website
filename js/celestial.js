@@ -507,7 +507,6 @@ window.AstroCelestial = {
     const targets = [
       celestialObjects.j1713.position,
       celestialObjects.b1913.position,
-      celestialObjects.relay.position
     ];
 
     targets.forEach((targetPos) => {
