@@ -362,7 +362,7 @@ window.AstroCelestial = {
     const dishGeo = new THREE.CylinderGeometry(7.8, 1.8, 2.4, 16, 2, true);
     const dishMesh = new THREE.Mesh(dishGeo, dishPanelMat);
     //dishMesh.rotation.x = Math.PI;
-    dishMesh.position.y = 0;
+    dishMesh.position.y = 0.5;
     dishMount.add(dishMesh);
 
     // Flat bottom cap to fill in the hole
@@ -393,15 +393,15 @@ window.AstroCelestial = {
     boomLeg2.rotation.z = 0.12;
     boomGroup.add(boomLeg2);
 
-    // Upper converging boom extending over dish center
-    const boomUpper = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.28, 6.5, 5), steelTrussMat);
-    boomUpper.position.set(0, 8.2, -0.6);
-    boomUpper.rotation.x = -0.62; // <-- Leaning the wrong way
-    boomGroup.add(boomUpper);
-    
-    // Focal Cabin & Gregorian Subreflector
-    const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.2, 1.6), steelTrussMat);
-    cabin.position.set(0, 7.6, 1.8); // <-- Floating below the boom
+  // Upper converging boom extending over dish center
+  const boomUpper = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.28, 6.5, 5), steelTrussMat);
+  boomUpper.position.set(0, 7.5, 2.1); // Slid forward and down so the back end meets the lower legs
+  boomUpper.rotation.x = 1.9; // Angled downward and forward over the dish
+  boomGroup.add(boomUpper);
+  
+  // Focal Cabin & Gregorian Subreflector
+  const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.2, 1.6), steelTrussMat);
+  cabin.position.set(0, 6.5, 5.1);
 
     const subReflector = new THREE.Mesh(new THREE.DodecahedronGeometry(0.8), dishPanelMat);
     subReflector.position.set(0, -0.8, 0);
