@@ -110,13 +110,24 @@ window.AstroScene = {
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-    const starTexture = new THREE.TextureLoader().load('circle.png');
+  const canvas = document.createElement('canvas');
+  canvas.width = 64;
+  canvas.height = 64;
+  
+  const ctx = canvas.getContext('2d');
+  ctx.beginPath();
+  ctx.arc(32, 32, 30, 0, Math.PI * 2);
+  ctx.fillStyle = 'white';
+  ctx.fill();
+  
+  const starTexture = new THREE.CanvasTexture(canvas);
     
     const material = new THREE.PointsMaterial({
       size: 5,
       vertexColors: true,
       map: starTexture,
       transparent: true,
+      alphaTest: 0.1,
       opacity: 1.0
     });
 
