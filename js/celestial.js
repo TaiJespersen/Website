@@ -362,7 +362,7 @@ window.AstroCelestial = {
     const dishGeo = new THREE.CylinderGeometry(7.8, 1.8, 2.4, 16, 2, true);
     const dishMesh = new THREE.Mesh(dishGeo, dishPanelMat);
     //dishMesh.rotation.x = Math.PI;
-    dishMesh.position.y = -0.5;
+    dishMesh.position.y = 0;
     dishMount.add(dishMesh);
 
     // Flat bottom cap to fill in the hole
