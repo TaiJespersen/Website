@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Dr. Lyra Mercer // NANOGrav & Pulsar Astrophysics</title>
+  <meta name="description" content="Interactive low-poly videogame portfolio of Dr. Lyra Mercer - Astrophysics researcher specializing in neutron stars, millisecond pulsars, and NANOGrav gravitational-wave astrophysics." />
+  <meta name="author" content="Dr. Lyra Mercer" />
+
+  <!-- Favicon Emoji -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+
+  <!-- Stylesheets (Relative Paths for GitHub Pages compatibility) -->
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./css/modals.css" />
+
+  <!-- 3D & UI Libraries via High-Speed CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
+</head>
+<body>
+  <!-- CRT Retro Scanline Grid Effect -->
+  <div class="crt-scanlines"></div>
+
+  <!-- 3D WebGL Canvas Viewport -->
+  <div id="canvas-container"></div>
+
+  <!-- React 18 Application Root -->
+  <div id="react-root"></div>
+
+  <!-- Application Logic Scripts (Relative Paths) -->
+  <script src="./js/data.js"></script>
+  <script src="./js/audio.js"></script>
+  <script src="./js/simulations.js"></script>
+  <script src="./js/celestial.js"></script>
+  <script src="./js/ship.js"></script>
+  <script src="./js/scene.js"></script>
+
+  <!-- React JSX Application (Transpiled client-side via Babel for static GitHub Pages) -->
+  <script type="text/babel" src="./js/app.jsx"></script>
+
+  <!-- Initialize 3D Universe on Load -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.AstroScene && window.THREE) {
+        window.AstroScene.init('canvas-container');
+      } else {
+        console.warn("Three.js or AstroScene initializing...");
+      }
+    });
+  </script>
+</body>
+</html>

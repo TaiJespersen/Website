@@ -1,0 +1,592 @@
+/* ============================================================================
+   ASTRO-OS // VIDEOGAME HUD & FLIGHT COCKPIT STYLES
+   Low-Poly Sci-Fi Vector Aesthetic with CRT Scanlines & Neon Accents
+   ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap');
+
+:root {
+  --bg-deep: #05070f;
+  --bg-card: rgba(10, 15, 30, 0.85);
+  --border-neon: rgba(0, 240, 255, 0.4);
+  --neon-cyan: #00f0ff;
+  --neon-pink: #ec4899;
+  --neon-amber: #f59e0b;
+  --neon-emerald: #10b981;
+  --neon-purple: #a855f7;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --font-display: 'Chakra Petch', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+/* 3D WebGL Canvas Viewport */
+#canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+
+#canvas-container canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* React Application Container */
+#react-root {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none; /* Allows mouse to steer 3D world unless clicking HUD */
+}
+
+.astro-app {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* CRT Subtle Scanline Overlay */
+.crt-scanlines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.25) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.03),
+    rgba(0, 255, 0, 0.01),
+    rgba(0, 0, 255, 0.03)
+  );
+  background-size: 100% 3px, 6px 100%;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0.65;
+}
+
+/* HUD Overlay Elements (Interactable) */
+#hud-overlay {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#hud-overlay * {
+  pointer-events: auto;
+}
+
+/* Top Bar */
+.hud-top-bar {
+  position: absolute;
+  top: 14px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 18px;
+  background: rgba(5, 7, 15, 0.75);
+  border: 1px solid var(--border-neon);
+  border-radius: 4px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+}
+
+.hud-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-indicator.live-pulse {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--neon-emerald);
+  box-shadow: 0 0 8px var(--neon-emerald);
+  animation: pulseGlow 1.8s infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.system-code {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+}
+
+.callsign-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: rgba(236, 72, 153, 0.2);
+  border: 1px solid var(--neon-pink);
+  color: var(--neon-pink);
+  border-radius: 3px;
+}
+
+.hud-controls-top {
+  display: flex;
+  gap: 10px;
+}
+
+/* Cyber Button Styling */
+.hud-btn {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 14px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid var(--border-neon);
+  color: var(--text-main);
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  letter-spacing: 0.8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-btn:hover {
+  background: rgba(0, 240, 255, 0.2);
+  border-color: var(--neon-cyan);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.hud-btn.neon-btn {
+  background: rgba(0, 240, 255, 0.15);
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+}
+
+.hud-btn.sound-toggle.active {
+  border-color: var(--neon-emerald);
+  color: var(--neon-emerald);
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.hud-btn.mini-btn {
+  padding: 4px 10px;
+  font-size: 11px;
+  text-decoration: none;
+}
+
+/* Telemetry Panel (Bottom Left) */
+.hud-telemetry-panel {
+  position: absolute;
+  bottom: 24px;
+  left: 20px;
+  width: 280px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-neon);
+  border-left: 3px solid var(--neon-cyan);
+  padding: 12px 14px;
+  border-radius: 4px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.hud-panel-header {
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: var(--neon-cyan);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+  padding-bottom: 4px;
+}
+
+.telemetry-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.telem-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.telem-label {
+  color: var(--text-muted);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+}
+
+.telem-value {
+  font-weight: 600;
+}
+
+.flight-instructions {
+  margin-top: 10px;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* Radar Minimap (Bottom Right) */
+.hud-radar-panel {
+  position: absolute;
+  bottom: 24px;
+  right: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-neon);
+  border-radius: 4px;
+  padding: 10px;
+  backdrop-filter: blur(8px);
+  text-align: center;
+}
+
+.radar-screen {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(2, 132, 199, 0.2) 0%, rgba(5, 7, 15, 0.9) 70%);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  overflow: hidden;
+  margin: 0 auto 6px auto;
+}
+
+.radar-sweep {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(0, 240, 255, 0.3) 60deg, transparent 65deg);
+  animation: radarRotate 4s linear infinite;
+}
+
+@keyframes radarRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.radar-center-blip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: #ffffff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 6px #ffffff;
+}
+
+.radar-target-blip {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid var(--neon-cyan);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 700;
+  color: #fff;
+  transition: transform 0.2s ease;
+}
+
+.radar-target-blip:hover {
+  transform: translate(-50%, -50%) scale(1.4);
+  background: rgba(0, 240, 255, 0.4);
+}
+
+.radar-label {
+  font-size: 9px;
+  color: var(--neon-cyan);
+  letter-spacing: 1px;
+}
+
+/* Fast-Travel Nav Bar (Bottom Center) */
+.hud-nav-bar {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-title {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 8px;
+  background: var(--bg-card);
+  padding: 6px 12px;
+  border: 1px solid var(--border-neon);
+  border-radius: 4px;
+  backdrop-filter: blur(8px);
+}
+
+.nav-jump-btn {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  color: var(--text-main);
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.nav-jump-btn:hover, .nav-jump-btn.active {
+  border-color: var(--neon-cyan);
+  background: rgba(0, 240, 255, 0.2);
+  color: #fff;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+}
+
+.jump-key {
+  color: var(--neon-amber);
+  font-weight: 700;
+}
+
+/* Center Target Lock Reticle */
+.target-reticle-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 90px;
+  height: 90px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0.65;
+}
+
+.reticle-bracket {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--neon-cyan);
+}
+
+.reticle-bracket.top-left { top: 0; left: 0; border-right: none; border-bottom: none; }
+.reticle-bracket.top-right { top: 0; right: 0; border-left: none; border-bottom: none; }
+.reticle-bracket.btm-left { bottom: 0; left: 0; border-right: none; border-top: none; }
+.reticle-bracket.btm-right { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+.reticle-data {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  white-space: nowrap;
+  font-size: 11px;
+}
+
+.target-name {
+  display: block;
+  font-weight: 700;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 6px rgba(0, 240, 255, 0.6);
+}
+
+.target-dist {
+  font-size: 10px;
+  color: var(--neon-amber);
+}
+
+/* Docking Proximity Banner */
+.docking-prompt-banner {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(5, 7, 15, 0.85);
+  border: 2px solid var(--neon-emerald);
+  padding: 10px 22px;
+  border-radius: 4px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+  animation: dockPulse 1.5s infinite alternate;
+}
+
+@keyframes dockPulse {
+  from { box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
+  to { box-shadow: 0 0 25px rgba(16, 185, 129, 0.8); }
+}
+
+.dock-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.dock-key {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--neon-emerald);
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.dock-dest {
+  font-size: 11px;
+  color: var(--text-main);
+}
+
+/* Neon Text Helper Classes */
+.neon-cyan { color: var(--neon-cyan); text-shadow: 0 0 6px rgba(0, 240, 255, 0.4); }
+.neon-pink { color: var(--neon-pink); text-shadow: 0 0 6px rgba(236, 72, 153, 0.4); }
+.neon-amber { color: var(--neon-amber); text-shadow: 0 0 6px rgba(245, 158, 11, 0.4); }
+.neon-emerald { color: var(--neon-emerald); text-shadow: 0 0 6px rgba(16, 185, 129, 0.4); }
+.neon-purple { color: var(--neon-purple); text-shadow: 0 0 6px rgba(168, 85, 247, 0.4); }
+
+/* Mobile Touch Virtual Gamepad */
+.mobile-touch-controls {
+  display: none;
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  width: 100%;
+  padding: 0 15px;
+  pointer-events: none;
+}
+
+@media (max-width: 860px) {
+  .mobile-touch-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .mobile-touch-controls * {
+    pointer-events: auto;
+  }
+
+  .hud-nav-bar {
+    display: none;
+  }
+
+  .hud-telemetry-panel {
+    bottom: auto;
+    top: 75px;
+    width: 220px;
+    padding: 8px 10px;
+  }
+
+  .flight-instructions {
+    display: none;
+  }
+
+  .hud-radar-panel {
+    bottom: auto;
+    top: 75px;
+    right: 15px;
+    padding: 6px;
+  }
+
+  .radar-screen {
+    width: 80px;
+    height: 80px;
+  }
+
+  /* Virtual D-pad */
+  .dpad-zone {
+    position: relative;
+    width: 130px;
+    height: 130px;
+  }
+
+  .touch-btn {
+    position: absolute;
+    width: 42px;
+    height: 42px;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1.5px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    font-size: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .touch-btn.up { top: 0; left: 44px; }
+  .touch-btn.left { top: 44px; left: 0; }
+  .touch-btn.right { top: 44px; left: 88px; }
+  .touch-btn.down { top: 88px; left: 44px; }
+
+  /* Virtual Action Buttons */
+  .action-zone {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .touch-action-btn {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    border: 2px solid var(--neon-pink);
+    background: rgba(236, 72, 153, 0.25);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .touch-action-btn.dock {
+    border-color: var(--neon-emerald);
+    background: rgba(16, 185, 129, 0.25);
+  }
+}

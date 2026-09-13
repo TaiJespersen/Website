@@ -1,0 +1,810 @@
+/* ============================================================================
+   ASTRO-OS // MODAL DIALOGS, SIMULATION PANELS & 2D READER STYLES
+   ============================================================================ */
+
+/* Backdrop */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(5, 7, 15, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  pointer-events: auto;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Modal Window Container */
+.modal-container {
+  position: relative;
+  width: 90%;
+  max-width: 860px;
+  max-height: 88vh;
+  background: rgba(10, 15, 30, 0.95);
+  border: 1.5px solid var(--border-neon);
+  border-top: 4px solid var(--neon-cyan);
+  border-radius: 6px;
+  box-shadow: 0 0 35px rgba(0, 240, 255, 0.25), 0 10px 30px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Modal Internal Scanline effect */
+.modal-scanline-fx {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.4;
+}
+
+/* Modal Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background: rgba(15, 23, 42, 0.8);
+  border-bottom: 1px solid var(--border-neon);
+  z-index: 3;
+}
+
+.modal-title-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-icon {
+  font-size: 20px;
+}
+
+.modal-header h2 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  color: var(--neon-cyan);
+  letter-spacing: 1px;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: 1px solid rgba(236, 72, 153, 0.4);
+  color: var(--neon-pink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: rgba(236, 72, 153, 0.25);
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.4);
+}
+
+/* Modal Body */
+.modal-body {
+  padding: 22px;
+  overflow-y: auto;
+  z-index: 3;
+  flex: 1;
+}
+
+/* Custom scrollbar */
+.modal-body::-webkit-scrollbar,
+.reader-body::-webkit-scrollbar {
+  width: 6px;
+}
+.modal-body::-webkit-scrollbar-track,
+.reader-body::-webkit-scrollbar-track {
+  background: rgba(5, 7, 15, 0.8);
+}
+.modal-body::-webkit-scrollbar-thumb,
+.reader-body::-webkit-scrollbar-thumb {
+  background: var(--neon-cyan);
+  border-radius: 3px;
+}
+
+/* Terminal Panels */
+.terminal-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Sector 1: Alert & Stats */
+.terminal-alert-box {
+  background: rgba(16, 185, 129, 0.1);
+  border-left: 3px solid var(--neon-emerald);
+  padding: 12px 16px;
+  border-radius: 4px;
+}
+
+.alert-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--neon-emerald);
+  background: rgba(16, 185, 129, 0.2);
+  padding: 2px 6px;
+  border-radius: 2px;
+  margin-bottom: 6px;
+}
+
+.terminal-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.t-stat {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  padding: 12px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.t-stat-val {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.t-stat-lbl {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Acoustic Pulsar Sonification Card */
+.sonification-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(2, 132, 199, 0.15);
+  border: 1px dashed var(--neon-cyan);
+  padding: 16px;
+  border-radius: 4px;
+  gap: 14px;
+}
+
+.son-info h4 {
+  color: var(--neon-cyan);
+  margin-bottom: 4px;
+  font-family: var(--font-display);
+}
+
+.son-info p {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.son-btn {
+  white-space: nowrap;
+  background: rgba(0, 240, 255, 0.2);
+  border-color: var(--neon-cyan);
+}
+
+.son-btn.pulsing {
+  background: var(--neon-cyan);
+  color: #05070f;
+  animation: pulseGlow 0.4s infinite alternate;
+}
+
+.research-summary-text h3 {
+  color: var(--neon-amber);
+  margin-bottom: 8px;
+  font-family: var(--font-display);
+}
+
+.research-summary-text p {
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+/* Sector 2: Publications Filter & Cards */
+.filter-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.filter-pill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 5px 12px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  color: var(--text-muted);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-pill:hover, .filter-pill.active {
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+  background: rgba(0, 240, 255, 0.15);
+}
+
+.publications-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pub-card-terminal {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  padding: 14px 16px;
+  border-radius: 4px;
+  transition: border-color 0.2s ease;
+}
+
+.pub-card-terminal:hover {
+  border-color: var(--neon-cyan);
+}
+
+.pub-meta-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 11px;
+}
+
+.pub-tag {
+  background: rgba(236, 72, 153, 0.2);
+  border: 1px solid var(--neon-pink);
+  color: var(--neon-pink);
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-weight: 700;
+  font-size: 9px;
+}
+
+.pub-year-badge {
+  color: var(--neon-amber);
+  font-weight: 700;
+}
+
+.pub-heading {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.pub-author-line {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.pub-abstract-text {
+  font-size: 12px;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  background: rgba(5, 7, 15, 0.4);
+  padding: 8px 10px;
+  border-left: 2px solid var(--neon-amber);
+  border-radius: 2px;
+}
+
+.pub-button-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Sector 3: Physics Lab & Simulations */
+.sim-tab-header {
+  display: flex;
+  gap: 10px;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+  padding-bottom: 10px;
+}
+
+.sim-tab-btn {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 16px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  color: var(--text-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sim-tab-btn:hover, .sim-tab-btn.active {
+  border-color: var(--neon-cyan);
+  background: rgba(0, 240, 255, 0.2);
+  color: var(--neon-cyan);
+}
+
+.simulation-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sim-instruction-text {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.sim-canvas-box {
+  background: #05070f;
+  border: 1px solid var(--border-neon);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.sim-controls-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(15, 23, 42, 0.5);
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+}
+
+.slider-row label {
+  color: var(--neon-cyan);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.slider-row input[type="range"] {
+  flex: 1;
+  accent-color: var(--neon-cyan);
+  cursor: pointer;
+}
+
+.curve-type-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sim-readout-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.stat-box {
+  background: rgba(5, 7, 15, 0.6);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  padding: 8px 10px;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-lbl {
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.stat-val {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Sector 4: Dossier & CV */
+.dossier-bio-section h3,
+.appointments-timeline h4,
+.grants-section h4 {
+  font-family: var(--font-display);
+  color: var(--neon-cyan);
+  margin-bottom: 10px;
+  letter-spacing: 0.8px;
+}
+
+.dossier-bio-section p {
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.appointments-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 14px;
+  font-size: 12px;
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.time-period {
+  font-weight: 700;
+  white-space: nowrap;
+  width: 120px;
+}
+
+.time-role {
+  font-weight: 600;
+  color: var(--text-main);
+  flex: 1;
+}
+
+.time-inst {
+  color: var(--text-muted);
+}
+
+.grants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.grant-card {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  padding: 12px;
+  border-radius: 4px;
+}
+
+.grant-facility {
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.grant-hrs {
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.grant-project {
+  font-size: 12px;
+  color: #cbd5e1;
+  line-height: 1.4;
+}
+
+.cv-download-box {
+  margin-top: 10px;
+}
+
+/* Sector 5: Sub-Space Contact Form */
+.subspace-form-wrapper h3 {
+  font-family: var(--font-display);
+  color: var(--neon-emerald);
+  margin-bottom: 6px;
+}
+
+.subspace-form-wrapper p {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+
+.subspace-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: rgba(15, 23, 42, 0.5);
+  padding: 16px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 4px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-group label {
+  font-size: 10px;
+  color: var(--neon-emerald);
+  font-weight: 600;
+  letter-spacing: 0.8px;
+}
+
+.form-group input,
+.form-group textarea {
+  background: rgba(5, 7, 15, 0.8);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: 3px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--neon-emerald);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.transmit-btn {
+  align-self: flex-start;
+  border-color: var(--neon-emerald);
+  color: var(--neon-emerald);
+}
+
+.direct-links-card {
+  margin-top: 18px;
+}
+
+.direct-links-card h4 {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.links-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.link-badge {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  color: var(--text-main);
+  padding: 6px 12px;
+  border-radius: 3px;
+  text-decoration: none;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.link-badge:hover {
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+  background: rgba(0, 240, 255, 0.15);
+}
+
+/* ============================================================================
+   2D ACCESSIBLE READER MODE CONTAINER
+   ============================================================================ */
+.reader-container {
+  width: 100vw;
+  height: 100vh;
+  background: #090d16;
+  color: #e2e8f0;
+  overflow-y: auto;
+  padding: 30px 20px;
+  pointer-events: auto;
+  z-index: 50;
+  position: relative;
+}
+
+.reader-header {
+  max-width: 900px;
+  margin: 0 auto 30px auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid var(--border-neon);
+  padding-bottom: 20px;
+}
+
+.reader-callsign {
+  font-size: 11px;
+  color: var(--neon-cyan);
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.reader-brand h1 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: #fff;
+  margin: 4px 0;
+}
+
+.reader-tagline {
+  color: var(--neon-amber);
+  font-size: 14px;
+}
+
+.reader-inst {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.reader-body {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.reader-section h2 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--neon-cyan);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+  padding-bottom: 6px;
+  margin-bottom: 14px;
+}
+
+.reader-section p {
+  line-height: 1.7;
+  color: #cbd5e1;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.stat-card {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  padding: 12px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.stat-num {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.stat-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.reader-pubs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pub-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 3px solid var(--neon-cyan);
+  padding: 16px;
+  border-radius: 4px;
+}
+
+.pub-badge-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.pub-badge {
+  background: rgba(236, 72, 153, 0.2);
+  color: var(--neon-pink);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+.pub-year {
+  color: var(--neon-amber);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.pub-journal {
+  font-size: 11px;
+}
+
+.pub-title {
+  font-size: 15px;
+  margin-bottom: 6px;
+  color: #fff;
+}
+
+.pub-authors {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.pub-abstract {
+  font-size: 12px;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.pub-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.teaching-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.teaching-item {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px 16px;
+  border-radius: 4px;
+}
+
+.teach-hdr {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.teach-id {
+  font-weight: 700;
+}
+
+.teach-term {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.teaching-item h4 {
+  font-size: 14px;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.teaching-item p {
+  margin-bottom: 0;
+  font-size: 12px;
+}
