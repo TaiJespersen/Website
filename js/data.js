@@ -30,16 +30,16 @@ window.AstroData = {
     ],
     telescopeGrants: [
       {
-        facility: "Very Large Array (VLA)",
-        cycle: "Semester 2025A (Co-I)",
-        hours: "34 Hours",
-        title: "Sub-Arcsecond Astrometry and Parallax Measurements of Newly Discovered MSPs"
+        facility: "N/A",
+        cycle: "a",
+        hours: "a",
+        title: "a"
       },
       {
-        facility: "NICER on the ISS",
-        cycle: "Cycle 6 (Co-I)",
-        hours: "95 ksec",
-        title: "X-ray Pulse Profile Modeling of the Massive Neutron Star PSR J0740+6620"
+        facility: "a",
+        cycle: "a",
+        hours: "a",
+        title: "a"
       }
     ]
   },
@@ -129,27 +129,19 @@ window.AstroData = {
 
   teaching: [
     {
-      courseId: "ASTR-310",
-      title: "Radio Astronomy & Time-Domain Astrophysics",
-      level: "Upper Undergraduate",
-      term: "Spring 2025 // Instructor",
-      desc: "Fundamentals of radio interferometry, antennas, pulsar dispersion, Fourier signal analysis, fast radio bursts (FRBs), and gravitational wave astrophysics.",
+      courseId: "PHY-121",
+      title: "General Physics Laboratory I",
+      level: "Undergraduate",
+      term: "Fall 2026 // Instructor",
+      desc: "Experiments correlated with lecture material of PHYSICS 120. ",
       syllabusUrl: "#"
     },
     {
-      courseId: "ASTR-105",
-      title: "Extreme Stars: White Dwarfs, Neutron Stars & Black Holes",
+      courseId: "AST-101",
+      title: "Exploring Ideas in Astronomy",
       level: "Introductory Undergraduate",
-      term: "Fall 2024 // Co-Instructor",
-      desc: "Stellar graveyards, degeneracy pressure, supernovae, pulsars, accretion physics, and the latest discoveries from LIGO and NANOGrav.",
-      syllabusUrl: "#"
-    },
-    {
-      courseId: "PHYS-480",
-      title: "Gravitational Wave Physics & Multi-Messenger Astronomy",
-      level: "Senior / Graduate",
-      term: "Winter 2024 // Guest Lecturer",
-      desc: "General relativity, quadrupole formula, pulsar timing arrays, ground-based laser interferometers (LIGO/Virgo), and space interferometers (LISA).",
+      term: "Fall 2023 // TA",
+      desc: "An exploration of topics in astronomy with a view toward understanding the big ideas. After establishing a solid background in the quantitative scientific and physical principles that underlie these topics, the course discusses topics centered around big questions (for example, how do astronomers study the sky? how do we study things we can’t see? how will the universe end?).",
       syllabusUrl: "#"
     }
   ],
