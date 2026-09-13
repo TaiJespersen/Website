@@ -50,18 +50,6 @@ window.AstroCelestial = {
     const light = new THREE.PointLight(0x00f0ff, 3.5, 140);
     group.add(light);
 
-    // Luminous Navigational Waypoint Beacon Halo (High visibility from distance)
-    const haloGeo = new THREE.TorusGeometry(26, 0.35, 4, 24);
-    const haloMat = new THREE.MeshBasicMaterial({
-      color: 0x00f0ff,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.65
-    });
-    const navHalo = new THREE.Mesh(haloGeo, haloMat);
-    navHalo.rotation.x = Math.PI / 2;
-    group.add(navHalo);
-
     // Ultra-dense Faceted Neutron Core
     const coreGeo = new THREE.IcosahedronGeometry(7, 1);
     const coreMat = new THREE.MeshStandardMaterial({
@@ -143,18 +131,6 @@ window.AstroCelestial = {
     // Dynamic Point Light to illuminate binary barycenter brightly
     const light = new THREE.PointLight(0xf59e0b, 3.5, 140);
     group.add(light);
-
-    // Luminous Navigational Waypoint Beacon Halo (High visibility)
-    const haloGeo = new THREE.TorusGeometry(32, 0.4, 4, 24);
-    const haloMat = new THREE.MeshBasicMaterial({
-      color: 0xf59e0b,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.65
-    });
-    const navHalo = new THREE.Mesh(haloGeo, haloMat);
-    navHalo.rotation.x = Math.PI / 2;
-    group.add(navHalo);
 
     const pulsarMat = new THREE.MeshStandardMaterial({
       color: 0xf59e0b,
@@ -263,18 +239,6 @@ window.AstroCelestial = {
     // Dynamic Point Light illuminating the planet and observatory
     const light = new THREE.PointLight(0xa855f7, 3.5, 140);
     group.add(light);
-
-    // Luminous Navigational Waypoint Beacon Halo (High visibility from deep space)
-    const haloGeo = new THREE.TorusGeometry(34, 0.45, 4, 24);
-    const haloMat = new THREE.MeshBasicMaterial({
-      color: 0xa855f7,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.7
-    });
-    const navHalo = new THREE.Mesh(haloGeo, haloMat);
-    navHalo.rotation.x = Math.PI / 2;
-    group.add(navHalo);
 
     // ------------------------------------------------------------------------
     // A. The Host Planet (Terrestrial mountain world)
