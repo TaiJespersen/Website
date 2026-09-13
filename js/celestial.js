@@ -395,9 +395,10 @@ window.AstroCelestial = {
   
     // Focal Cabin & Gregorian Subreflector (Mounted directly to the main boom legs)
     const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.2, 1.6), steelTrussMat);
-    // Positioned perfectly at the apex of the two lower legs
-    cabin.position.set(0, 8.8, -1.0); 
-    cabin.rotation.x = 0.52; // Tilt the cabin to match the angle of the legs
+    // Lifted slightly up and forward to sit flush on the ends of the poles
+    cabin.position.set(0, 9.4, -0.6); 
+    // Tilted downward so the receiver/subreflector stares into the center of the dish
+    cabin.rotation.x = -0.25;
     
     const subReflector = new THREE.Mesh(new THREE.DodecahedronGeometry(0.8), dishPanelMat);
     subReflector.position.set(0, -0.8, 0);
