@@ -464,7 +464,9 @@ window.AstroCelestial = {
     const ptaLines = [];
 
     // Connect the radio observatory to the pulsars
-    const obsPos = celestialObjects.observatory.position;
+    const obsPos = celestialObjects.observatory.position.clone();
+    obsPos.y += 19.4;
+    
     const targets = [
       celestialObjects.j1713.position,
       celestialObjects.b1913.position,
