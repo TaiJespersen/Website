@@ -52,12 +52,28 @@ window.AstroCelestial = {
     const group = new THREE.Group();
     group.position.set(pos.x, pos.y, pos.z);
 
+    // Dynamic Point Light to illuminate surrounding space brightly
+    const light = new THREE.PointLight(0x00f0ff, 3.5, 140);
+    group.add(light);
+
+    // Luminous Navigational Waypoint Beacon Halo (High visibility from distance)
+    const haloGeo = new THREE.TorusGeometry(26, 0.35, 4, 24);
+    const haloMat = new THREE.MeshBasicMaterial({
+      color: 0x00f0ff,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.65
+    });
+    const navHalo = new THREE.Mesh(haloGeo, haloMat);
+    navHalo.rotation.x = Math.PI / 2;
+    group.add(navHalo);
+
     // Ultra-dense Faceted Neutron Core
     const coreGeo = new THREE.IcosahedronGeometry(7, 1);
     const coreMat = new THREE.MeshStandardMaterial({
       color: 0x38bdf8,
       emissive: 0x0284c7,
-      emissiveIntensity: 0.9,
+      emissiveIntensity: 1.4,
       flatShading: true,
       roughness: 0.2,
       metalness: 0.8
@@ -71,19 +87,19 @@ window.AstroCelestial = {
       color: 0x00f0ff,
       wireframe: true,
       transparent: true,
-      opacity: 0.35
+      opacity: 0.45
     });
     const shell = new THREE.Mesh(shellGeo, shellMat);
     group.add(shell);
 
     // Relativistic Polar Radiation Beams (Dual sweeping cones)
     // Both beams originate from a single point on the magnetic poles and flare outward!
-    const beamGeo = this.createExpandingBeamGeometry(9, 80, 8);
+    const beamGeo = this.createExpandingBeamGeometry(9.5, 85, 8);
     const beamMat = new THREE.MeshBasicMaterial({
       color: 0x67e8f9,
       wireframe: true,
       transparent: true,
-      opacity: 0.75
+      opacity: 0.85
     });
 
     const beamGroup = new THREE.Group();
@@ -114,6 +130,7 @@ window.AstroCelestial = {
         core.rotation.y += delta * 6.5;
         beamGroup.rotation.y += delta * 5.2;
         shell.rotation.x -= delta * 1.5;
+        navHalo.rotation.z += delta * 0.2;
       }
     };
 
@@ -129,10 +146,26 @@ window.AstroCelestial = {
     const group = new THREE.Group();
     group.position.set(pos.x, pos.y, pos.z);
 
+    // Dynamic Point Light to illuminate binary barycenter brightly
+    const light = new THREE.PointLight(0xf59e0b, 3.5, 140);
+    group.add(light);
+
+    // Luminous Navigational Waypoint Beacon Halo (High visibility)
+    const haloGeo = new THREE.TorusGeometry(32, 0.4, 4, 24);
+    const haloMat = new THREE.MeshBasicMaterial({
+      color: 0xf59e0b,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.65
+    });
+    const navHalo = new THREE.Mesh(haloGeo, haloMat);
+    navHalo.rotation.x = Math.PI / 2;
+    group.add(navHalo);
+
     const pulsarMat = new THREE.MeshStandardMaterial({
       color: 0xf59e0b,
       emissive: 0xd97706,
-      emissiveIntensity: 0.8,
+      emissiveIntensity: 1.4,
       flatShading: true,
       roughness: 0.3
     });
@@ -140,7 +173,7 @@ window.AstroCelestial = {
     const compMat = new THREE.MeshStandardMaterial({
       color: 0x94a3b8,
       emissive: 0x475569,
-      emissiveIntensity: 0.5,
+      emissiveIntensity: 0.8,
       flatShading: true,
       roughness: 0.4
     });
@@ -151,12 +184,12 @@ window.AstroCelestial = {
 
     // Primary Dual Sweeping Relativistic Beams (North and South)
     // Both beams emanate from a single point at the magnetic poles and flare outward
-    const bBeamGeo = this.createExpandingBeamGeometry(6.5, 55, 8);
+    const bBeamGeo = this.createExpandingBeamGeometry(7.0, 60, 8);
     const bBeamMat = new THREE.MeshBasicMaterial({
       color: 0xfbbf24,
       wireframe: true,
       transparent: true,
-      opacity: 0.65
+      opacity: 0.75
     });
 
     const star1BeamGroup = new THREE.Group();
@@ -180,12 +213,12 @@ window.AstroCelestial = {
     // Expanding Gravitational Wave Ripples (Concentric low-poly rings)
     const gwRipples = [];
     for (let i = 0; i < 4; i++) {
-      const rGeo = new THREE.RingGeometry(8 + i * 8, 9.5 + i * 8, 20);
+      const rGeo = new THREE.RingGeometry(8 + i * 8, 9.8 + i * 8, 20);
       const rMat = new THREE.MeshBasicMaterial({
         color: 0xf59e0b,
         wireframe: true,
         transparent: true,
-        opacity: 0.4,
+        opacity: 0.65,
         side: THREE.DoubleSide
       });
       const rMesh = new THREE.Mesh(rGeo, rMat);
@@ -210,12 +243,13 @@ window.AstroCelestial = {
 
         star1.rotation.y += delta * 4.0;
         star2.rotation.y += delta * 2.0;
+        navHalo.rotation.z -= delta * 0.15;
 
         // Animate gravitational wave ripples expanding outward
         gwRipples.forEach((r, idx) => {
           const t = (this.time * 0.8 + idx * 0.5) % 2.0;
           r.scale.set(1 + t * 2.2, 1 + t * 2.2, 1);
-          r.material.opacity = Math.max(0, 0.6 - t * 0.28);
+          r.material.opacity = Math.max(0, 0.7 - t * 0.3);
         });
       }
     };
@@ -232,14 +266,30 @@ window.AstroCelestial = {
     const group = new THREE.Group();
     group.position.set(pos.x, pos.y, pos.z);
 
+    // Dynamic Point Light to illuminate surrounding space with crimson glow
+    const light = new THREE.PointLight(0xef4444, 4.0, 140);
+    group.add(light);
+
+    // Luminous Navigational Waypoint Beacon Halo (High visibility)
+    const haloGeo = new THREE.TorusGeometry(30, 0.4, 4, 24);
+    const haloMat = new THREE.MeshBasicMaterial({
+      color: 0xec4899,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.75
+    });
+    const navHalo = new THREE.Mesh(haloGeo, haloMat);
+    navHalo.rotation.x = Math.PI / 2;
+    group.add(navHalo);
+
     // Highly Strained Faceted Crust
     const crustGeo = new THREE.IcosahedronGeometry(9, 1);
     const crustMat = new THREE.MeshStandardMaterial({
       color: 0xef4444,
       emissive: 0x991b1b,
-      emissiveIntensity: 0.9,
+      emissiveIntensity: 1.5,
       flatShading: true,
-      roughness: 0.5,
+      roughness: 0.4,
       metalness: 0.7
     });
     const crust = new THREE.Mesh(crustGeo, crustMat);
@@ -250,12 +300,12 @@ window.AstroCelestial = {
       color: 0xf43f5e,
       wireframe: true,
       transparent: true,
-      opacity: 0.5
+      opacity: 0.75
     });
 
     const arches = new THREE.Group();
     for (let i = 0; i < 4; i++) {
-      const archGeo = new THREE.TorusGeometry(14, 0.4, 4, 16, Math.PI);
+      const archGeo = new THREE.TorusGeometry(14, 0.45, 4, 16, Math.PI);
       const arch = new THREE.Mesh(archGeo, magneticArchMat);
       arch.rotation.y = (i * Math.PI) / 4;
       arch.position.y = 0;
@@ -284,6 +334,7 @@ window.AstroCelestial = {
         crust.rotation.y += delta * 0.4;
         arches.rotation.y += delta * 0.6;
         arches.rotation.z = Math.sin(this.time * 0.5) * 0.2;
+        navHalo.rotation.z += delta * 0.25;
 
         // Periodic seismic crust glitch / giant flare
         const flareCycle = Math.sin(this.time * 1.2);
@@ -301,266 +352,239 @@ window.AstroCelestial = {
   },
 
   // --------------------------------------------------------------------------
-  // 4. ORBITAL RADIO OBSERVATORY: GREEN BANK & ARECIBO ARRAY
-  // Iconic combination of Green Bank (off-axis cantilevered feed arm & alidade)
-  // and Arecibo (tri-tower cable-suspended instrument platform)
+  // 4. PLANETARY RADIO OBSERVATORY: GREEN BANK TELESCOPE (GBT)
+  // Low-poly terrestrial planet with the 100m Green Bank Telescope on a mountain plateau
   // --------------------------------------------------------------------------
   createRadioObservatory(scene, pos) {
     const group = new THREE.Group();
     group.position.set(pos.x, pos.y, pos.z);
 
+    // Dynamic Point Light illuminating the planet and observatory
+    const light = new THREE.PointLight(0xa855f7, 3.5, 140);
+    group.add(light);
+
+    // Luminous Navigational Waypoint Beacon Halo (High visibility from deep space)
+    const haloGeo = new THREE.TorusGeometry(34, 0.45, 4, 24);
+    const haloMat = new THREE.MeshBasicMaterial({
+      color: 0xa855f7,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.7
+    });
+    const navHalo = new THREE.Mesh(haloGeo, haloMat);
+    navHalo.rotation.x = Math.PI / 2;
+    group.add(navHalo);
+
+    // ------------------------------------------------------------------------
+    // A. The Host Planet (Terrestrial mountain world)
+    // ------------------------------------------------------------------------
+    const planetGroup = new THREE.Group();
+
+    const planetGeo = new THREE.IcosahedronGeometry(20, 2);
+    // Vertex colors for Appalachian mountain ridges and valleys
+    const count = planetGeo.attributes.position.count;
+    const colors = new Float32Array(count * 3);
+    const posAttr = planetGeo.attributes.position;
+
+    for (let i = 0; i < count; i++) {
+      const y = posAttr.getY(i);
+      const x = posAttr.getX(i);
+      const z = posAttr.getZ(i);
+      const elevation = Math.sin(x * 0.3) + Math.cos(z * 0.3) + (y / 20.0);
+
+      if (y > 14) {
+        // High mountain plateau (where the observatory is situated) - granite slate
+        colors[i * 3] = 0.55; colors[i * 3 + 1] = 0.60; colors[i * 3 + 2] = 0.68;
+      } else if (elevation > 0.4) {
+        // Mountain forest ridge - deep pine green
+        colors[i * 3] = 0.12; colors[i * 3 + 1] = 0.42; colors[i * 3 + 2] = 0.28;
+      } else if (elevation > -0.3) {
+        // Valley terrain - warm moss/earth
+        colors[i * 3] = 0.22; colors[i * 3 + 1] = 0.38; colors[i * 3 + 2] = 0.22;
+      } else {
+        // Deep mountain lake / basin - deep alpine blue
+        colors[i * 3] = 0.08; colors[i * 3 + 1] = 0.24; colors[i * 3 + 2] = 0.45;
+      }
+    }
+    planetGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const planetMat = new THREE.MeshStandardMaterial({
+      vertexColors: true,
+      flatShading: true,
+      roughness: 0.85,
+      metalness: 0.15
+    });
+    const planetMesh = new THREE.Mesh(planetGeo, planetMat);
+    planetGroup.add(planetMesh);
+
+    // Subtle atmospheric glow shell around planet
+    const atmosGeo = new THREE.IcosahedronGeometry(21.4, 1);
+    const atmosMat = new THREE.MeshBasicMaterial({
+      color: 0x818cf8,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.25
+    });
+    const atmos = new THREE.Mesh(atmosGeo, atmosMat);
+    planetGroup.add(atmos);
+
+    // ------------------------------------------------------------------------
+    // B. The Green Bank Telescope (GBT 100m) - Scaled to sit on mountain summit
+    // ------------------------------------------------------------------------
+    const gbtGroup = new THREE.Group();
+    gbtGroup.position.set(0, 19.4, 0); // Positioned atop the northern summit plateau
+
     const dishPanelMat = new THREE.MeshStandardMaterial({
       color: 0xf8fafc,
       flatShading: true,
       metalness: 0.8,
-      roughness: 0.25
+      roughness: 0.2
     });
 
     const steelTrussMat = new THREE.MeshStandardMaterial({
-      color: 0x334155,
+      color: 0x475569,
       flatShading: true,
       metalness: 0.85,
-      roughness: 0.35
+      roughness: 0.3
     });
 
     const darkMetalMat = new THREE.MeshStandardMaterial({
       color: 0x1e293b,
       flatShading: true,
       metalness: 0.9,
-      roughness: 0.2
+      roughness: 0.25
     });
 
-    const receiverMat = new THREE.MeshStandardMaterial({
-      color: 0x0284c7,
-      emissive: 0x0369a1,
-      emissiveIntensity: 0.6,
-      flatShading: true,
-      roughness: 0.3
-    });
+    // 1. Concrete Foundation Ring & Azimuth Track on the mountain
+    const foundationGeo = new THREE.CylinderGeometry(5.5, 6.2, 1.2, 12);
+    const foundation = new THREE.Mesh(foundationGeo, darkMetalMat);
+    foundation.position.y = 0.6;
+    gbtGroup.add(foundation);
 
-    // ------------------------------------------------------------------------
-    // A. Steerable Dish & Green Bank Off-Axis Cantilever Structure
-    // ------------------------------------------------------------------------
-    const mountGroup = new THREE.Group();
+    // Azimuth rotating track ring
+    const trackRing = new THREE.Mesh(new THREE.TorusGeometry(5.0, 0.3, 4, 16), steelTrussMat);
+    trackRing.rotation.x = Math.PI / 2;
+    trackRing.position.y = 1.3;
+    gbtGroup.add(trackRing);
 
-    // 1. Primary Parabolic Reflector Dish (Faceted segmented bowl)
-    const dishGeo = new THREE.CylinderGeometry(24, 4, 7, 20, 2, true);
+    // 2. Alidade A-Frame Turret (Rotating mount)
+    const alidadeTurret = new THREE.Group();
+    alidadeTurret.position.y = 1.4;
+
+    for (let side = -1; side <= 1; side += 2) {
+      const legA = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.5, 6.5, 5), steelTrussMat);
+      legA.position.set(side * 2.8, 3.2, -1.4);
+      legA.rotation.x = 0.22;
+      alidadeTurret.add(legA);
+
+      const legB = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.5, 6.5, 5), steelTrussMat);
+      legB.position.set(side * 2.8, 3.2, 1.4);
+      legB.rotation.x = -0.22;
+      alidadeTurret.add(legB);
+    }
+
+    // 3. Steerable Parabolic Dish & Off-Axis Cantilever Boom
+    const dishMount = new THREE.Group();
+    dishMount.position.set(0, 6.4, 0);
+
+    // Elevation Bull Gear Sector underneath dish
+    const bullGear = new THREE.Mesh(new THREE.TorusGeometry(2.8, 0.35, 4, 10, Math.PI), darkMetalMat);
+    bullGear.rotation.z = Math.PI / 2;
+    dishMount.add(bullGear);
+
+    // Primary Off-Axis Parabolic Reflector (White segmented dish)
+    const dishGeo = new THREE.CylinderGeometry(7.8, 1.8, 2.4, 16, 2, true);
     const dishMesh = new THREE.Mesh(dishGeo, dishPanelMat);
     dishMesh.rotation.x = Math.PI;
-    mountGroup.add(dishMesh);
+    dishMesh.position.y = 1.2;
+    dishMount.add(dishMesh);
 
-    // Outer structural rim girder
-    const rimGeo = new THREE.TorusGeometry(24.2, 0.7, 5, 20);
-    const rimMesh = new THREE.Mesh(rimGeo, steelTrussMat);
-    rimMesh.rotation.x = Math.PI / 2;
-    dishMesh.add(rimMesh);
+    // Outer rim truss
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(7.9, 0.25, 4, 16), steelTrussMat);
+    rim.rotation.x = Math.PI / 2;
+    rim.position.y = -1.2;
+    dishMesh.add(rim);
 
-    // Dish backup support truss framework (radial ribs under the dish)
-    for (let r = 0; r < 8; r++) {
-      const ribGeo = new THREE.BoxGeometry(0.5, 3.5, 22);
-      const rib = new THREE.Mesh(ribGeo, steelTrussMat);
-      rib.position.y = 2.0;
-      rib.rotation.y = (r * Math.PI) / 8;
-      dishMesh.add(rib);
-    }
-
-    // 2. Green Bank Iconic Cantilevered Off-Axis Feed Boom Arm
-    // A massive triangular space-frame boom sweeping up from the southern rim over the dish
+    // 4. Iconic Green Bank Cantilevered Off-Axis Boom Arm
     const boomGroup = new THREE.Group();
 
-    // Main lower arching struts
-    const arm1Geo = new THREE.CylinderGeometry(0.7, 0.9, 28, 6);
-    const arm1 = new THREE.Mesh(arm1Geo, steelTrussMat);
-    arm1.position.set(-3.5, 14, -10);
-    arm1.rotation.x = 0.55;
-    arm1.rotation.z = -0.15;
-    boomGroup.add(arm1);
+    const boomLeg1 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.35, 9.5, 5), steelTrussMat);
+    boomLeg1.position.set(-1.2, 4.8, -3.4);
+    boomLeg1.rotation.x = 0.52;
+    boomLeg1.rotation.z = -0.12;
+    boomGroup.add(boomLeg1);
 
-    const arm2 = new THREE.Mesh(arm1Geo, steelTrussMat);
-    arm2.position.set(3.5, 14, -10);
-    arm2.rotation.x = 0.55;
-    arm2.rotation.z = 0.15;
-    boomGroup.add(arm2);
+    const boomLeg2 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.35, 9.5, 5), steelTrussMat);
+    boomLeg2.position.set(1.2, 4.8, -3.4);
+    boomLeg2.rotation.x = 0.52;
+    boomLeg2.rotation.z = 0.12;
+    boomGroup.add(boomLeg2);
 
-    // Upper converging boom reaching over the dish center
-    const upperArmGeo = new THREE.CylinderGeometry(0.6, 0.7, 18, 5);
-    const upperArm = new THREE.Mesh(upperArmGeo, steelTrussMat);
-    upperArm.position.set(0, 24, -2);
-    upperArm.rotation.x = -0.65;
-    boomGroup.add(upperArm);
+    // Upper converging boom extending over dish center
+    const boomUpper = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.28, 6.5, 5), steelTrussMat);
+    boomUpper.position.set(0, 8.2, -0.6);
+    boomUpper.rotation.x = -0.62;
+    boomGroup.add(boomUpper);
 
-    // Cross brace trusses on the boom
-    for (let b = 0; b < 3; b++) {
-      const brace = new THREE.Mesh(new THREE.BoxGeometry(6.5, 0.4, 0.4), steelTrussMat);
-      brace.position.set(0, 8 + b * 6, -16 + b * 4.5);
-      boomGroup.add(brace);
-    }
+    // Focal Cabin & Gregorian Subreflector
+    const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.2, 1.6), steelTrussMat);
+    cabin.position.set(0, 7.6, 1.8);
 
-    // 3. Focal Cabin & Gregorian Subreflector (GBT / Arecibo Feed Dome)
-    const cabinGroup = new THREE.Group();
-    cabinGroup.position.set(0, 22, 5);
+    const subReflector = new THREE.Mesh(new THREE.DodecahedronGeometry(0.8), dishPanelMat);
+    subReflector.position.set(0, -0.8, 0);
+    cabin.add(subReflector);
 
-    // Feed cabin housing
-    const cabinGeo = new THREE.BoxGeometry(4.5, 3.5, 4.5);
-    const cabin = new THREE.Mesh(cabinGeo, steelTrussMat);
-    cabinGroup.add(cabin);
-
-    // Gregorian subreflector dome
-    const subReflectorGeo = new THREE.DodecahedronGeometry(2.4);
-    const subReflector = new THREE.Mesh(subReflectorGeo, dishPanelMat);
-    subReflector.position.set(0, -2.5, 0);
-    cabinGroup.add(subReflector);
-
-    // Multi-frequency receiver feed horns pointing at dish
-    for (let h = 0; h < 3; h++) {
-      const hornGeo = new THREE.ConeGeometry(0.6, 2.2, 6);
-      const horn = new THREE.Mesh(hornGeo, receiverMat);
-      const hAng = (h * Math.PI * 2) / 3;
-      horn.position.set(Math.cos(hAng) * 1.2, -4.0, Math.sin(hAng) * 1.2);
-      horn.rotation.x = Math.PI;
-      cabinGroup.add(horn);
-    }
-
-    // Active pulsar receiver laser strobe
+    // Active receiver laser strobe
     const strobeMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
-    const strobe = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), strobeMat);
-    strobe.position.set(0, -5.2, 0);
-    cabinGroup.add(strobe);
+    const strobe = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.4), strobeMat);
+    strobe.position.set(0, -1.6, 0);
+    cabin.add(strobe);
 
-    boomGroup.add(cabinGroup);
-    mountGroup.add(boomGroup);
+    boomGroup.add(cabin);
+    dishMount.add(boomGroup);
 
-    // 4. Elevation Gear Sector (Bull gear arc underneath dish)
-    const gearArcGeo = new THREE.TorusGeometry(8, 0.9, 4, 12, Math.PI);
-    const gearArc = new THREE.Mesh(gearArcGeo, darkMetalMat);
-    gearArc.position.set(0, -3, 0);
-    gearArc.rotation.z = Math.PI / 2;
-    mountGroup.add(gearArc);
+    dishMount.rotation.x = 0.35;
+    alidadeTurret.add(dishMount);
+    gbtGroup.add(alidadeTurret);
 
-    mountGroup.position.y = 4;
-    mountGroup.rotation.x = 0.35;
-    group.add(mountGroup);
+    // 5. Small Observatory Campus Building & Antenna Mast on Plateau
+    const campusBuilding = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.2, 3.2), steelTrussMat);
+    campusBuilding.position.set(5.2, 0.6, -1.5);
+    gbtGroup.add(campusBuilding);
 
-    // ------------------------------------------------------------------------
-    // B. Alidade Turret Base & Azimuth Ring Foundation
-    // ------------------------------------------------------------------------
-    const alidadeGroup = new THREE.Group();
+    const antennaMast = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.12, 4.5, 4), darkMetalMat);
+    antennaMast.position.set(5.2, 3.2, -1.5);
+    gbtGroup.add(antennaMast);
 
-    // Dual heavy A-frame upright pedestals
-    for (let side = -1; side <= 1; side += 2) {
-      const leg1 = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1.4, 16, 6), steelTrussMat);
-      leg1.position.set(side * 8, -4, -4);
-      leg1.rotation.x = 0.2;
-      alidadeGroup.add(leg1);
+    const redBeacon = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.3), new THREE.MeshBasicMaterial({ color: 0xef4444 }));
+    redBeacon.position.set(5.2, 5.5, -1.5);
+    gbtGroup.add(redBeacon);
 
-      const leg2 = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1.4, 16, 6), steelTrussMat);
-      leg2.position.set(side * 8, -4, 4);
-      leg2.rotation.x = -0.2;
-      alidadeGroup.add(leg2);
-    }
-
-    // Circular Azimuth Track Platform (Ring foundation)
-    const azimuthRingGeo = new THREE.CylinderGeometry(14, 16, 3, 16);
-    const azimuthRing = new THREE.Mesh(azimuthRingGeo, darkMetalMat);
-    azimuthRing.position.y = -12;
-    alidadeGroup.add(azimuthRing);
-
-    group.add(alidadeGroup);
+    planetGroup.add(gbtGroup);
+    group.add(planetGroup);
 
     // ------------------------------------------------------------------------
-    // C. Arecibo-Style Tri-Tower Cable Suspension System
-    // Three perimeter concrete towers with suspension cables to the feed cabin
-    // ------------------------------------------------------------------------
-    const towerRadius = 40;
-    const towerHeight = 36;
-    const towers = [];
-    const cableLines = [];
-
-    const towerMat = new THREE.MeshStandardMaterial({
-      color: 0x64748b,
-      flatShading: true,
-      roughness: 0.8
-    });
-
-    const cableMat = new THREE.LineBasicMaterial({
-      color: 0x94a3b8,
-      transparent: true,
-      opacity: 0.55
-    });
-
-    const beaconMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
-
-    for (let t = 0; t < 3; t++) {
-      const angle = (t * Math.PI * 2) / 3 + 0.5;
-      const tx = Math.cos(angle) * towerRadius;
-      const tz = Math.sin(angle) * towerRadius;
-
-      const towerGroup = new THREE.Group();
-      towerGroup.position.set(tx, -14, tz);
-
-      // Main concrete column
-      const colGeo = new THREE.CylinderGeometry(1.6, 2.8, towerHeight, 6);
-      const col = new THREE.Mesh(colGeo, towerMat);
-      col.position.y = towerHeight / 2;
-      towerGroup.add(col);
-
-      // Tower top crown platform
-      const crown = new THREE.Mesh(new THREE.BoxGeometry(4, 1.2, 4), darkMetalMat);
-      crown.position.y = towerHeight;
-      towerGroup.add(crown);
-
-      // Blinking red aviation warning strobe beacon
-      const beacon = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.9), beaconMat);
-      beacon.position.y = towerHeight + 1.2;
-      towerGroup.add(beacon);
-
-      group.add(towerGroup);
-      towers.push(towerGroup);
-
-      // Suspension cable from tower top to feed cabin area
-      const cablePoints = [
-        new THREE.Vector3(tx, -14 + towerHeight, tz),
-        new THREE.Vector3(0, 24, 4)
-      ];
-      const cableGeo = new THREE.BufferGeometry().setFromPoints(cablePoints);
-      const cable = new THREE.Line(cableGeo, cableMat);
-      group.add(cable);
-      cableLines.push({ line: cable, towerPos: cablePoints[0] });
-    }
-
-    // ------------------------------------------------------------------------
-    // D. Dynamic Update Hook
+    // C. Dynamic Update Hook
     // ------------------------------------------------------------------------
     group.userData = {
       id: "observatory",
-      name: "Green Bank & Arecibo Array",
-      radius: 34,
+      name: "Green Bank Observatory",
+      radius: 30,
       time: 0,
       update(delta) {
         this.time += delta;
 
-        // Smooth slow realistic dish azimuth tracking & elevation slew
-        mountGroup.rotation.y = Math.sin(this.time * 0.12) * 0.35;
-        mountGroup.rotation.x = 0.35 + Math.cos(this.time * 0.08) * 0.12;
+        // Slow planet diurnal rotation
+        planetGroup.rotation.y += delta * 0.04;
+        navHalo.rotation.z -= delta * 0.12;
 
-        // Pulsing receiver strobe
+        // GBT dish slow realistic tracking slew in azimuth and elevation
+        alidadeTurret.rotation.y = Math.sin(this.time * 0.15) * 0.45;
+        dishMount.rotation.x = 0.35 + Math.cos(this.time * 0.1) * 0.15;
+
+        // Receiver strobe flash
         strobe.visible = Math.sin(this.time * 6) > 0;
-
-        // Aviation beacons flash
-        const beaconOn = Math.sin(this.time * 3) > 0.2;
-        beaconMat.color.set(beaconOn ? 0xef4444 : 0x220505);
-
-        // Update suspension cables connected to moving feed cabin
-        const cabinWorldPos = new THREE.Vector3();
-        cabinGroup.getWorldPosition(cabinWorldPos);
-        const cabinLocalPos = group.worldToLocal(cabinWorldPos.clone());
-
-        cableLines.forEach(c => {
-          const posAttr = c.line.geometry.attributes.position;
-          posAttr.setXYZ(0, c.towerPos.x, c.towerPos.y, c.towerPos.z);
-          posAttr.setXYZ(1, cabinLocalPos.x, cabinLocalPos.y, cabinLocalPos.z);
-          posAttr.needsUpdate = true;
-        });
+        redBeacon.visible = Math.sin(this.time * 3) > 0;
       }
     };
 
@@ -576,11 +600,29 @@ window.AstroCelestial = {
     const group = new THREE.Group();
     group.position.set(pos.x, pos.y, pos.z);
 
+    // Dynamic Point Light illuminating relay brightly
+    const light = new THREE.PointLight(0x10b981, 3.2, 120);
+    group.add(light);
+
+    // Luminous Navigational Waypoint Beacon Halo (High visibility)
+    const haloGeo = new THREE.TorusGeometry(26, 0.4, 4, 24);
+    const haloMat = new THREE.MeshBasicMaterial({
+      color: 0x10b981,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.75
+    });
+    const navHalo = new THREE.Mesh(haloGeo, haloMat);
+    navHalo.rotation.x = Math.PI / 2;
+    group.add(navHalo);
+
     const goldMat = new THREE.MeshStandardMaterial({
       color: 0xf59e0b,
       metalness: 0.95,
       roughness: 0.15,
-      flatShading: true
+      flatShading: true,
+      emissive: 0x78350f,
+      emissiveIntensity: 0.4
     });
 
     const dishGeo = new THREE.CylinderGeometry(14, 2, 5, 12, 1, true);
@@ -600,7 +642,7 @@ window.AstroCelestial = {
       const rMat = new THREE.MeshBasicMaterial({
         color: 0x10b981,
         transparent: true,
-        opacity: 0.8,
+        opacity: 0.85,
         side: THREE.DoubleSide
       });
       const rMesh = new THREE.Mesh(rGeo, rMat);
@@ -617,6 +659,8 @@ window.AstroCelestial = {
       update(delta) {
         this.time += delta;
         group.rotation.y = Math.sin(this.time * 0.25) * 0.2;
+        navHalo.rotation.z += delta * 0.2;
+
         beaconRings.forEach((r, idx) => {
           const t = (this.time * 1.6 + idx * 0.6) % 2.0;
           r.scale.set(1 + t * 4, 1 + t * 4, 1);
@@ -662,7 +706,7 @@ window.AstroCelestial = {
       const lineMat = new THREE.LineBasicMaterial({
         color: 0x00f0ff,
         transparent: true,
-        opacity: 0.4
+        opacity: 0.55
       });
 
       const line = new THREE.Line(lineGeo, lineMat);
@@ -700,32 +744,47 @@ window.AstroCelestial = {
   },
 
   // --------------------------------------------------------------------------
-  // 7. ASTEROID BELT & DUST
+  // 7. ASTEROID BELT & DUST (SEAMLESS - NO GAPS OR CRACKS)
   // --------------------------------------------------------------------------
   createAsteroidBelt(scene) {
     const group = new THREE.Group();
-    const count = 75;
-    const mat = new THREE.MeshStandardMaterial({ color: 0x475569, flatShading: true, roughness: 0.9 });
+    const count = 80;
+    const mat = new THREE.MeshStandardMaterial({
+      color: 0x64748b,
+      flatShading: true,
+      roughness: 0.85,
+      metalness: 0.15
+    });
     const asteroids = [];
 
     for (let i = 0; i < count; i++) {
-      const size = 1.0 + Math.random() * 3.2;
+      const size = 1.2 + Math.random() * 3.4;
       const geo = new THREE.DodecahedronGeometry(size, 0);
 
-      // Perturb vertices
+      // Perturb unique 3D vertex positions coherently so adjacent faces never tear apart (NO GAPS!)
       const pos = geo.attributes.position;
+      const vMap = new Map();
+
       for (let j = 0; j < pos.count; j++) {
-        pos.setXYZ(j,
-          pos.getX(j) * (0.8 + Math.random() * 0.4),
-          pos.getY(j) * (0.8 + Math.random() * 0.4),
-          pos.getZ(j) * (0.8 + Math.random() * 0.4)
-        );
+        const x = pos.getX(j);
+        const y = pos.getY(j);
+        const z = pos.getZ(j);
+        const key = `${x.toFixed(2)}_${y.toFixed(2)}_${z.toFixed(2)}`;
+
+        if (!vMap.has(key)) {
+          // Uniform radial displacement per unique vertex point
+          const scale = 0.76 + Math.random() * 0.44;
+          vMap.set(key, scale);
+        }
+
+        const scale = vMap.get(key);
+        pos.setXYZ(j, x * scale, y * scale, z * scale);
       }
       geo.computeVertexNormals();
 
       const mesh = new THREE.Mesh(geo, mat);
       const angle = Math.random() * Math.PI * 2;
-      const dist = 100 + Math.random() * 80;
+      const dist = 100 + Math.random() * 85;
 
       mesh.position.set(
         Math.cos(angle) * dist,
@@ -773,7 +832,7 @@ window.AstroCelestial = {
         color: colors[i % colors.length],
         wireframe: true,
         transparent: true,
-        opacity: 0.1
+        opacity: 0.12
       });
       const mesh = new THREE.Mesh(geo, mat);
       const th = Math.random() * Math.PI * 2;
