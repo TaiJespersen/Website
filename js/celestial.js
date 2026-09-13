@@ -253,7 +253,7 @@ window.AstroCelestial = {
   },
 
   // --------------------------------------------------------------------------
-  // 4. PLANETARY RADIO OBSERVATORY: GREEN BANK TELESCOPE (GBT)
+  // 3. PLANETARY RADIO OBSERVATORY: GREEN BANK TELESCOPE (GBT)
   // Low-poly terrestrial planet with the 100m Green Bank Telescope on a mountain plateau
   // --------------------------------------------------------------------------
   createRadioObservatory(scene, pos) {
@@ -493,90 +493,9 @@ window.AstroCelestial = {
     return group;
   },
 
-  // --------------------------------------------------------------------------
-  // 5. EARTH DEEP SPACE UPLINK RELAY
-  // Communication dish with pulse beacon
-  // --------------------------------------------------------------------------
-  createEarthRelay(scene, pos) {
-    const group = new THREE.Group();
-    group.position.set(pos.x, pos.y, pos.z);
-
-    // Dynamic Point Light illuminating relay brightly
-    const light = new THREE.PointLight(0x10b981, 3.2, 120);
-    group.add(light);
-
-    // Luminous Navigational Waypoint Beacon Halo (High visibility)
-    const haloGeo = new THREE.TorusGeometry(26, 0.4, 4, 24);
-    const haloMat = new THREE.MeshBasicMaterial({
-      color: 0x10b981,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.75
-    });
-    const navHalo = new THREE.Mesh(haloGeo, haloMat);
-    navHalo.rotation.x = Math.PI / 2;
-    group.add(navHalo);
-
-    const goldMat = new THREE.MeshStandardMaterial({
-      color: 0xf59e0b,
-      metalness: 0.95,
-      roughness: 0.15,
-      flatShading: true,
-      emissive: 0x78350f,
-      emissiveIntensity: 0.4
-    });
-
-    const dishGeo = new THREE.CylinderGeometry(14, 2, 5, 12, 1, true);
-    const dish = new THREE.Mesh(dishGeo, goldMat);
-    dish.rotation.x = Math.PI / 2 + 0.25;
-    group.add(dish);
-
-    const towerGeo = new THREE.CylinderGeometry(1.5, 3, 16, 6);
-    const tower = new THREE.Mesh(towerGeo, new THREE.MeshStandardMaterial({ color: 0x64748b, flatShading: true }));
-    tower.position.y = -10;
-    group.add(tower);
-
-    // Expanding Earth Uplink Beacons
-    const beaconRings = [];
-    for (let i = 0; i < 3; i++) {
-      const rGeo = new THREE.RingGeometry(1, 1.5, 16);
-      const rMat = new THREE.MeshBasicMaterial({
-        color: 0x10b981,
-        transparent: true,
-        opacity: 0.85,
-        side: THREE.DoubleSide
-      });
-      const rMesh = new THREE.Mesh(rGeo, rMat);
-      rMesh.position.set(0, 1.5, 8 + i * 4);
-      group.add(rMesh);
-      beaconRings.push(rMesh);
-    }
-
-    group.userData = {
-      id: "relay",
-      name: "Earth Deep Space Relay",
-      radius: 24,
-      time: 0,
-      update(delta) {
-        this.time += delta;
-        group.rotation.y = Math.sin(this.time * 0.25) * 0.2;
-        navHalo.rotation.z += delta * 0.2;
-
-        beaconRings.forEach((r, idx) => {
-          const t = (this.time * 1.6 + idx * 0.6) % 2.0;
-          r.scale.set(1 + t * 4, 1 + t * 4, 1);
-          r.position.z = 7 + t * 15;
-          r.material.opacity = Math.max(0, 1 - t * 0.5);
-        });
-      }
-    };
-
-    scene.add(group);
-    return group;
-  },
 
   // --------------------------------------------------------------------------
-  // 6. PULSAR TIMING ARRAY (PTA) TIMING GRID & BASELINES
+  // 4. PULSAR TIMING ARRAY (PTA) TIMING GRID & BASELINES
   // Glowing laser timing baselines showing nanohertz gravitational wave strain
   // --------------------------------------------------------------------------
   createPTATimingGrid(scene, celestialObjects) {
@@ -644,7 +563,7 @@ window.AstroCelestial = {
   },
 
   // --------------------------------------------------------------------------
-  // 7. ASTEROID BELT & DUST (SEAMLESS - NO GAPS OR CRACKS)
+  // 5. ASTEROID BELT & DUST (SEAMLESS - NO GAPS OR CRACKS)
   // --------------------------------------------------------------------------
   createAsteroidBelt(scene) {
     const group = new THREE.Group();
@@ -720,7 +639,7 @@ window.AstroCelestial = {
   },
 
   // --------------------------------------------------------------------------
-  // 8. LOW-POLY FACETED NEBULA
+  // 6. LOW-POLY FACETED NEBULA
   // --------------------------------------------------------------------------
   createCosmicNebula(scene) {
     const group = new THREE.Group();
