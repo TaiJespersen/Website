@@ -298,27 +298,14 @@ window.AstroData = {
       subtitle: "Publications, Papers & BibTeX",
       modalId: "modal-b1913"
     },
-    {
-      id: "magnetar",
-      key: "3",
-      code: "SECTOR-03",
-      name: "Magnetar SGR 1806-20",
-      type: "Ultra-Magnetized Neutron Star",
-      periodMs: 7560.0,
-      frequencyHz: 0.13,
-      coords: { x: 0, y: 5, z: -150 },
-      color: "#ff3366",
-      icon: "🧲",
-      subtitle: "Interactive Physics: Hellings-Downs & DM",
-      modalId: "modal-magnetar"
-    },
+
         {
       id: "observatory",
       key: "4",
       code: "SECTOR-04",
       name: "Green Bank Observatory",
       type: "Planetary Radio Observatory",
-      coords: { x: -105, y: 35, z: 65 },
+      coords: { x: 0, y: 5, z: -150 },
       color: "#a855f7",
       icon: "🔭",
       subtitle: "Researcher Bio, CV & Telescope Grants",
