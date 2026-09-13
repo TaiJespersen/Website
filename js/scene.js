@@ -110,11 +110,14 @@ window.AstroScene = {
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
+    const starTexture = new THREE.TextureLoader().load('circle.png');
+    
     const material = new THREE.PointsMaterial({
-      size: 6,
+      size: 5,
       vertexColors: true,
+      map: starTexture,
       transparent: true,
-      opacity: 0.85
+      opacity: 1.0
     });
 
     const starPoints = new THREE.Points(geometry, material);
