@@ -657,7 +657,7 @@ function AstroApp() {
                 <div className="terminal-panel">
                   <div className="subspace-form-wrapper">
                     <h3>SUB-SPACE TRANSMISSION CONSOLE</h3>
-                    <p>Transmit an inquiry, collaboration proposal, or lecture invitation to Dr. Mercer:</p>
+                    <p>Transmit an inquiry to Tai:</p>
 
                     <form onSubmit={handleContactSubmit} className="subspace-form">
                       <div className="form-group">
@@ -709,10 +709,10 @@ function AstroApp() {
                     <div className="direct-links-card">
                       <h4>DIRECT SCIENTIFIC CHANNELS:</h4>
                       <div className="links-row">
-                        <a href="mailto:lyra.mercer@pulsar-astronomy.org" className="link-badge">
+                        <a href="mailto:jespers5@uwm.edu" className="link-badge">
                           ✉️ Email
                         </a>
-                        <a href="https://orcid.org" target="_blank" rel="noreferrer" className="link-badge">
+                        <a href="https://orcid.org/0009-0007-4226-0037" target="_blank" rel="noreferrer" className="link-badge">
                           🆔 ORCID
                         </a>
                         <a href="https://scholar.google.com" target="_blank" rel="noreferrer" className="link-badge">
