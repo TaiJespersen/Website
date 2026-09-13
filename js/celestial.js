@@ -13,19 +13,13 @@ window.AstroCelestial = {
     // 2. Relativistic Binary Pulsar: PSR B1913+16 (Hulse-Taylor Binary)
     celestialObjects.b1913 = this.createBinaryPulsar(scene, { x: 85, y: -20, z: -75 });
 
-    // 3. Ultra-Magnetized Neutron Star: Magnetar SGR 1806-20
-    celestialObjects.magnetar = this.createMagnetar(scene, { x: 0, y: 5, z: -150 });
+    // 3. Orbital Radio Observatory: Green Bank
+    celestialObjects.observatory = this.createRadioObservatory(scene, { x: 0, y: 5, z: -150 });
 
-    // 4. Orbital Radio Observatory: Green Bank & Arecibo Array
-    celestialObjects.observatory = this.createRadioObservatory(scene, { x: -105, y: 35, z: 65 });
-
-    // 5. Deep Space Relay: Earth Uplink Array
-    celestialObjects.relay = this.createEarthRelay(scene, { x: 75, y: 25, z: 85 });
-
-    // 6. Pulsar Timing Array (PTA) Cosmic Timing Grid & Baselines
+    // 4. Pulsar Timing Array (PTA) Cosmic Timing Grid & Baselines
     celestialObjects.ptaGrid = this.createPTATimingGrid(scene, celestialObjects);
 
-    // 7. Ambient Asteroids & Low-Poly Cosmic Dust
+    // 5. Ambient Asteroids & Low-Poly Cosmic Dust
     this.createAsteroidBelt(scene);
     this.createCosmicNebula(scene);
 
@@ -251,99 +245,6 @@ window.AstroCelestial = {
           r.scale.set(1 + t * 2.2, 1 + t * 2.2, 1);
           r.material.opacity = Math.max(0, 0.7 - t * 0.3);
         });
-      }
-    };
-
-    scene.add(group);
-    return group;
-  },
-
-  // --------------------------------------------------------------------------
-  // 3. MAGNETAR: SGR 1806-20 (ULTRA-MAGNETIZED NEUTRON STAR)
-  // Faceted crust, magnetic field loop arches, and burst flare rings
-  // --------------------------------------------------------------------------
-  createMagnetar(scene, pos) {
-    const group = new THREE.Group();
-    group.position.set(pos.x, pos.y, pos.z);
-
-    // Dynamic Point Light to illuminate surrounding space with crimson glow
-    const light = new THREE.PointLight(0xef4444, 4.0, 140);
-    group.add(light);
-
-    // Luminous Navigational Waypoint Beacon Halo (High visibility)
-    const haloGeo = new THREE.TorusGeometry(30, 0.4, 4, 24);
-    const haloMat = new THREE.MeshBasicMaterial({
-      color: 0xec4899,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.75
-    });
-    const navHalo = new THREE.Mesh(haloGeo, haloMat);
-    navHalo.rotation.x = Math.PI / 2;
-    group.add(navHalo);
-
-    // Highly Strained Faceted Crust
-    const crustGeo = new THREE.IcosahedronGeometry(9, 1);
-    const crustMat = new THREE.MeshStandardMaterial({
-      color: 0xef4444,
-      emissive: 0x991b1b,
-      emissiveIntensity: 1.5,
-      flatShading: true,
-      roughness: 0.4,
-      metalness: 0.7
-    });
-    const crust = new THREE.Mesh(crustGeo, crustMat);
-    group.add(crust);
-
-    // Magnetic Flux Loop Arches (Tori spanning across magnetic poles)
-    const magneticArchMat = new THREE.MeshBasicMaterial({
-      color: 0xf43f5e,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.75
-    });
-
-    const arches = new THREE.Group();
-    for (let i = 0; i < 4; i++) {
-      const archGeo = new THREE.TorusGeometry(14, 0.45, 4, 16, Math.PI);
-      const arch = new THREE.Mesh(archGeo, magneticArchMat);
-      arch.rotation.y = (i * Math.PI) / 4;
-      arch.position.y = 0;
-      arches.add(arch);
-    }
-    group.add(arches);
-
-    // Magnetar Giant Flare Flash Sphere
-    const flareGeo = new THREE.IcosahedronGeometry(13, 1);
-    const flareMat = new THREE.MeshBasicMaterial({
-      color: 0xffedd5,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.0
-    });
-    const flare = new THREE.Mesh(flareGeo, flareMat);
-    group.add(flare);
-
-    group.userData = {
-      id: "magnetar",
-      name: "Magnetar SGR 1806-20",
-      radius: 30,
-      time: 0,
-      update(delta) {
-        this.time += delta;
-        crust.rotation.y += delta * 0.4;
-        arches.rotation.y += delta * 0.6;
-        arches.rotation.z = Math.sin(this.time * 0.5) * 0.2;
-        navHalo.rotation.z += delta * 0.25;
-
-        // Periodic seismic crust glitch / giant flare
-        const flareCycle = Math.sin(this.time * 1.2);
-        if (flareCycle > 0.85) {
-          flare.material.opacity = (flareCycle - 0.85) * 5.0;
-          flare.scale.setScalar(1.0 + (flareCycle - 0.85) * 1.8);
-        } else {
-          flare.material.opacity = 0;
-        }
       }
     };
 
@@ -687,7 +588,6 @@ window.AstroCelestial = {
     const targets = [
       celestialObjects.j1713.position,
       celestialObjects.b1913.position,
-      celestialObjects.magnetar.position,
       celestialObjects.relay.position
     ];
 
