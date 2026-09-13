@@ -317,7 +317,7 @@ function AstroApp() {
 
           {/* Quick Nav Jump Bar (Bottom Center) */}
           <div className="hud-nav-bar">
-            <div className="nav-title">PTA FAST TRAVEL HYPERDRIVE:</div>
+            <div className="nav-title">HYPERDRIVE:</div>
             <div className="nav-buttons">
               {window.AstroData.destinations.map(dest => (
                 <button
@@ -357,7 +357,7 @@ function AstroApp() {
                 );
               })}
             </div>
-            <div className="radar-label">PTA TIMING RADAR</div>
+            <div className="radar-label">RADAR</div>
           </div>
 
           {/* Mobile Virtual Controls */}
