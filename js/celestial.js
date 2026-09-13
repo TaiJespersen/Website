@@ -358,7 +358,7 @@ window.AstroCelestial = {
     // Primary Off-Axis Parabolic Reflector (White segmented dish)
     const dishGeo = new THREE.CylinderGeometry(7.8, 1.8, 2.4, 16, 2, true);
     const dishMesh = new THREE.Mesh(dishGeo, dishPanelMat);
-    dishMesh.rotation.x = Math.PI;
+    //dishMesh.rotation.x = Math.PI;
     dishMesh.position.y = 1.2;
     dishMount.add(dishMesh);
 
