@@ -589,4 +589,74 @@ html, body {
     border-color: var(--neon-emerald);
     background: rgba(16, 185, 129, 0.25);
   }
+
+   /* ============================================================================
+   IN-WORLD FLOATING WAYPOINT MARKERS (HIGH VISIBILITY OVER CELESTIAL BODIES)
+   ============================================================================ */
+.floating-waypoints-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.waypoint-badge {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: rgba(5, 7, 15, 0.85);
+  border: 1px solid var(--neon-cyan);
+  border-radius: 4px;
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  cursor: pointer;
+  pointer-events: auto;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
+  transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  white-space: nowrap;
+}
+
+.waypoint-badge:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  background: rgba(15, 23, 42, 0.95);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
+}
+
+.waypoint-badge.selected {
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.6);
+  border-width: 1.5px;
+}
+
+.waypoint-pin {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulseGlow 1.5s infinite alternate;
+}
+
+.waypoint-key {
+  color: var(--neon-amber);
+  font-weight: 700;
+  font-size: 10px;
+}
+
+.waypoint-title {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.waypoint-dist {
+  color: var(--text-muted);
+  font-size: 10px;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  padding-left: 5px;
+}
 }
