@@ -410,6 +410,7 @@ window.AstroCelestial = {
     cabin.add(strobe);
     
     boomGroup.add(cabin);
+    dishMount.add(boomGroup);
 
     dishMount.rotation.x = 0.35;
     alidadeTurret.add(dishMount);
