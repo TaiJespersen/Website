@@ -206,11 +206,25 @@ window.AstroScene = {
       this.camera.fov += (speedFov - this.camera.fov) * 0.1;
       this.camera.updateProjectionMatrix();
 
-      // Check proximity to destinations
+      // Check proximity & screen projection to destinations
+      const screenMarkers = [];
       window.AstroData.destinations.forEach(dest => {
         const destPos = new THREE.Vector3(dest.coords.x, dest.coords.y, dest.coords.z);
         const dist = destPos.distanceTo(ship.position);
         dest.currentDistance = dist;
+
+        const screen = this.projectToScreen(destPos);
+        screenMarkers.push({
+          id: dest.id,
+          key: dest.key,
+          name: dest.name,
+          icon: dest.icon,
+          color: dest.color,
+          distance: Math.round(dist),
+          x: Math.round(screen.x),
+          y: Math.round(screen.y),
+          inFront: screen.inFront
+        });
       });
 
       // Notify React HUD
@@ -218,12 +232,13 @@ window.AstroScene = {
         window.AstroAppDispatch({
           type: 'UPDATE_TELEMETRY',
           payload: {
-            speed: Math.round(speed * 12),
+            speed: Math.round(ship.speed * 32),
             coords: {
               x: Math.round(ship.position.x),
               y: Math.round(ship.position.y),
               z: Math.round(ship.position.z)
-            }
+            },
+            markers: screenMarkers
           }
         });
       }
