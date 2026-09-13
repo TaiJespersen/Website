@@ -301,7 +301,7 @@ window.AstroData = {
 
         {
       id: "observatory",
-      key: "4",
+      key: "3",
       code: "SECTOR-04",
       name: "Green Bank Observatory",
       type: "Planetary Radio Observatory",
@@ -310,18 +310,6 @@ window.AstroData = {
       icon: "🔭",
       subtitle: "Researcher Bio, CV & Telescope Grants",
       modalId: "modal-observatory"
-    },
-    {
-      id: "relay",
-      key: "5",
-      code: "SECTOR-05",
-      name: "Earth Deep Space Relay",
-      type: "Uplink & Transmission Array",
-      coords: { x: 75, y: 25, z: 85 },
-      color: "#10b981",
-      icon: "📡",
-      subtitle: "Sub-Space Contact & Outreach",
-      modalId: "modal-relay"
     }
   ]
 };
