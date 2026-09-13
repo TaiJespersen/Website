@@ -337,13 +337,15 @@ window.AstroCelestial = {
 
     for (let side = -1; side <= 1; side += 2) {
       const legA = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.5, 6.5, 5), steelTrussMat);
-      legA.position.set(side * 2.8, 3.2, -1.4);
+      legA.position.set(side * 4.5, 3.2, -1.4); // Pushed outward
       legA.rotation.x = 0.22;
+      legA.rotation.z = side * -0.2; // Added an outward lean to brace the wide dish
       alidadeTurret.add(legA);
-
+    
       const legB = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.5, 6.5, 5), steelTrussMat);
-      legB.position.set(side * 2.8, 3.2, 1.4);
+      legB.position.set(side * 4.5, 3.2, 1.4); // Pushed outward
       legB.rotation.x = -0.22;
+      legB.rotation.z = side * -0.2; // Added an outward lean
       alidadeTurret.add(legB);
     }
 
@@ -352,8 +354,8 @@ window.AstroCelestial = {
     dishMount.position.set(0, 6.4, 0);
 
     // Elevation Bull Gear Sector underneath dish
-    const bullGear = new THREE.Mesh(new THREE.TorusGeometry(2.8, 0.35, 4, 10, Math.PI), darkMetalMat);
-    bullGear.rotation.z = -Math.PI / 2;
+    const bullGear = new THREE.Mesh(new THREE.TorusGeometry(4.5, 0.35, 4, 10, Math.PI), darkMetalMat);
+    bullGear.rotation.z = Math.PI; // Hanging downward
     dishMount.add(bullGear);
 
     // Primary Off-Axis Parabolic Reflector (White segmented dish)
@@ -394,12 +396,12 @@ window.AstroCelestial = {
     // Upper converging boom extending over dish center
     const boomUpper = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.28, 6.5, 5), steelTrussMat);
     boomUpper.position.set(0, 8.2, -0.6);
-    boomUpper.rotation.x = -0.62;
+    boomUpper.rotation.x = 0.52; // <-- Flipped to a positive angle to lean forward OVER the dish
     boomGroup.add(boomUpper);
-
+    
     // Focal Cabin & Gregorian Subreflector
     const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.2, 1.6), steelTrussMat);
-    cabin.position.set(0, 7.6, 1.8);
+    cabin.position.set(0, 10.9, 1.0);
 
     const subReflector = new THREE.Mesh(new THREE.DodecahedronGeometry(0.8), dishPanelMat);
     subReflector.position.set(0, -0.8, 0);
