@@ -52,5 +52,48 @@
       }
     });
   </script>
+
+  <!-- Star Background -->
+  <script>
+  function createStarField() {
+    const container = document.getElementById('star-field');
+
+    if (!container) return;
+
+    const starCount = 350;
+
+    for (let i = 0; i < starCount; i++) {
+      const star = document.createElement('div');
+
+      star.className = 'star';
+
+      if (Math.random() < 0.08) {
+        star.classList.add('large');
+      }
+
+      star.style.left = `${Math.random() * 100}%`;
+      star.style.top = `${Math.random() * 100}%`;
+
+      star.style.setProperty(
+        '--twinkle-duration',
+        `${3 + Math.random() * 6}s`
+      );
+
+      star.style.setProperty(
+        '--twinkle-delay',
+        `${Math.random() * 6}s`
+      );
+
+      /* Slight depth variation */
+      const depth = 0.5 + Math.random() * 1.5;
+
+      star.style.transform = `scale(${depth})`;
+
+      container.appendChild(star);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', createStarField);
+</script>
 </body>
 </html>
