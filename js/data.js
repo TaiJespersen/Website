@@ -6,7 +6,7 @@
 window.AstroData = {
   researcher: {
     name: "Tai Jespersen",
-    callsign: "MERCER-PTA",
+    callsign: "Graduate Researcher",
     title: "PhD Student",
     institution: "Center for Gravitational Cosmology and Astrophysics, Department of Astrophysics",
     office: "KIRC 1190",
