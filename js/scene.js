@@ -80,7 +80,7 @@ window.AstroScene = {
   },
 
   createStarfield() {
-    const starCount = 1400;
+    const starCount = 5000;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(starCount * 3);
     const colors = new Float32Array(starCount * 3);
