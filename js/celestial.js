@@ -353,7 +353,7 @@ window.AstroCelestial = {
 
     // Elevation Bull Gear Sector underneath dish
     const bullGear = new THREE.Mesh(new THREE.TorusGeometry(2.8, 0.35, 4, 10, Math.PI), darkMetalMat);
-    bullGear.rotation.z = Math.PI / 2;
+    bullGear.rotation.z = -Math.PI / 2;
     dishMount.add(bullGear);
 
     // Primary Off-Axis Parabolic Reflector (White segmented dish)
@@ -362,6 +362,13 @@ window.AstroCelestial = {
     //dishMesh.rotation.x = Math.PI;
     dishMesh.position.y = 1.2;
     dishMount.add(dishMesh);
+
+    // Flat bottom cap to fill in the hole
+    const capGeo = new THREE.CircleGeometry(1.8, 16);
+    const capMesh = new THREE.Mesh(capGeo, dishPanelMat);
+    capMesh.rotation.x = Math.PI / 2; // Rotate it to lay flat
+    capMesh.position.y = -1.2; // Position it at the bottom edge of the cylinder
+    dishMesh.add(capMesh);
 
     // Outer rim truss
     const rim = new THREE.Mesh(new THREE.TorusGeometry(7.9, 0.25, 4, 16), steelTrussMat);
