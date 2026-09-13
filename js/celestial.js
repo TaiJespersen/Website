@@ -32,6 +32,18 @@ window.AstroCelestial = {
     return celestialObjects;
   },
 
+  // Helper: Creates a conical beam whose apex (sharp point of radius 0) is at y = 0,
+  // and which widens outward to radius R at y = +H.
+  createExpandingBeamGeometry(radius, height, segments = 8) {
+    const geo = new THREE.ConeGeometry(radius, height, segments, 1, true);
+    // Three.js ConeGeometry has apex at +height/2 and base at -height/2.
+    // Invert so apex is at -height/2 and base at +height/2:
+    geo.rotateZ(Math.PI);
+    // Translate so apex (single point, radius 0) sits exactly at origin (0,0,0):
+    geo.translate(0, height / 2, 0);
+    return geo;
+  },
+
   // --------------------------------------------------------------------------
   // 1. MILLISECOND PULSAR: PSR J1713+0747
   // Ultra-fast spinning faceted neutron star with relativistic light cones
@@ -59,13 +71,14 @@ window.AstroCelestial = {
       color: 0x00f0ff,
       wireframe: true,
       transparent: true,
-      opacity: 0.4
+      opacity: 0.35
     });
     const shell = new THREE.Mesh(shellGeo, shellMat);
     group.add(shell);
 
     // Relativistic Polar Radiation Beams (Dual sweeping cones)
-    const beamGeo = new THREE.ConeGeometry(8, 75, 8, 1, true);
+    // Both beams originate from a single point on the magnetic poles and flare outward!
+    const beamGeo = this.createExpandingBeamGeometry(9, 80, 8);
     const beamMat = new THREE.MeshBasicMaterial({
       color: 0x67e8f9,
       wireframe: true,
@@ -74,32 +87,21 @@ window.AstroCelestial = {
     });
 
     const beamGroup = new THREE.Group();
+
+    // North Beam: apex sits right at the north pole (y = 6.8), flaring outward into space (+Y)
     const northBeam = new THREE.Mesh(beamGeo, beamMat);
-    northBeam.position.y = 40;
+    northBeam.position.set(0, 6.8, 0);
     beamGroup.add(northBeam);
 
+    // South Beam: apex sits right at the south pole (y = -6.8), rotated 180° flaring outward (-Y)
     const southBeam = new THREE.Mesh(beamGeo, beamMat);
-    southBeam.position.y = -40;
-    southBeam.rotation.x = Math.PI;
+    southBeam.position.set(0, -6.8, 0);
+    southBeam.rotation.z = Math.PI;
     beamGroup.add(southBeam);
 
-    // Magnetic axis inclination
+    // Magnetic axis inclination relative to rotational axis
     beamGroup.rotation.z = 0.45;
     group.add(beamGroup);
-
-    // Equatorial Relativistic Plasma Ring
-    const ringGeo = new THREE.RingGeometry(11, 15, 18);
-    const ringMat = new THREE.MeshStandardMaterial({
-      color: 0x0ea5e9,
-      emissive: 0x0369a1,
-      flatShading: true,
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: 0.85
-    });
-    const plasmaRing = new THREE.Mesh(ringGeo, ringMat);
-    plasmaRing.rotation.x = Math.PI / 2;
-    group.add(plasmaRing);
 
     group.userData = {
       id: "j1713",
@@ -112,7 +114,6 @@ window.AstroCelestial = {
         core.rotation.y += delta * 6.5;
         beamGroup.rotation.y += delta * 5.2;
         shell.rotation.x -= delta * 1.5;
-        plasmaRing.rotation.z += delta * 0.8;
       }
     };
 
@@ -148,12 +149,29 @@ window.AstroCelestial = {
     const star1 = new THREE.Mesh(new THREE.DodecahedronGeometry(5), pulsarMat);
     group.add(star1);
 
-    // Primary Sweeping Beam
-    const bGeo = new THREE.ConeGeometry(5, 45, 6, 1, true);
-    const bMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24, wireframe: true, transparent: true, opacity: 0.6 });
-    const beam = new THREE.Mesh(bGeo, bMat);
-    beam.position.y = 24;
-    star1.add(beam);
+    // Primary Dual Sweeping Relativistic Beams (North and South)
+    // Both beams emanate from a single point at the magnetic poles and flare outward
+    const bBeamGeo = this.createExpandingBeamGeometry(6.5, 55, 8);
+    const bBeamMat = new THREE.MeshBasicMaterial({
+      color: 0xfbbf24,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.65
+    });
+
+    const star1BeamGroup = new THREE.Group();
+
+    const star1North = new THREE.Mesh(bBeamGeo, bBeamMat);
+    star1North.position.set(0, 4.8, 0);
+    star1BeamGroup.add(star1North);
+
+    const star1South = new THREE.Mesh(bBeamGeo, bBeamMat);
+    star1South.position.set(0, -4.8, 0);
+    star1South.rotation.z = Math.PI;
+    star1BeamGroup.add(star1South);
+
+    star1BeamGroup.rotation.z = 0.35; // magnetic inclination tilt
+    star1.add(star1BeamGroup);
 
     // Companion Neutron Star
     const star2 = new THREE.Mesh(new THREE.DodecahedronGeometry(4.6), compMat);
@@ -284,83 +302,265 @@ window.AstroCelestial = {
 
   // --------------------------------------------------------------------------
   // 4. ORBITAL RADIO OBSERVATORY: GREEN BANK & ARECIBO ARRAY
-  // Giant low-poly steerable radio dish, feed cabin, and support masts
+  // Iconic combination of Green Bank (off-axis cantilevered feed arm & alidade)
+  // and Arecibo (tri-tower cable-suspended instrument platform)
   // --------------------------------------------------------------------------
   createRadioObservatory(scene, pos) {
     const group = new THREE.Group();
     group.position.set(pos.x, pos.y, pos.z);
 
-    const dishMat = new THREE.MeshStandardMaterial({
-      color: 0xe2e8f0,
+    const dishPanelMat = new THREE.MeshStandardMaterial({
+      color: 0xf8fafc,
       flatShading: true,
-      metalness: 0.85,
+      metalness: 0.8,
       roughness: 0.25
     });
 
-    const frameMat = new THREE.MeshStandardMaterial({
+    const steelTrussMat = new THREE.MeshStandardMaterial({
       color: 0x334155,
       flatShading: true,
+      metalness: 0.85,
+      roughness: 0.35
+    });
+
+    const darkMetalMat = new THREE.MeshStandardMaterial({
+      color: 0x1e293b,
+      flatShading: true,
       metalness: 0.9,
+      roughness: 0.2
+    });
+
+    const receiverMat = new THREE.MeshStandardMaterial({
+      color: 0x0284c7,
+      emissive: 0x0369a1,
+      emissiveIntensity: 0.6,
+      flatShading: true,
       roughness: 0.3
     });
 
-    // Steerable Mount
+    // ------------------------------------------------------------------------
+    // A. Steerable Dish & Green Bank Off-Axis Cantilever Structure
+    // ------------------------------------------------------------------------
     const mountGroup = new THREE.Group();
 
-    // Parabolic Reflector Dish (Faceted cone/cylinder)
-    const dishGeo = new THREE.CylinderGeometry(20, 3, 7, 16, 2, true);
-    const dish = new THREE.Mesh(dishGeo, dishMat);
-    dish.rotation.x = Math.PI;
-    mountGroup.add(dish);
+    // 1. Primary Parabolic Reflector Dish (Faceted segmented bowl)
+    const dishGeo = new THREE.CylinderGeometry(24, 4, 7, 20, 2, true);
+    const dishMesh = new THREE.Mesh(dishGeo, dishPanelMat);
+    dishMesh.rotation.x = Math.PI;
+    mountGroup.add(dishMesh);
 
-    // Feed Support Tripod Legs
-    for (let i = 0; i < 3; i++) {
-      const legGeo = new THREE.CylinderGeometry(0.4, 0.4, 22, 5);
-      const leg = new THREE.Mesh(legGeo, frameMat);
-      const ang = (i * Math.PI * 2) / 3;
-      leg.position.set(Math.cos(ang) * 9, 7, Math.sin(ang) * 9);
-      leg.rotation.x = 0.35 * Math.sin(ang);
-      leg.rotation.z = -0.35 * Math.cos(ang);
-      mountGroup.add(leg);
+    // Outer structural rim girder
+    const rimGeo = new THREE.TorusGeometry(24.2, 0.7, 5, 20);
+    const rimMesh = new THREE.Mesh(rimGeo, steelTrussMat);
+    rimMesh.rotation.x = Math.PI / 2;
+    dishMesh.add(rimMesh);
+
+    // Dish backup support truss framework (radial ribs under the dish)
+    for (let r = 0; r < 8; r++) {
+      const ribGeo = new THREE.BoxGeometry(0.5, 3.5, 22);
+      const rib = new THREE.Mesh(ribGeo, steelTrussMat);
+      rib.position.y = 2.0;
+      rib.rotation.y = (r * Math.PI) / 8;
+      dishMesh.add(rib);
     }
 
-    // Focal Point Sub-reflector & Receiver Horn
-    const hornGeo = new THREE.OctahedronGeometry(2.2);
-    const hornMat = new THREE.MeshStandardMaterial({
-      color: 0x00f0ff,
-      emissive: 0x0284c7,
-      flatShading: true
-    });
-    const horn = new THREE.Mesh(hornGeo, hornMat);
-    horn.position.y = 15;
-    mountGroup.add(horn);
+    // 2. Green Bank Iconic Cantilevered Off-Axis Feed Boom Arm
+    // A massive triangular space-frame boom sweeping up from the southern rim over the dish
+    const boomGroup = new THREE.Group();
 
-    mountGroup.rotation.x = 0.4;
+    // Main lower arching struts
+    const arm1Geo = new THREE.CylinderGeometry(0.7, 0.9, 28, 6);
+    const arm1 = new THREE.Mesh(arm1Geo, steelTrussMat);
+    arm1.position.set(-3.5, 14, -10);
+    arm1.rotation.x = 0.55;
+    arm1.rotation.z = -0.15;
+    boomGroup.add(arm1);
+
+    const arm2 = new THREE.Mesh(arm1Geo, steelTrussMat);
+    arm2.position.set(3.5, 14, -10);
+    arm2.rotation.x = 0.55;
+    arm2.rotation.z = 0.15;
+    boomGroup.add(arm2);
+
+    // Upper converging boom reaching over the dish center
+    const upperArmGeo = new THREE.CylinderGeometry(0.6, 0.7, 18, 5);
+    const upperArm = new THREE.Mesh(upperArmGeo, steelTrussMat);
+    upperArm.position.set(0, 24, -2);
+    upperArm.rotation.x = -0.65;
+    boomGroup.add(upperArm);
+
+    // Cross brace trusses on the boom
+    for (let b = 0; b < 3; b++) {
+      const brace = new THREE.Mesh(new THREE.BoxGeometry(6.5, 0.4, 0.4), steelTrussMat);
+      brace.position.set(0, 8 + b * 6, -16 + b * 4.5);
+      boomGroup.add(brace);
+    }
+
+    // 3. Focal Cabin & Gregorian Subreflector (GBT / Arecibo Feed Dome)
+    const cabinGroup = new THREE.Group();
+    cabinGroup.position.set(0, 22, 5);
+
+    // Feed cabin housing
+    const cabinGeo = new THREE.BoxGeometry(4.5, 3.5, 4.5);
+    const cabin = new THREE.Mesh(cabinGeo, steelTrussMat);
+    cabinGroup.add(cabin);
+
+    // Gregorian subreflector dome
+    const subReflectorGeo = new THREE.DodecahedronGeometry(2.4);
+    const subReflector = new THREE.Mesh(subReflectorGeo, dishPanelMat);
+    subReflector.position.set(0, -2.5, 0);
+    cabinGroup.add(subReflector);
+
+    // Multi-frequency receiver feed horns pointing at dish
+    for (let h = 0; h < 3; h++) {
+      const hornGeo = new THREE.ConeGeometry(0.6, 2.2, 6);
+      const horn = new THREE.Mesh(hornGeo, receiverMat);
+      const hAng = (h * Math.PI * 2) / 3;
+      horn.position.set(Math.cos(hAng) * 1.2, -4.0, Math.sin(hAng) * 1.2);
+      horn.rotation.x = Math.PI;
+      cabinGroup.add(horn);
+    }
+
+    // Active pulsar receiver laser strobe
+    const strobeMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
+    const strobe = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), strobeMat);
+    strobe.position.set(0, -5.2, 0);
+    cabinGroup.add(strobe);
+
+    boomGroup.add(cabinGroup);
+    mountGroup.add(boomGroup);
+
+    // 4. Elevation Gear Sector (Bull gear arc underneath dish)
+    const gearArcGeo = new THREE.TorusGeometry(8, 0.9, 4, 12, Math.PI);
+    const gearArc = new THREE.Mesh(gearArcGeo, darkMetalMat);
+    gearArc.position.set(0, -3, 0);
+    gearArc.rotation.z = Math.PI / 2;
+    mountGroup.add(gearArc);
+
+    mountGroup.position.y = 4;
+    mountGroup.rotation.x = 0.35;
     group.add(mountGroup);
 
-    // Base Pedestal Tower
-    const baseGeo = new THREE.CylinderGeometry(5, 7, 18, 8);
-    const base = new THREE.Mesh(baseGeo, frameMat);
-    base.position.y = -12;
-    group.add(base);
+    // ------------------------------------------------------------------------
+    // B. Alidade Turret Base & Azimuth Ring Foundation
+    // ------------------------------------------------------------------------
+    const alidadeGroup = new THREE.Group();
 
-    // Blinking Active Observation Strobe
-    const strobeMat = new THREE.MeshBasicMaterial({ color: 0x10b981 });
-    const strobe = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), strobeMat);
-    strobe.position.set(0, 17, 0);
-    mountGroup.add(strobe);
+    // Dual heavy A-frame upright pedestals
+    for (let side = -1; side <= 1; side += 2) {
+      const leg1 = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1.4, 16, 6), steelTrussMat);
+      leg1.position.set(side * 8, -4, -4);
+      leg1.rotation.x = 0.2;
+      alidadeGroup.add(leg1);
 
+      const leg2 = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1.4, 16, 6), steelTrussMat);
+      leg2.position.set(side * 8, -4, 4);
+      leg2.rotation.x = -0.2;
+      alidadeGroup.add(leg2);
+    }
+
+    // Circular Azimuth Track Platform (Ring foundation)
+    const azimuthRingGeo = new THREE.CylinderGeometry(14, 16, 3, 16);
+    const azimuthRing = new THREE.Mesh(azimuthRingGeo, darkMetalMat);
+    azimuthRing.position.y = -12;
+    alidadeGroup.add(azimuthRing);
+
+    group.add(alidadeGroup);
+
+    // ------------------------------------------------------------------------
+    // C. Arecibo-Style Tri-Tower Cable Suspension System
+    // Three perimeter concrete towers with suspension cables to the feed cabin
+    // ------------------------------------------------------------------------
+    const towerRadius = 40;
+    const towerHeight = 36;
+    const towers = [];
+    const cableLines = [];
+
+    const towerMat = new THREE.MeshStandardMaterial({
+      color: 0x64748b,
+      flatShading: true,
+      roughness: 0.8
+    });
+
+    const cableMat = new THREE.LineBasicMaterial({
+      color: 0x94a3b8,
+      transparent: true,
+      opacity: 0.55
+    });
+
+    const beaconMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
+
+    for (let t = 0; t < 3; t++) {
+      const angle = (t * Math.PI * 2) / 3 + 0.5;
+      const tx = Math.cos(angle) * towerRadius;
+      const tz = Math.sin(angle) * towerRadius;
+
+      const towerGroup = new THREE.Group();
+      towerGroup.position.set(tx, -14, tz);
+
+      // Main concrete column
+      const colGeo = new THREE.CylinderGeometry(1.6, 2.8, towerHeight, 6);
+      const col = new THREE.Mesh(colGeo, towerMat);
+      col.position.y = towerHeight / 2;
+      towerGroup.add(col);
+
+      // Tower top crown platform
+      const crown = new THREE.Mesh(new THREE.BoxGeometry(4, 1.2, 4), darkMetalMat);
+      crown.position.y = towerHeight;
+      towerGroup.add(crown);
+
+      // Blinking red aviation warning strobe beacon
+      const beacon = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.9), beaconMat);
+      beacon.position.y = towerHeight + 1.2;
+      towerGroup.add(beacon);
+
+      group.add(towerGroup);
+      towers.push(towerGroup);
+
+      // Suspension cable from tower top to feed cabin area
+      const cablePoints = [
+        new THREE.Vector3(tx, -14 + towerHeight, tz),
+        new THREE.Vector3(0, 24, 4)
+      ];
+      const cableGeo = new THREE.BufferGeometry().setFromPoints(cablePoints);
+      const cable = new THREE.Line(cableGeo, cableMat);
+      group.add(cable);
+      cableLines.push({ line: cable, towerPos: cablePoints[0] });
+    }
+
+    // ------------------------------------------------------------------------
+    // D. Dynamic Update Hook
+    // ------------------------------------------------------------------------
     group.userData = {
       id: "observatory",
       name: "Green Bank & Arecibo Array",
-      radius: 30,
+      radius: 34,
       time: 0,
       update(delta) {
         this.time += delta;
-        // Slow realistic dish tracking slew
-        mountGroup.rotation.y = Math.sin(this.time * 0.15) * 0.4;
-        mountGroup.rotation.x = 0.4 + Math.cos(this.time * 0.1) * 0.15;
-        strobe.visible = Math.sin(this.time * 4) > 0;
+
+        // Smooth slow realistic dish azimuth tracking & elevation slew
+        mountGroup.rotation.y = Math.sin(this.time * 0.12) * 0.35;
+        mountGroup.rotation.x = 0.35 + Math.cos(this.time * 0.08) * 0.12;
+
+        // Pulsing receiver strobe
+        strobe.visible = Math.sin(this.time * 6) > 0;
+
+        // Aviation beacons flash
+        const beaconOn = Math.sin(this.time * 3) > 0.2;
+        beaconMat.color.set(beaconOn ? 0xef4444 : 0x220505);
+
+        // Update suspension cables connected to moving feed cabin
+        const cabinWorldPos = new THREE.Vector3();
+        cabinGroup.getWorldPosition(cabinWorldPos);
+        const cabinLocalPos = group.worldToLocal(cabinWorldPos.clone());
+
+        cableLines.forEach(c => {
+          const posAttr = c.line.geometry.attributes.position;
+          posAttr.setXYZ(0, c.towerPos.x, c.towerPos.y, c.towerPos.z);
+          posAttr.setXYZ(1, cabinLocalPos.x, cabinLocalPos.y, cabinLocalPos.z);
+          posAttr.needsUpdate = true;
+        });
       }
     };
 
