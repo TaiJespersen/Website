@@ -643,8 +643,16 @@ function AstroApp() {
                   </div>
 
                   <div className="cv-download-box">
-                    <button className="hud-btn neon-btn" onClick={() => window.print()}>
-                      📄 PRINT / EXPORT DOSSIER CV
+                    <button
+                      className="hud-btn neon-btn"
+                      onClick={() =>
+                        window.open(
+                          "/CV___Tai_Jespersen__Updated_Sep__2026_.pdf",
+                          "_blank"
+                        )
+                      }
+                    >
+                      📄 CHECK OUT MY CV
                     </button>
                   </div>
                 </div>
