@@ -46,6 +46,10 @@ window.AstroCelestial = {
     const group = new THREE.Group();
     group.position.set(pos.x, pos.y, pos.z);
 
+    // Dynamic Point Light to illuminate surrounding space brightly
+    const light = new THREE.PointLight(0x00f0ff, 3.5, 140);
+    group.add(light);
+
     // Luminous Navigational Waypoint Beacon Halo (High visibility from distance)
     const haloGeo = new THREE.TorusGeometry(26, 0.35, 4, 24);
     const haloMat = new THREE.MeshBasicMaterial({
@@ -135,6 +139,10 @@ window.AstroCelestial = {
   createBinaryPulsar(scene, pos) {
     const group = new THREE.Group();
     group.position.set(pos.x, pos.y, pos.z);
+
+    // Dynamic Point Light to illuminate binary barycenter brightly
+    const light = new THREE.PointLight(0xf59e0b, 3.5, 140);
+    group.add(light);
 
     // Luminous Navigational Waypoint Beacon Halo (High visibility)
     const haloGeo = new THREE.TorusGeometry(32, 0.4, 4, 24);
@@ -251,6 +259,10 @@ window.AstroCelestial = {
   createRadioObservatory(scene, pos) {
     const group = new THREE.Group();
     group.position.set(pos.x, pos.y, pos.z);
+
+    // Dynamic Point Light illuminating the planet and observatory
+    const light = new THREE.PointLight(0xa855f7, 3.5, 140);
+    group.add(light);
 
     // Luminous Navigational Waypoint Beacon Halo (High visibility from deep space)
     const haloGeo = new THREE.TorusGeometry(34, 0.45, 4, 24);
