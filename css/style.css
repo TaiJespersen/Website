@@ -44,16 +44,16 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #050510; /* Dark space background */
-  z-index: 9999; /* Ensure it sits on top of everything */
+  background-color: #050510; 
+  z-index: 9999; 
   display: flex;
   justify-content: center;
   align-items: center;
   color: #ffffff;
   text-align: center;
   font-family: monospace;
+  pointer-events: auto; /* <--- ADD THIS LINE */
 }
-
 .landing-content h1 {
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
