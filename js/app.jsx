@@ -248,11 +248,6 @@ function AstroApp() {
         <div id="hud-overlay">
           {/* Top Bar */}
           <header className="hud-top-bar">
-            <div className="hud-brand">
-              <div className="status-indicator live-pulse"></div>
-              <span className="system-code">TAI JESPERSEN</span>
-              <span className="callsign-badge">{window.AstroData.researcher.callsign}</span>
-            </div>
 
             <div className="hud-controls-top">
               <button
