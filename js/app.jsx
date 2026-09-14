@@ -22,6 +22,7 @@ function AstroApp() {
   const [contactState, setContactState] = useState({ name: '', email: '', message: '', status: 'idle' });
   const [audioPulsarActive, setAudioPulsarActive] = useState(false);
   const [markers, setMarkers] = useState([]);
+  const initialCoordsRef = useRef({ x: 0, y: 0, z: 40 });
 
   // =========================================
   // 2. EFFECTS & DISPATCHERS
@@ -58,7 +59,7 @@ function AstroApp() {
       if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
 
       if (e.key === 'Escape') {
-        setActiveModal(null);
+        closeModal();
       } else if (e.key === 'e' || e.key === 'E') {
         if (canDock && nearest) {
           openModal(nearest.modalId);
@@ -109,10 +110,17 @@ function AstroApp() {
     }
   };
 
-  const closeModal = () => {
-    setActiveModal(null);
-    if (window.astroAudio) window.astroAudio.playBlip(440, 0.04);
-  };
+const closeModal = () => {
+  setActiveModal(null);
+  if (window.astroAudio) window.astroAudio.playBlip(440, 0.04);
+
+  // Return ship back to original spawn coordinates
+  if (window.AstroShip && initialCoordsRef.current) {
+    window.AstroShip.warpTo(initialCoordsRef.current, () => {
+      setCanDock(false);
+    });
+  }
+};
 
   const copyBibtex = (pub) => {
     navigator.clipboard.writeText(pub.bibtex);
