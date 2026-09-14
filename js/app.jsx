@@ -12,7 +12,7 @@ function AstroApp() {
   const [nearest, setNearest] = useState(null);
   const [canDock, setCanDock] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
-  const [viewMode, setViewMode] = useState('3d'); // '3d' | 'reader'
+  const [viewMode, setViewMode] = useState('landing'); // starting state
   const [pubCategory, setPubCategory] = useState('all');
   const [copiedBibId, setCopiedBibId] = useState(null);
   const [simTab, setSimTab] = useState('hellings-downs'); // 'hellings-downs' | 'dedispersion'
