@@ -163,7 +163,7 @@ function AstroApp() {
                   if (window.AstroAudio) window.AstroAudio.initContext();
                 }}
               >
-                Research Interests
+                Research
               </button>
             </div>
           </div>
@@ -180,7 +180,7 @@ function AstroApp() {
               <p className="reader-inst">{window.AstroData.researcher.institution}</p>
             </div>
             <button className="hud-btn neon-btn" onClick={() => setViewMode('3d')}>
-              Research Interests
+              Research
             </button>
           </header>
 
@@ -301,32 +301,6 @@ function AstroApp() {
             })}
           </div>
 
-          {/* Telemetry Display */}
-          <div className="hud-telemetry-panel">
-            <div className="hud-panel-header">FLIGHT TELEMETRY</div>
-            <div className="telemetry-grid">
-              <div className="telem-item">
-                <span className="telem-label">VELOCITY</span>
-                <span className="telem-value neon-cyan">{telemetry.speed} <small>km/s</small></span>
-              </div>
-              <div className="telem-item">
-                <span className="telem-label">SECTOR COORDS</span>
-                <span className="telem-value neon-amber">
-                  X:{telemetry.coords.x} Y:{telemetry.coords.y} Z:{telemetry.coords.z}
-                </span>
-              </div>
-              <div className="telem-item">
-                <span className="telem-label">NEAREST BODY</span>
-                <span className="telem-value neon-pink">
-                  {nearest ? `${nearest.name} (${Math.round(nearest.currentDistance || 0)} AU)` : 'DEEP SPACE'}
-                </span>
-              </div>
-            </div>
-            <div className="flight-instructions">
-              <span>W/S: Throttle</span> • <span>A/D: Yaw/Roll</span> • <span>SHIFT: Turbo</span> • <span>SPACE: Brake</span>
-            </div>
-          </div>
-
           {/* Docking Proximity Banner */}
           {canDock && nearest && (
             <div className="docking-prompt-banner" onClick={() => openModal(nearest.modalId)}>
@@ -338,73 +312,7 @@ function AstroApp() {
             </div>
           )}
 
-          {/* Radar Minimap */}
-          <div className="hud-radar-panel">
-            <div className="radar-screen">
-              <div className="radar-sweep"></div>
-              <div className="radar-center-blip"></div>
-              {window.AstroData.destinations.map(dest => {
-                const relX = (dest.coords.x - telemetry.coords.x) * 0.45;
-                const relY = (dest.coords.z - telemetry.coords.z) * 0.45;
-                const radarX = Math.max(10, Math.min(110, 60 + relX));
-                const radarY = Math.max(10, Math.min(110, 60 + relY));
-
-                return (
-                  <div
-                    key={dest.id}
-                    className="radar-target-blip"
-                    style={{ left: `${radarX}px`, top: `${radarY}px`, borderColor: dest.color }}
-                    title={dest.name}
-                    onClick={() => warpTo(dest)}
-                  >
-                    <span className="radar-blip-label">{dest.key}</span>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="radar-label">RADAR</div>
-          </div>
-
-          {/* Mobile Virtual Controls */}
-          <div className="mobile-touch-controls">
-            <div className="dpad-zone">
-              <button
-                className="touch-btn up"
-                onTouchStart={() => { window.AstroShip.keys.forward = true; }}
-                onTouchEnd={() => { window.AstroShip.keys.forward = false; }}
-              >▲</button>
-              <button
-                className="touch-btn left"
-                onTouchStart={() => { window.AstroShip.keys.left = true; }}
-                onTouchEnd={() => { window.AstroShip.keys.left = false; }}
-              >◀</button>
-              <button
-                className="touch-btn right"
-                onTouchStart={() => { window.AstroShip.keys.right = true; }}
-                onTouchEnd={() => { window.AstroShip.keys.right = false; }}
-              >▶</button>
-              <button
-                className="touch-btn down"
-                onTouchStart={() => { window.AstroShip.keys.backward = true; }}
-                onTouchEnd={() => { window.AstroShip.keys.backward = false; }}
-              >▼</button>
-            </div>
-            <div className="action-zone">
-              <button
-                className="touch-action-btn boost"
-                onTouchStart={() => { window.AstroShip.keys.boost = true; }}
-                onTouchEnd={() => { window.AstroShip.keys.boost = false; }}
-              >BOOST</button>
-              <button
-                className="touch-action-btn dock"
-                onClick={() => { if (canDock && nearest) openModal(nearest.modalId); }}
-              >DOCK</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* --- MODALS (ARCHIVAL CONSOLES) --- */}
+      {/* --- Research Projects --- */}
       {activeModal && (
         <div className="modal-backdrop" onClick={closeModal}>
           <div className="modal-container" onClick={e => e.stopPropagation()}>
@@ -413,7 +321,6 @@ function AstroApp() {
             {/* Modal Header */}
             <div className="modal-header">
               <div className="modal-title-box">
-                <span className="modal-icon">{selectedTarget?.icon || '⚡'}</span>
                 <h2>{selectedTarget?.name} // ARCHIVAL CONSOLE</h2>
               </div>
               <button className="modal-close-btn" onClick={closeModal}>✕ [ESC]</button>
