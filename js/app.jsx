@@ -267,7 +267,7 @@ function AstroApp() {
                 onClick={() => setViewMode('reader')}
                 title="Switch to 2D Document Reader"
               >
-                📄 2D READER MODE
+                About Me
               </button>
             </div>
           </header>
