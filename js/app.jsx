@@ -86,13 +86,16 @@ function AstroApp() {
   };
 
   const warpTo = (dest) => {
-    setSelectedTarget(dest);
-    if (window.AstroShip) {
-      window.AstroShip.warpTo(dest.coords, () => {
-        setCanDock(true);
-      });
-    }
-  };
+      setSelectedTarget(dest);
+      if (window.AstroShip) {
+        // Initiate warp and pass the callback
+        window.AstroShip.warpTo(dest.coords, () => {
+          setCanDock(true);
+          // Automatically open the terminal menu for this destination!
+          openModal(dest.modalId); 
+        });
+      }
+    };
 
   const openModal = (modalId) => {
     setActiveModal(modalId);
