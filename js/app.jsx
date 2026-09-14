@@ -307,6 +307,10 @@ function AstroApp() {
             </div>
           )}
 
+          </div>
+      )}
+
+      
       {/* --- Research Projects --- */}
       {activeModal && (
         <div className="modal-backdrop" onClick={closeModal}>
