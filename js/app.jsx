@@ -6,26 +6,32 @@
 const { useState, useEffect, useRef } = React;
 
 function AstroApp() {
+  // =========================================
+  // 1. STATE DECLARATIONS
+  // =========================================
   const [activeModal, setActiveModal] = useState(null);
   const [selectedTarget, setSelectedTarget] = useState(window.AstroData.destinations[0]);
   const [telemetry, setTelemetry] = useState({ speed: 0, coords: { x: 0, y: 0, z: 40 } });
   const [nearest, setNearest] = useState(null);
   const [canDock, setCanDock] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
-  const [viewMode, setViewMode] = useState('landing'); // starting state
+  const [viewMode, setViewMode] = useState('landing'); 
   const [pubCategory, setPubCategory] = useState('all');
   const [copiedBibId, setCopiedBibId] = useState(null);
-  const [simTab, setSimTab] = useState('hellings-downs'); // 'hellings-downs' | 'dedispersion'
+  const [simTab, setSimTab] = useState('hellings-downs'); 
   const [contactState, setContactState] = useState({ name: '', email: '', message: '', status: 'idle' });
   const [audioPulsarActive, setAudioPulsarActive] = useState(false);
   const [markers, setMarkers] = useState([]);
 
-  // Expose state dispatcher to Three.js game loop
+  // =========================================
+  // 2. EFFECTS & DISPATCHERS
+  // =========================================
   useEffect(() => {
+    // Expose state dispatcher to Three.js game loop
     window.AstroAppDispatch = (action) => {
       if (action.type === 'UPDATE_TELEMETRY') {
         setTelemetry(action.payload);
-        if (action.payload.markers) {        // <--- ADD THESE 3 LINES
+        if (action.payload.markers) {
           setMarkers(action.payload.markers);
         }
         
@@ -47,7 +53,7 @@ function AstroApp() {
       }
     };
 
-    // Keyboard shortcuts: [1-5] for fast jump, [E] for dock, [M] for mute, [ESC] to close modal
+    // Keyboard shortcuts
     const handleKeyDown = (e) => {
       if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
 
@@ -71,6 +77,9 @@ function AstroApp() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [canDock, nearest]);
 
+  // =========================================
+  // 3. HELPER FUNCTIONS
+  // =========================================
   const toggleSound = () => {
     const muted = window.astroAudio.toggleMute();
     setIsMuted(muted);
@@ -89,7 +98,6 @@ function AstroApp() {
     setActiveModal(modalId);
     if (window.astroAudio) window.astroAudio.playDock();
 
-    // Init simulations if opening the physics lab
     if (modalId === 'modal-magnetar') {
       setTimeout(() => {
         window.AstroSimulations.hellingsDowns.init('hd-canvas', 'hd-slider', 'hd-readout');
@@ -132,12 +140,38 @@ function AstroApp() {
     ? window.AstroData.publications
     : window.AstroData.publications.filter(p => p.category === pubCategory);
 
+  // =========================================
+  // 4. MAIN RENDER / UI
+  // =========================================
   return (
     <div className={`astro-app ${viewMode === 'reader' ? 'reader-mode-active' : ''}`}>
-      {/* =================================================================== */}
-      {/* 2D ACCESSIBLE READER MODE (TOGGLEABLE) */}
-      {/* =================================================================== */}
-      {viewMode === 'reader' ? (
+      
+      {/* --- VIEW 1: LANDING SCREEN --- */}
+      {viewMode === 'landing' && (
+        <div className="landing-screen">
+          <div className="landing-content">
+            <h1>TAI JESPERSEN</h1>
+            <p>Choose your experience:</p>
+            <div className="button-group">
+              <button className="start-btn" onClick={() => setViewMode('reader')}>
+                Regular View
+              </button>
+              <button 
+                className="start-btn" 
+                onClick={() => {
+                  setViewMode('3d');
+                  if (window.AstroAudio) window.AstroAudio.initContext();
+                }}
+              >
+                Interactive View
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- VIEW 2: 2D READER MODE --- */}
+      {viewMode === 'reader' && (
         <div className="reader-container">
           <header className="reader-header">
             <div className="reader-brand">
@@ -233,10 +267,10 @@ function AstroApp() {
             </section>
           </main>
         </div>
-      ) : (
-        /* =================================================================== */
-        /* 3D VIDEOGAME FLIGHT HUD OVERLAY */
-        /* =================================================================== */
+      )}
+
+      {/* --- VIEW 3: 3D VIDEOGAME FLIGHT HUD OVERLAY --- */}
+      {viewMode === '3d' && (
         <div id="hud-overlay">
           {/* Top Bar */}
           <header className="hud-top-bar">
@@ -254,7 +288,6 @@ function AstroApp() {
               >
                 {isMuted ? '🔇 AUDIO OFF' : '🔊 SYNTH ON'}
               </button>
-
               <button
                 className="hud-btn reader-toggle"
                 onClick={() => setViewMode('reader')}
@@ -265,7 +298,7 @@ function AstroApp() {
             </div>
           </header>
 
-          {/* In-World Floating Waypoint Markers over 3D Celestial Bodies (High Visibility) */}
+          {/* Floating Waypoints */}
           <div className="floating-waypoints-layer">
             {markers.map(m => {
               if (!m.inFront || m.x < -80 || m.x > window.innerWidth + 80 || m.y < -80 || m.y > window.innerHeight + 80) return null;
@@ -294,7 +327,7 @@ function AstroApp() {
             })}
           </div>
 
-          {/* Telemetry Display (Bottom Left) */}
+          {/* Telemetry Display */}
           <div className="hud-telemetry-panel">
             <div className="hud-panel-header">FLIGHT TELEMETRY</div>
             <div className="telemetry-grid">
@@ -331,14 +364,12 @@ function AstroApp() {
             </div>
           )}
 
-          
-          {/* Radar Minimap (Bottom Right) */}
+          {/* Radar Minimap */}
           <div className="hud-radar-panel">
             <div className="radar-screen">
               <div className="radar-sweep"></div>
               <div className="radar-center-blip"></div>
               {window.AstroData.destinations.map(dest => {
-                // Project 3D x,z coords relative to player ship into 2D radar (-80 to 80 units)
                 const relX = (dest.coords.x - telemetry.coords.x) * 0.45;
                 const relY = (dest.coords.z - telemetry.coords.z) * 0.45;
                 const radarX = Math.max(10, Math.min(110, 60 + relX));
@@ -399,9 +430,7 @@ function AstroApp() {
         </div>
       )}
 
-      {/* =================================================================== */}
-      {/* INTERACTIVE TERMINAL MODALS (5 CELESTIAL SECTORS) */}
-      {/* =================================================================== */}
+      {/* --- MODALS (ARCHIVAL CONSOLES) --- */}
       {activeModal && (
         <div className="modal-backdrop" onClick={closeModal}>
           <div className="modal-container" onClick={e => e.stopPropagation()}>
@@ -417,16 +446,12 @@ function AstroApp() {
             </div>
 
             <div className="modal-body">
-              {/* ----------------------------------------------------------- */}
-              {/* MODAL 1: PSR J1713+0747 (NANOGrav 15-Yr Science & Clocks) */}
-              {/* ----------------------------------------------------------- */}
+              {/* MODAL 1: PSR J1713+0747 */}
               {activeModal === 'modal-j1713' && (
                 <div className="terminal-panel">
                   <div className="terminal-alert-box">
                     <span className="alert-badge">STOCHASTIC GWB DETECTED</span>
-                    <p>
-                      Precision timing of PSR J1713+0747 over 28 years with Arecibo and the Green Bank Telescope provides the backbone of the NANOGrav 15-year evidence for low-frequency gravitational waves.
-                    </p>
+                    <p>Precision timing of PSR J1713+0747 over 28 years with Arecibo and the Green Bank Telescope provides the backbone of the NANOGrav 15-year evidence for low-frequency gravitational waves.</p>
                   </div>
 
                   <div className="terminal-stats-grid">
@@ -463,16 +488,11 @@ function AstroApp() {
 
                   <div className="research-summary-text">
                     <h3>NANOGrav 15-Year Research Breakthrough</h3>
-                    <p>
-                      In June 2023, the NANOGrav Collaboration published compelling evidence for a cosmic background of gravitational waves at nanohertz frequencies (wavelengths spanning light-years).
-                    </p>
-                    <p>
-                      Unlike ground-based detectors like LIGO, which observe stellar-mass black holes merging in fractions of a second, Pulsar Timing Arrays detect the cosmic roar of supermassive black hole binaries—pairs with millions to billions of solar masses slowly orbiting in the centers of merging galaxies.
-                    </p>
+                    <p>In June 2023, the NANOGrav Collaboration published compelling evidence for a cosmic background of gravitational waves at nanohertz frequencies (wavelengths spanning light-years).</p>
+                    <p>Unlike ground-based detectors like LIGO, which observe stellar-mass black holes merging in fractions of a second, Pulsar Timing Arrays detect the cosmic roar of supermassive black hole binaries—pairs with millions to billions of solar masses slowly orbiting in the centers of merging galaxies.</p>
                   </div>
                 </div>
               )}
-
               {/* ----------------------------------------------------------- */}
               {/* MODAL 2: PSR B1913+16 (Publications, Papers & BibTeX) */}
               {/* ----------------------------------------------------------- */}
