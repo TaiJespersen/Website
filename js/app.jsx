@@ -170,18 +170,17 @@ function AstroApp() {
         </div>
       )}
 
-      {/* --- VIEW 2: 2D READER MODE --- */}
+      {/* --- About Me --- */}
       {viewMode === 'reader' && (
         <div className="reader-container">
           <header className="reader-header">
             <div className="reader-brand">
-              <span className="reader-callsign">NANOGRAV // RESEARCH DOSSIER</span>
               <h1>{window.AstroData.researcher.name}</h1>
               <p className="reader-tagline">{window.AstroData.researcher.title}</p>
               <p className="reader-inst">{window.AstroData.researcher.institution}</p>
             </div>
             <button className="hud-btn neon-btn" onClick={() => setViewMode('3d')}>
-              🎮 RETURN TO 3D VIDEOGAME FLIGHT
+              Research Interests
             </button>
           </header>
 
@@ -192,31 +191,6 @@ function AstroApp() {
               {window.AstroData.researcher.bio.map((p, i) => (
                 <p key={i}>{p}</p>
               ))}
-              <div className="stats-row">
-                {window.AstroData.researcher.stats.map((s, i) => (
-                  <div key={i} className="stat-card">
-                    <div className="stat-num neon-cyan">{s.value}</div>
-                    <div className="stat-desc">{s.label}</div>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Telescope Grants */}
-            <section className="reader-section">
-              <h2>TELESCOPE ALLOCATIONS & ACTIVE GRANTS</h2>
-              <div className="grants-grid">
-                {window.AstroData.researcher.telescopeGrants.map((g, i) => (
-                  <div key={i} className="grant-card">
-                    <div className="grant-hdr">
-                      <span className="grant-fac neon-pink">{g.facility}</span>
-                      <span className="grant-hrs neon-amber">{g.hours}</span>
-                    </div>
-                    <div className="grant-title">{g.title}</div>
-                    <div className="grant-cycle">{g.cycle}</div>
-                  </div>
-                ))}
-              </div>
             </section>
 
             {/* Publications */}
@@ -269,7 +243,7 @@ function AstroApp() {
         </div>
       )}
 
-      {/* --- VIEW 3: 3D VIDEOGAME FLIGHT HUD OVERLAY --- */}
+      {/* --- Research Interests --- */}
       {viewMode === '3d' && (
         <div id="hud-overlay">
           {/* Top Bar */}
@@ -286,7 +260,7 @@ function AstroApp() {
                 onClick={toggleSound}
                 title="Toggle Web Audio SFX & Ambient Music (Key: M)"
               >
-                {isMuted ? '🔇 AUDIO OFF' : '🔊 SYNTH ON'}
+                {isMuted ? '🔇 Sound Off' : '🔊 Sound On'}
               </button>
               <button
                 className="hud-btn reader-toggle"
