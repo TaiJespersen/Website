@@ -150,11 +150,11 @@ function AstroApp() {
       {viewMode === 'landing' && (
         <div className="landing-screen">
           <div className="landing-content">
-            <h1>TAI JESPERSEN</h1>
-            <p>Choose your experience:</p>
+            <h1>Hello!</h1>
+            <p>Welcome to my website:</p>
             <div className="button-group">
               <button className="start-btn" onClick={() => setViewMode('reader')}>
-                Regular View
+                About Me
               </button>
               <button 
                 className="start-btn" 
@@ -163,7 +163,7 @@ function AstroApp() {
                   if (window.AstroAudio) window.AstroAudio.initContext();
                 }}
               >
-                Interactive View
+                Research Interests
               </button>
             </div>
           </div>
