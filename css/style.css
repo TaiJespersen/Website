@@ -37,6 +37,58 @@ html, body {
   font-size: 14px;
 }
 
+/* Landing Screen Styles */
+.landing-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #050510; /* Dark space background */
+  z-index: 9999; /* Ensure it sits on top of everything */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+  text-align: center;
+  font-family: monospace;
+}
+
+.landing-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 2px;
+}
+
+.landing-content p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  color: #a0a0b0;
+}
+
+.button-group {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.start-btn {
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  background: transparent;
+  color: #00ffff;
+  border: 1px solid #00ffff;
+  cursor: pointer;
+  font-family: monospace;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.start-btn:hover {
+  background: #00ffff;
+  color: #000000;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+}
 /* 3D WebGL Canvas Viewport */
 #canvas-container {
   position: absolute;
