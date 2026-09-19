@@ -145,16 +145,78 @@ window.AstroScene = {
   setupInteractivity() {
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
+    let currentlyHoveredId = null;
 
-    window.addEventListener('click', (e) => {
-      // Don't raycast if clicking UI elements
-      if (e.target.closest('#hud-overlay') || e.target.closest('.modal-container')) return;
+    // Hover Raycasting for Destiny 2 Planet Selection Inspection Box
+    window.addEventListener('pointermove', (e) => {
+      // If cursor is over an open modal or interactive button, suppress celestial hover
+      if (e.target.closest('.modal-container') || e.target.closest('.hud-controls-top') || e.target.closest('.docking-prompt-banner')) {
+        if (currentlyHoveredId) {
+          currentlyHoveredId = null;
+          document.body.style.cursor = 'default';
+          if (window.AstroAppDispatch) {
+            window.AstroAppDispatch({ type: 'HOVER_DESTINATION', payload: null });
+          }
+        }
+        return;
+      }
 
       mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
       raycaster.setFromCamera(mouse, this.camera);
 
-      // Check for click on celestial destinations
+      // Check for hover over interactive celestial destinations (Green Bank, J1713, Binary Black Holes)
+      const targets = Object.values(this.celestialObjects).filter(o => o.userData && o.userData.id);
+      const intersects = raycaster.intersectObjects(targets, true);
+
+      if (intersects.length > 0) {
+        let hitObject = intersects[0].object;
+        while (hitObject.parent && !hitObject.userData.id) {
+          hitObject = hitObject.parent;
+        }
+
+        if (hitObject.userData && hitObject.userData.id) {
+          const dest = window.AstroData.destinations.find(d => d.id === hitObject.userData.id);
+          if (dest) {
+            document.body.style.cursor = 'pointer';
+            if (currentlyHoveredId !== dest.id) {
+              currentlyHoveredId = dest.id;
+              if (window.astroAudio) window.astroAudio.playBlip(720, 0.03);
+            }
+            if (window.AstroAppDispatch) {
+              window.AstroAppDispatch({
+                type: 'HOVER_DESTINATION',
+                payload: {
+                  dest: dest,
+                  screenX: e.clientX,
+                  screenY: e.clientY
+                }
+              });
+            }
+            return;
+          }
+        }
+      }
+
+      // If no interactive celestial object is hovered
+      if (currentlyHoveredId) {
+        currentlyHoveredId = null;
+        document.body.style.cursor = 'default';
+        if (window.AstroAppDispatch) {
+          window.AstroAppDispatch({ type: 'HOVER_DESTINATION', payload: null });
+        }
+      }
+    });
+
+    // Click Raycasting: Clicking celestial object directly opens the associated modal popup (like pressing E)
+    window.addEventListener('click', (e) => {
+      // Don't raycast if clicking UI buttons or active modal
+      if (e.target.closest('.modal-container') || e.target.closest('.hud-controls-top') || e.target.closest('.docking-prompt-banner') || e.target.closest('.waypoint-badge')) return;
+
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, this.camera);
+
       const targets = Object.values(this.celestialObjects).filter(o => o.userData && o.userData.id);
       const intersects = raycaster.intersectObjects(targets, true);
 
@@ -167,7 +229,7 @@ window.AstroScene = {
         if (hitObject.userData && hitObject.userData.id) {
           const dest = window.AstroData.destinations.find(d => d.id === hitObject.userData.id);
           if (dest && window.AstroAppDispatch) {
-            window.AstroAppDispatch({ type: 'TARGET_DESTINATION', payload: dest });
+            window.AstroAppDispatch({ type: 'OPEN_DESTINATION_MODAL', payload: dest });
           }
         }
       }

@@ -22,6 +22,7 @@ function AstroApp() {
   const [contactState, setContactState] = useState({ name: '', email: '', message: '', status: 'idle' });
   const [audioPulsarActive, setAudioPulsarActive] = useState(false);
   const [markers, setMarkers] = useState([]);
+  const [hoveredDest, setHoveredDest] = useState(null);
   const initialCoordsRef = useRef({ x: 0, y: 0, z: 40 });
 
   // =========================================
@@ -51,6 +52,11 @@ function AstroApp() {
       } else if (action.type === 'TARGET_DESTINATION') {
         setSelectedTarget(action.payload);
         if (window.astroAudio) window.astroAudio.playLockOn();
+      } else if (action.type === 'HOVER_DESTINATION') {
+        setHoveredDest(action.payload);
+      } else if (action.type === 'OPEN_DESTINATION_MODAL') {
+        setSelectedTarget(action.payload);
+        openModal(action.payload.modalId);
       }
     };
 
@@ -160,21 +166,35 @@ const closeModal = () => {
       {/* --- VIEW 1: LANDING SCREEN --- */}
       {viewMode === 'landing' && (
         <div className="landing-screen">
-          <div className="landing-content">
-            <h1>Hello!</h1>
-            <p>Welcome to my website:</p>
-            <div className="button-group">
-              <button className="start-btn" onClick={() => setViewMode('reader')}>
-                About Me
+          <div className="landing-card">
+            <div className="landing-badge">
+              <span className="landing-sparkle">✦</span>
+              <span>OBSERVATIONAL ASTRONOMY & ASTROPHYSICS</span>
+            </div>
+
+            <h1 className="landing-name">Tai Jespersen</h1>
+            <p className="landing-role">PhD Student · Gravitational Wave & Pulsar Astronomy</p>
+            <p className="landing-inst">Center for Gravitational Cosmology and Astrophysics · UW-Milwaukee</p>
+
+            <p className="landing-bio-snippet">
+              Investigating the nanohertz gravitational-wave universe through millisecond pulsar timing arrays,
+              searching archival radio surveys, and exploring relativistic compact objects.
+            </p>
+
+            <div className="landing-actions">
+              <button className="landing-btn primary" onClick={() => setViewMode('reader')}>
+                <span className="btn-icon">✦</span>
+                <span>About Me & Portfolio</span>
               </button>
               <button 
-                className="start-btn" 
+                className="landing-btn secondary" 
                 onClick={() => {
                   setViewMode('3d');
                   if (window.AstroAudio) window.AstroAudio.initContext();
                 }}
               >
-                Research
+                <span className="btn-icon">🪐</span>
+                <span>Explore 3D Cosmos</span>
               </button>
             </div>
           </div>
@@ -186,48 +206,84 @@ const closeModal = () => {
         <div className="reader-container">
           <header className="reader-header">
             <div className="reader-brand">
+              <div className="reader-pretitle">ACADEMIC DOSSIER & CURRICULUM VITAE</div>
               <h1>{window.AstroData.researcher.name}</h1>
               <p className="reader-tagline">{window.AstroData.researcher.title}</p>
               <p className="reader-inst">{window.AstroData.researcher.institution}</p>
+              <div className="reader-contacts">
+                <a href={`mailto:${window.AstroData.researcher.email}`} className="reader-contact-pill">
+                  ✉️ {window.AstroData.researcher.email}
+                </a>
+                <a href="https://orcid.org/0009-0007-4226-0037" target="_blank" rel="noreferrer" className="reader-contact-pill">
+                  🆔 ORCID: 0009-0007-4226-0037
+                </a>
+              </div>
             </div>
-            <button className="hud-btn neon-btn" onClick={() => setViewMode('3d')}>
-              Research
+            <button className="reader-exit-btn" onClick={() => setViewMode('3d')}>
+              ✦ Explore 3D Cosmos
             </button>
           </header>
 
           <main className="reader-body">
-            {/* Bio & Stats */}
+            {/* Bio */}
             <section className="reader-section">
-              <h2>RESEARCH OVERVIEW</h2>
-              {window.AstroData.researcher.bio.map((p, i) => (
-                <p key={i}>{p}</p>
-              ))}
+              <div className="section-header-row">
+                <span className="section-spark">✦</span>
+                <h2>RESEARCH OVERVIEW</h2>
+              </div>
+              <div className="reader-bio-card">
+                {window.AstroData.researcher.bio.map((p, i) => (
+                  <p key={i}>{p}</p>
+                ))}
+              </div>
             </section>
 
             {/* Publications */}
             <section className="reader-section">
-              <h2>KEY PUBLICATIONS & PREPRINTS</h2>
+              <div className="section-header-row">
+                <span className="section-spark">✦</span>
+                <h2>KEY PUBLICATIONS & PREPRINTS</h2>
+              </div>
               <div className="reader-pubs-list">
                 {window.AstroData.publications.map(pub => (
                   <div key={pub.id} className="pub-card">
                     <div className="pub-badge-row">
                       <span className="pub-badge">{pub.badge}</span>
                       <span className="pub-year">{pub.year}</span>
-                      <span className="pub-journal neon-cyan">{pub.journal}</span>
+                      <span className="pub-journal">{pub.journal}</span>
                     </div>
                     <h3 className="pub-title">{pub.title}</h3>
                     <p className="pub-authors">{pub.authors}</p>
                     <p className="pub-abstract">{pub.abstract}</p>
                     <div className="pub-actions">
-                      <a href={`https://arxiv.org/abs/${pub.arxiv}`} target="_blank" rel="noreferrer" className="hud-btn mini-btn">
+                      <a href={`https://arxiv.org/abs/${pub.arxiv}`} target="_blank" rel="noreferrer" className="reader-action-btn">
                         arXiv:{pub.arxiv}
                       </a>
-                      <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noreferrer" className="hud-btn mini-btn">
+                      <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noreferrer" className="reader-action-btn">
                         DOI Link
                       </a>
-                      <button className="hud-btn mini-btn" onClick={() => copyBibtex(pub)}>
-                        {copiedBibId === pub.id ? '✓ COPIED BIBTEX' : 'COPY BIBTEX'}
+                      <button className="reader-action-btn copy-btn" onClick={() => copyBibtex(pub)}>
+                        {copiedBibId === pub.id ? '✓ Copied BibTeX' : 'Copy BibTeX'}
                       </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Academic Positions */}
+            <section className="reader-section">
+              <div className="section-header-row">
+                <span className="section-spark">✦</span>
+                <h2>ACADEMIC POSITIONS & EDUCATION</h2>
+              </div>
+              <div className="appointments-card">
+                {window.AstroData.researcher.appointments.map((app, i) => (
+                  <div key={i} className="appointment-row">
+                    <span className="app-period">{app.period}</span>
+                    <div className="app-details">
+                      <span className="app-role">{app.role}</span>
+                      <span className="app-inst">{app.institution}</span>
                     </div>
                   </div>
                 ))}
@@ -236,12 +292,15 @@ const closeModal = () => {
 
             {/* Teaching */}
             <section className="reader-section">
-              <h2>TEACHING & MENTORSHIP</h2>
+              <div className="section-header-row">
+                <span className="section-spark">✦</span>
+                <h2>TEACHING & MENTORSHIP</h2>
+              </div>
               <div className="teaching-list">
                 {window.AstroData.teaching.map((t, i) => (
                   <div key={i} className="teaching-item">
                     <div className="teach-hdr">
-                      <span className="teach-id neon-amber">{t.courseId}</span>
+                      <span className="teach-id">{t.courseId}</span>
                       <span className="teach-term">{t.term}</span>
                     </div>
                     <h4>{t.title}</h4>
@@ -250,15 +309,40 @@ const closeModal = () => {
                 ))}
               </div>
             </section>
+
+            {/* CV Download CTA */}
+            <section className="reader-section cv-section">
+              <div className="cv-card">
+                <div className="cv-info">
+                  <h3>Curriculum Vitae</h3>
+                  <p>Download or view the complete updated CV with comprehensive research history, publications, and presentations.</p>
+                </div>
+                <button
+                  className="cv-button"
+                  onClick={() =>
+                    window.open(
+                      "/Website/CV___Tai_Jespersen__Updated_Sep__2026_.pdf",
+                      "_blank"
+                    )
+                  }
+                >
+                  📄 View Complete CV (PDF)
+                </button>
+              </div>
+            </section>
           </main>
         </div>
       )}
 
-      {/* --- Research Interests --- */}
+      {/* --- Research Cosmos (3D Mode) --- */}
       {viewMode === '3d' && (
         <div id="hud-overlay">
           {/* Top Bar */}
           <header className="hud-top-bar">
+            <div className="hud-brand">
+              <span className="status-indicator live-pulse"></span>
+              <span className="system-code">COSMIC RESEARCH EXPLORER</span>
+            </div>
 
             <div className="hud-controls-top">
               <button
@@ -307,6 +391,52 @@ const closeModal = () => {
             })}
           </div>
 
+          {/* Destiny 2 Style Celestial Inspection Hover Card */}
+          {hoveredDest && hoveredDest.dest && !activeModal && (
+            <div
+              className="destiny-hover-card"
+              style={{
+                left: `${Math.min(window.innerWidth - 350, Math.max(20, hoveredDest.screenX + 22))}px`,
+                top: `${Math.min(window.innerHeight - 250, Math.max(25, hoveredDest.screenY - 60))}px`
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedTarget(hoveredDest.dest);
+                openModal(hoveredDest.dest.modalId);
+              }}
+            >
+              <div className="destiny-card-corner top-left"></div>
+              <div className="destiny-card-corner top-right"></div>
+              <div className="destiny-card-corner btm-left"></div>
+              <div className="destiny-card-corner btm-right"></div>
+
+              <div className="destiny-card-header">
+                <div className="destiny-card-code">
+                  <span className="destiny-diamond">◆</span>
+                  <span>DESTINATION // {hoveredDest.dest.code}</span>
+                </div>
+                <h3 className="destiny-card-name">{hoveredDest.dest.name}</h3>
+                <div className="destiny-card-type">{hoveredDest.dest.type}</div>
+              </div>
+
+              <div className="destiny-card-divider">
+                <span className="destiny-divider-line"></span>
+                <span className="destiny-divider-diamond">◆</span>
+                <span className="destiny-divider-line"></span>
+              </div>
+
+              <p className="destiny-card-desc">
+                {hoveredDest.dest.description || hoveredDest.dest.subtitle}
+              </p>
+
+              <div className="destiny-card-cta">
+                <span className="destiny-cta-diamond">◆</span>
+                <span className="destiny-cta-text">CLICK TO EXPLORE</span>
+                <span className="destiny-cta-chevron">›</span>
+              </div>
+            </div>
+          )}
+
           {/* Docking Proximity Banner */}
           {canDock && nearest && (
             <div className="docking-prompt-banner" onClick={() => openModal(nearest.modalId)}>
@@ -317,8 +447,7 @@ const closeModal = () => {
               </div>
             </div>
           )}
-
-          </div>
+        </div>
       )}
 
       

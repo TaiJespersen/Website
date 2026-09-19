@@ -177,9 +177,10 @@ window.AstroData = {
       periodMs: 4.57,
       frequencyHz: 218.8,
       coords: { x: -80, y: 15, z: -60 },
-      color: "#00f0ff",
+      color: "#38bdf8",
       icon: "⚡",
       subtitle: "NANOGrav 15-Yr Science & Cosmic Clocks",
+      description: "Precision timing of millisecond pulsars across decades provides the galactic backbone for detecting nanohertz gravitational waves with NANOGrav.",
       modalId: "modal-j1713"
     },
     {
@@ -187,26 +188,27 @@ window.AstroData = {
       key: "2",
       code: "SECTOR-02",
       name: "Gravitational Waves",
-      type: "Relativistic Binary Pulsar",
+      type: "Binary Black Hole System",
       periodMs: 59.0,
       frequencyHz: 16.9,
       coords: { x: 85, y: -20, z: -75 },
-      color: "#ffaa00",
+      color: "#f59e0b",
       icon: "🪐",
-      subtitle: "Publications, Papers & BibTeX",
+      subtitle: "Binary Black Holes, Papers & BibTeX",
+      description: "Two low-poly binary black holes locked in an extreme relativistic dance, warping spacetime and shedding gravitational waves. Explore research papers and publications.",
       modalId: "modal-b1913"
     },
-
-        {
+    {
       id: "observatory",
       key: "3",
-      code: "SECTOR-04",
+      code: "SECTOR-03",
       name: "Radio Pulsar Searching",
       type: "Planetary Radio Observatory",
       coords: { x: 0, y: 5, z: -150 },
       color: "#a855f7",
       icon: "🔭",
       subtitle: "Researcher Bio, CV & Telescope Grants",
+      description: "A planetary radio observatory hosting the 100-meter Green Bank Telescope. Explore scientific appointments, telescope allocations, and academic curriculum vitae.",
       modalId: "modal-observatory"
     }
   ]
