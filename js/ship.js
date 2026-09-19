@@ -6,9 +6,9 @@ window.AstroShip = {
   mesh: null,
 
   // Physics state
-  position: new THREE.Vector3(0, 0, 40),
+  position: new THREE.Vector3(0, 25, -210),
   velocity: new THREE.Vector3(0, 0, 0),
-  rotation: new THREE.Euler(0, 0, 0, 'YXZ'),
+  rotation: new THREE.Euler(0, Math.PI, 0, 'YXZ'),
   angularVelocity: new THREE.Vector3(0, 0, 0),
 
   // Flight parameters
