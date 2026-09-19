@@ -268,7 +268,7 @@ const closeModal = () => {
             <section className="reader-section">
               <div className="section-header-row">
                 <span className="section-spark">✦</span>
-                <h2>ACADEMIC POSITIONS & EDUCATION</h2>
+                <h2>EDUCATION</h2>
               </div>
               <div className="appointments-card">
                 {window.AstroData.researcher.appointments.map((app, i) => (
@@ -287,7 +287,7 @@ const closeModal = () => {
             <section className="reader-section">
               <div className="section-header-row">
                 <span className="section-spark">✦</span>
-                <h2>TEACHING & MENTORSHIP</h2>
+                <h2>TEACHING</h2>
               </div>
               <div className="teaching-list">
                 {window.AstroData.teaching.map((t, i) => (
