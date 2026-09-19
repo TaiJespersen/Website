@@ -46,6 +46,7 @@ window.AstroShip = {
     // This keeps all the flight math working perfectly without rendering anything.
     const shipGroup = new THREE.Group();
     shipGroup.position.copy(this.position);
+    shipGroup.rotation.copy(this.rotation);
     scene.add(shipGroup);
     this.mesh = shipGroup;
   },
