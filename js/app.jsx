@@ -222,7 +222,7 @@ const closeModal = () => {
             <section className="reader-section">
               <div className="section-header-row">
                 <span className="section-spark">✦</span>
-                <h2>RESEARCH OVERVIEW</h2>
+                <h2>OVERVIEW</h2>
               </div>
               <div className="reader-bio-card">
                 {window.AstroData.researcher.bio.map((p, i) => (
@@ -235,7 +235,7 @@ const closeModal = () => {
             <section className="reader-section">
               <div className="section-header-row">
                 <span className="section-spark">✦</span>
-                <h2>KEY PUBLICATIONS & PREPRINTS</h2>
+                <h2>PUBLICATIONS & PREPRINTS</h2>
               </div>
               <div className="reader-pubs-list">
                 {window.AstroData.publications.map(pub => (
