@@ -1280,7 +1280,7 @@ window.AstroCelestial = {
           map: glowTexture,
           color: colorBase,
           transparent: true,
-          opacity: 0.18 + Math.random() * 0.14,
+          opacity: 0.08 + Math.random() * 0.14,
           blending: THREE.AdditiveBlending,
           depthWrite: false
         });
@@ -1293,7 +1293,7 @@ window.AstroCelestial = {
           clusterPos.z + (Math.random() - 0.5) * spread
         );
 
-        const scale = 440 + Math.random() * 560;
+        const scale = 1040 + Math.random() * 1160;
         sprite.scale.set(scale, scale, 1);
         group.add(sprite);
 
@@ -1314,7 +1314,7 @@ window.AstroCelestial = {
         clouds.forEach(c => {
           c.sprite.material.opacity = c.baseOpacity + Math.sin(this.time * c.pulseSpeed + c.pulseOffset) * 0.04;
         });
-        group.rotation.y += delta * 0.012; // Slow cosmic drift
+        group.rotation.y += delta * 0.12; // Slow cosmic drift
       }
     };
 
