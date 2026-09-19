@@ -120,12 +120,6 @@ const closeModal = () => {
   setActiveModal(null);
   if (window.astroAudio) window.astroAudio.playBlip(440, 0.04);
 
-  // Return ship back to original spawn coordinates
-  if (window.AstroShip && initialCoordsRef.current) {
-    window.AstroShip.warpTo(initialCoordsRef.current, () => {
-      setCanDock(false);
-    });
-  }
 };
 
   const copyBibtex = (pub) => {
