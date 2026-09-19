@@ -1280,7 +1280,7 @@ window.AstroCelestial = {
           map: glowTexture,
           color: colorBase,
           transparent: true,
-          opacity: 0.06 + Math.random() * 0.0014,
+          opacity: 0.03 + Math.random() * 0.014,
           blending: THREE.AdditiveBlending,
           depthWrite: false
         });
@@ -1293,7 +1293,7 @@ window.AstroCelestial = {
           clusterPos.z + (Math.random() - 0.5) * spread
         );
 
-        const scale = 1040 + Math.random() * 1160;
+        const scale = 1240 + Math.random() * 1360;
         sprite.scale.set(scale, scale, 1);
         group.add(sprite);
 
