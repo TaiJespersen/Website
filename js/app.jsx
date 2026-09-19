@@ -353,35 +353,6 @@ const closeModal = () => {
             </div>
           </header>
 
-          {/* Floating Waypoints */}
-          <div className="floating-waypoints-layer">
-            {markers.map(m => {
-              if (!m.inFront || m.x < -80 || m.x > window.innerWidth + 80 || m.y < -80 || m.y > window.innerHeight + 80) return null;
-              const isSelected = selectedTarget && selectedTarget.id === m.id;
-              return (
-                <div
-                  key={m.id}
-                  className={`waypoint-badge ${isSelected ? 'selected' : ''}`}
-                  style={{
-                    left: `${m.x}px`,
-                    top: `${m.y}px`,
-                    borderColor: m.color
-                  }}
-                  onClick={() => {
-                    const dest = window.AstroData.destinations.find(d => d.id === m.id);
-                    if (dest) warpTo(dest);
-                  }}
-                  title={`Click to warp to ${m.name}`}
-                >
-                  <span className="waypoint-pin" style={{ backgroundColor: m.color, boxShadow: `0 0 8px ${m.color}` }}></span>
-                  <span className="waypoint-key">[{m.key}]</span>
-                  <span className="waypoint-title">{m.name}</span>
-                  <span className="waypoint-dist">{m.distance} AU</span>
-                </div>
-              );
-            })}
-          </div>
-
           {/* Destiny 2 Style Celestial Inspection Hover Card */}
           {hoveredDest && hoveredDest.dest && !activeModal && (
             <div
