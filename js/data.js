@@ -25,8 +25,8 @@ window.AstroData = {
       { label: "N/A", value: "e" }
     ],
     appointments: [
-      { period: "2022 - 2026", role: "Undergraduate", institution: "F&M" },
-      { period: "2026 - Present", role: "Graduate Student", institution: "UW-Milwaukee" }
+      { period: "2026 - Present", role: "PhD Student", institution: "UW-Milwaukee" },
+      { period: "2022 - 2026", role: "Undergraduate", institution: "F&M" }
     ],
     telescopeGrants: [
       {
