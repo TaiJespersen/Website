@@ -1280,7 +1280,7 @@ window.AstroCelestial = {
           map: glowTexture,
           color: colorBase,
           transparent: true,
-          opacity: 0.03 + Math.random() * 0.014,
+          opacity: 0.02 + Math.random() * 0.008,
           blending: THREE.AdditiveBlending,
           depthWrite: false
         });
