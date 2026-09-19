@@ -20,7 +20,7 @@ window.AstroCelestial = {
     celestialObjects.ptaGrid = this.createPTATimingGrid(scene, celestialObjects);
 
     // 5. Background Telescopes (Non-interactable, rotating in deep background)
-    celestialObjects.parkes = this.createParkesPlanet(scene, { x: -300, y: -200, z: 300 });
+    celestialObjects.parkes = this.createParkesPlanet(scene, { x: -400, y: -200, z: 300 });
     celestialObjects.arecibo = this.createAreciboPlanet(scene, { x: 305, y: -10, z: 150 });
     celestialObjects.dsa2000 = this.createDSA2000Cluster(scene, { x: 145, y: 55, z: 330 });
 
@@ -803,7 +803,7 @@ window.AstroCelestial = {
       time: 0,
       update(delta) {
         this.time += delta;
-        planetGroup.rotation.y += delta * 0.022; // Diurnal rotation
+        planetGroup.rotation.y += delta * 0.22; // Diurnal rotation
         turret.rotation.y = Math.sin(this.time * 0.12) * 0.35; // Azimuth tracking
         dishAssembly.rotation.x = 0.3 + Math.cos(this.time * 0.08) * 0.12;
         beacon.visible = Math.sin(this.time * 4) > 0;
