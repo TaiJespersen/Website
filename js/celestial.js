@@ -1293,7 +1293,7 @@ window.AstroCelestial = {
           clusterPos.z + (Math.random() - 0.5) * spread
         );
 
-        const scale = 140 + Math.random() * 160;
+        const scale = 440 + Math.random() * 560;
         sprite.scale.set(scale, scale, 1);
         group.add(sprite);
 
@@ -1306,20 +1306,6 @@ window.AstroCelestial = {
       }
     }
 
-    // 3. Ethereal Magnetic Gas Filaments (Curved low-poly glowing ribbon arcs)
-    for (let f = 0; f < 8; f++) {
-      const curvePoints = [];
-      const ribbonAngle = (f / 8) * Math.PI * 2;
-      const rDist = 700 + Math.random() * 200;
-      for (let p = 0; p <= 6; p++) {
-        const a = ribbonAngle + (p - 3) * 0.18;
-        const h = (p - 3) * 45 + (Math.random() - 0.5) * 40;
-        curvePoints.push(new THREE.Vector3(
-          Math.cos(a) * rDist,
-          h,
-          Math.sin(a) * rDist
-        ));
-      }
 
       const curve = new THREE.CatmullRomCurve3(curvePoints);
       const tubeGeo = new THREE.TubeGeometry(curve, 24, 8 + Math.random() * 12, 6, false);
@@ -1343,7 +1329,7 @@ window.AstroCelestial = {
         clouds.forEach(c => {
           c.sprite.material.opacity = c.baseOpacity + Math.sin(this.time * c.pulseSpeed + c.pulseOffset) * 0.04;
         });
-        group.rotation.y += delta * 0.0012; // Slow cosmic drift
+        group.rotation.y += delta * 0.012; // Slow cosmic drift
       }
     };
 
