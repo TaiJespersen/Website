@@ -1306,21 +1306,6 @@ window.AstroCelestial = {
       }
     }
 
-
-      const curve = new THREE.CatmullRomCurve3(curvePoints);
-      const tubeGeo = new THREE.TubeGeometry(curve, 24, 8 + Math.random() * 12, 6, false);
-      const ribbonMat = new THREE.MeshBasicMaterial({
-        color: nebulaColors[f % nebulaColors.length],
-        wireframe: true,
-        transparent: true,
-        opacity: 0.12,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false
-      });
-      const tubeMesh = new THREE.Mesh(tubeGeo, ribbonMat);
-      group.add(tubeMesh);
-    }
-
     group.userData = {
       time: 0,
       update(delta) {
