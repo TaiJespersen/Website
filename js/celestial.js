@@ -11,7 +11,7 @@ window.AstroCelestial = {
     celestialObjects.j1713 = this.createMillisecondPulsar(scene, { x: -80, y: 15, z: -160 });
 
     // 2. Relativistic Binary Black Holes: Two orbiting low-poly black holes
-    celestialObjects.b1913 = this.createBinaryBlackHoles(scene, { x: 85, y: -20, z: -125 });
+    celestialObjects.b1913 = this.createBinaryBlackHoles(scene, { x: 85, y: 0, z: -155 });
 
     // 3. Orbital Radio Observatory: Green Bank 100m
     celestialObjects.observatory = this.createRadioObservatory(scene, { x: 0, y: 5, z: -150 });
