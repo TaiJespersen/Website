@@ -20,9 +20,9 @@ window.AstroCelestial = {
     celestialObjects.ptaGrid = this.createPTATimingGrid(scene, celestialObjects);
 
     // 5. Background Telescopes (Non-interactable, rotating in deep background)
-    celestialObjects.parkes = this.createParkesPlanet(scene, { x: -90, y: 55, z: -30 });
-    celestialObjects.arecibo = this.createAreciboPlanet(scene, { x: 95, y: 45, z: -30 });
-    celestialObjects.dsa2000 = this.createDSA2000Cluster(scene, { x: 25, y: 75, z: -35 });
+    celestialObjects.parkes = this.createParkesPlanet(scene, { x: -90, y: 0, z: -100 });
+    celestialObjects.arecibo = this.createAreciboPlanet(scene, { x: 95, y: -10, z: -30 });
+    celestialObjects.dsa2000 = this.createDSA2000Cluster(scene, { x: 25, y: 55, z: 0 });
 
     // 6. Ambient Asteroids & Low-Poly Cosmic Dust (Cleared from starting sightlines)
     this.createAsteroidBelt(scene);
