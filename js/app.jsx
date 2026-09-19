@@ -339,8 +339,6 @@ const closeModal = () => {
           {/* Top Bar */}
           <header className="hud-top-bar">
             <div className="hud-brand">
-              <span className="status-indicator live-pulse"></span>
-              <span className="system-code">COSMIC RESEARCH EXPLORER</span>
             </div>
 
             <div className="hud-controls-top">
