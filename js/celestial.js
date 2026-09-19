@@ -20,7 +20,7 @@ window.AstroCelestial = {
     celestialObjects.ptaGrid = this.createPTATimingGrid(scene, celestialObjects);
 
     // 5. Background Telescopes (Non-interactable, rotating in deep background)
-    celestialObjects.parkes = this.createParkesPlanet(scene, { x: -300, y: -500, z: 300 });
+    celestialObjects.parkes = this.createParkesPlanet(scene, { x: -300, y: -200, z: 300 });
     celestialObjects.arecibo = this.createAreciboPlanet(scene, { x: 305, y: -10, z: 150 });
     celestialObjects.dsa2000 = this.createDSA2000Cluster(scene, { x: 145, y: 55, z: 330 });
 
