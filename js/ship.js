@@ -12,7 +12,7 @@ window.AstroShip = {
   angularVelocity: new THREE.Vector3(0, 0, 0),
 
   // Flight parameters
-  maxSpeed: 500,
+  maxSpeed: 5000,
   boostMultiplier: 2.2,
   thrustForce: 28,
   drag: 0.96,
