@@ -193,8 +193,7 @@ const closeModal = () => {
                   if (window.AstroAudio) window.AstroAudio.initContext();
                 }}
               >
-                <span className="btn-icon">🪐</span>
-                <span>Explore 3D Cosmos</span>
+                <span>Research Projects</span>
               </button>
             </div>
           </div>
@@ -220,7 +219,7 @@ const closeModal = () => {
               </div>
             </div>
             <button className="reader-exit-btn" onClick={() => setViewMode('3d')}>
-              ✦ Explore 3D Cosmos
+              ✦ Research Projects
             </button>
           </header>
 
