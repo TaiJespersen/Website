@@ -1,66 +1,60 @@
+
 /* ============================================================================
-   ASTRO-OS // VIDEOGAME HUD & FLIGHT COCKPIT STYLES
-   Low-Poly Sci-Fi Vector Aesthetic with CRT Scanlines & Neon Accents
+   LANDING SCREEN — COSMIC BACKGROUND
    ============================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap');
-
-:root {
-  --bg-deep: #05070f;
-  --bg-card: rgba(10, 15, 30, 0.85);
-  --border-neon: rgba(0, 240, 255, 0.4);
-  --neon-cyan: #00f0ff;
-  --neon-pink: #ec4899;
-  --neon-amber: #f59e0b;
-  --neon-emerald: #10b981;
-  --neon-purple: #a855f7;
-  --text-main: #f1f5f9;
-  --text-muted: #94a3b8;
-  --font-display: 'Chakra Petch', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  user-select: none;
-}
-
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background-color: var(--bg-deep);
-  color: var(--text-main);
-  font-family: var(--font-mono);
-  font-size: 14px;
-}
-
-/* Landing Screen Styles (Clean, Soft Cosmic Editorial) */
 .landing-screen {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100vw;
   height: 100vh;
-  background: radial-gradient(ellipse at 50% 45%, #0f172a 0%, #090d16 65%, #030712 100%);
+  overflow: hidden;
+  isolation: isolate;
+  background: radial-gradient(
+    ellipse at 50% 45%,
+    #0f172a 0%,
+    #090d16 65%,
+    #030712 100%
+  );
   z-index: 9999;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 24px;
   pointer-events: auto;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Inter', sans-serif;
 }
 
+/* Three.js celestial background */
+#launch-cosmos {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+#launch-cosmos canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Landing screen content */
 .landing-card {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    backdrop-filter: none;
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  text-align: center;
 }
 
+/* Landing screen entrance animation */
 @keyframes landingFadeIn {
   from {
     opacity: 0;
@@ -72,27 +66,7 @@ html, body {
   }
 }
 
-.landing-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 5px 14px;
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.25);
-  border-radius: 9999px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  color: #fbbf24;
-  margin-bottom: 20px;
-  text-transform: uppercase;
-}
-
-.landing-sparkle {
-  color: #f59e0b;
-  font-size: 10px;
-}
-
+/* Landing screen typography */
 .landing-name {
   font-size: 2.75rem;
   font-weight: 700;
@@ -125,6 +99,7 @@ html, body {
   margin-right: auto;
 }
 
+/* Landing screen buttons */
 .landing-actions {
   display: flex;
   gap: 16px;
@@ -177,818 +152,21 @@ html, body {
   font-size: 1.05rem;
 }
 
-/* 3D WebGL Canvas Viewport */
-#canvas-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 1;
-}
-
-#canvas-container canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-/* React Application Container */
-#react-root {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 10;
-  pointer-events: none;
-}
-
-.astro-app {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-/* CRT Subtle Scanline Overlay (Softened for non-techno aesthetic) */
-.crt-scanlines {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: linear-gradient(
-    rgba(18, 16, 16, 0) 50%,
-    rgba(0, 0, 0, 0.25) 50%
-  ), linear-gradient(
-    90deg,
-    rgba(255, 0, 0, 0.03),
-    rgba(0, 255, 0, 0.01),
-    rgba(0, 0, 255, 0.03)
-  );
-  background-size: 100% 3px, 6px 100%;
-  pointer-events: none;
-  z-index: 5;
-  opacity: 0.12; /* Greatly softened */
-}
-
-/* HUD Overlay Elements (Interactable) */
-#hud-overlay {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-#hud-overlay * {
-  pointer-events: auto;
-}
-
-/* Top Bar */
-.hud-top-bar {
-  position: absolute;
-  top: 14px;
-  left: 20px;
-  right: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 18px;
-  background: rgba(5, 7, 15, 0.75);
-  border: 1px solid var(--border-neon);
-  border-radius: 4px;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
-}
-
-.hud-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.status-indicator.live-pulse {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--neon-emerald);
-  box-shadow: 0 0 8px var(--neon-emerald);
-  animation: pulseGlow 1.8s infinite;
-}
-
-@keyframes pulseGlow {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.85); }
-}
-
-.system-code {
-  font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: var(--neon-cyan);
-  text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
-}
-
-.callsign-badge {
-  font-size: 11px;
-  padding: 2px 8px;
-  background: rgba(236, 72, 153, 0.2);
-  border: 1px solid var(--neon-pink);
-  color: var(--neon-pink);
-  border-radius: 3px;
-}
-
-.hud-controls-top {
-  display: flex;
-  gap: 10px;
-}
-
-/* Cyber Button Styling */
-.hud-btn {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 7px 14px;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid var(--border-neon);
-  color: var(--text-main);
-  cursor: pointer;
-  border-radius: 3px;
-  transition: all 0.2s ease;
-  letter-spacing: 0.8px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.hud-btn:hover {
-  background: rgba(0, 240, 255, 0.2);
-  border-color: var(--neon-cyan);
-  color: #ffffff;
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
-  transform: translateY(-1px);
-}
-
-.hud-btn.neon-btn {
-  background: rgba(0, 240, 255, 0.15);
-  border-color: var(--neon-cyan);
-  color: var(--neon-cyan);
-}
-
-.hud-btn.sound-toggle.active {
-  border-color: var(--neon-emerald);
-  color: var(--neon-emerald);
-  background: rgba(16, 185, 129, 0.15);
-}
-
-.hud-btn.mini-btn {
-  padding: 4px 10px;
-  font-size: 11px;
-  text-decoration: none;
-}
-
-/* Telemetry Panel (Bottom Left) */
-.hud-telemetry-panel {
-  position: absolute;
-  bottom: 24px;
-  left: 20px;
-  width: 280px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-neon);
-  border-left: 3px solid var(--neon-cyan);
-  padding: 12px 14px;
-  border-radius: 4px;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-}
-
-.hud-panel-header {
-  font-family: var(--font-display);
-  font-size: 11px;
-  color: var(--neon-cyan);
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
-  padding-bottom: 4px;
-}
-
-.telemetry-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.telem-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-}
-
-.telem-label {
-  color: var(--text-muted);
-  font-size: 10px;
-  letter-spacing: 0.5px;
-}
-
-.telem-value {
-  font-weight: 600;
-}
-
-.flight-instructions {
-  margin-top: 10px;
-  padding-top: 6px;
-  border-top: 1px dashed rgba(255, 255, 255, 0.1);
-  font-size: 10px;
-  color: var(--text-muted);
-}
-
-/* Radar Minimap (Bottom Right) */
-.hud-radar-panel {
-  position: absolute;
-  bottom: 24px;
-  right: 20px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-neon);
-  border-radius: 4px;
-  padding: 10px;
-  backdrop-filter: blur(8px);
-  text-align: center;
-}
-
-.radar-screen {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(2, 132, 199, 0.2) 0%, rgba(5, 7, 15, 0.9) 70%);
-  border: 1px solid rgba(0, 240, 255, 0.35);
-  overflow: hidden;
-  margin: 0 auto 6px auto;
-}
-
-.radar-sweep {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: conic-gradient(from 0deg, transparent 0deg, rgba(0, 240, 255, 0.3) 60deg, transparent 65deg);
-  animation: radarRotate 4s linear infinite;
-}
-
-@keyframes radarRotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.radar-center-blip {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 5px;
-  height: 5px;
-  background: #ffffff;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 6px #ffffff;
-}
-
-.radar-target-blip {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  border: 1.5px solid var(--neon-cyan);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 8px;
-  font-weight: 700;
-  color: #fff;
-  transition: transform 0.2s ease;
-}
-
-.radar-target-blip:hover {
-  transform: translate(-50%, -50%) scale(1.4);
-  background: rgba(0, 240, 255, 0.4);
-}
-
-.radar-label {
-  font-size: 9px;
-  color: var(--neon-cyan);
-  letter-spacing: 1px;
-}
-
-/* Fast-Travel Nav Bar (Bottom Center) */
-.hud-nav-bar {
-  position: absolute;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-
-.nav-title {
-  font-size: 10px;
-  color: var(--text-muted);
-  letter-spacing: 1px;
-}
-
-.nav-buttons {
-  display: flex;
-  gap: 8px;
-  background: var(--bg-card);
-  padding: 6px 12px;
-  border: 1px solid var(--border-neon);
-  border-radius: 4px;
-  backdrop-filter: blur(8px);
-}
-
-.nav-jump-btn {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(0, 240, 255, 0.2);
-  color: var(--text-main);
-  padding: 5px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.nav-jump-btn:hover, .nav-jump-btn.active {
-  border-color: var(--neon-cyan);
-  background: rgba(0, 240, 255, 0.2);
-  color: #fff;
-  box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
-}
-
-.jump-key {
-  color: var(--neon-amber);
-  font-weight: 700;
-}
-
-/* Center Target Lock Reticle */
-.target-reticle-box {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 90px;
-  height: 90px;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  opacity: 0.65;
-}
-
-.reticle-bracket {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  border: 2px solid var(--neon-cyan);
-}
-
-.reticle-bracket.top-left { top: 0; left: 0; border-right: none; border-bottom: none; }
-.reticle-bracket.top-right { top: 0; right: 0; border-left: none; border-bottom: none; }
-.reticle-bracket.btm-left { bottom: 0; left: 0; border-right: none; border-top: none; }
-.reticle-bracket.btm-right { bottom: 0; right: 0; border-left: none; border-top: none; }
-
-.reticle-data {
-  position: absolute;
-  top: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  white-space: nowrap;
-  font-size: 11px;
-}
-
-.target-name {
-  display: block;
-  font-weight: 700;
-  color: var(--neon-cyan);
-  text-shadow: 0 0 6px rgba(0, 240, 255, 0.6);
-}
-
-.target-dist {
-  font-size: 10px;
-  color: var(--neon-amber);
-}
-
-/* Docking Proximity Banner */
-.docking-prompt-banner {
-  position: absolute;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: rgba(5, 7, 15, 0.85);
-  border: 2px solid var(--neon-emerald);
-  padding: 10px 22px;
-  border-radius: 4px;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-  animation: dockPulse 1.5s infinite alternate;
-}
-
-@keyframes dockPulse {
-  from { box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
-  to { box-shadow: 0 0 25px rgba(16, 185, 129, 0.8); }
-}
-
-.dock-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.dock-key {
-  font-family: var(--font-display);
-  font-weight: 700;
-  color: var(--neon-emerald);
-  font-size: 13px;
-  letter-spacing: 1px;
-}
-
-.dock-dest {
-  font-size: 11px;
-  color: var(--text-main);
-}
-
-/* Neon Text Helper Classes */
-.neon-cyan { color: var(--neon-cyan); text-shadow: 0 0 6px rgba(0, 240, 255, 0.4); }
-.neon-pink { color: var(--neon-pink); text-shadow: 0 0 6px rgba(236, 72, 153, 0.4); }
-.neon-amber { color: var(--neon-amber); text-shadow: 0 0 6px rgba(245, 158, 11, 0.4); }
-.neon-emerald { color: var(--neon-emerald); text-shadow: 0 0 6px rgba(16, 185, 129, 0.4); }
-.neon-purple { color: var(--neon-purple); text-shadow: 0 0 6px rgba(168, 85, 247, 0.4); }
-
-/* In-World Floating Waypoint Markers (High Visibility) */
-.floating-waypoints-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 15;
-}
-
-.waypoint-badge {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  background: rgba(5, 7, 15, 0.85);
-  border: 1px solid var(--neon-cyan);
-  border-radius: 4px;
-  padding: 4px 10px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  cursor: pointer;
-  pointer-events: auto;
-  backdrop-filter: blur(6px);
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
-  transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
-  white-space: nowrap;
-}
-
-.waypoint-badge:hover {
-  transform: translate(-50%, -50%) scale(1.1);
-  background: rgba(15, 23, 42, 0.95);
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
-}
-
-.waypoint-badge.selected {
-  box-shadow: 0 0 18px rgba(0, 240, 255, 0.6);
-  border-width: 1.5px;
-}
-
-.waypoint-pin {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  display: inline-block;
-  animation: pulseGlow 1.5s infinite alternate;
-}
-
-.waypoint-key {
-  color: var(--neon-amber);
-  font-weight: 700;
-  font-size: 10px;
-}
-
-.waypoint-title {
-  color: #ffffff;
-  font-weight: 600;
-}
-
-.waypoint-dist {
-  color: var(--text-muted);
-  font-size: 10px;
-  border-left: 1px solid rgba(255, 255, 255, 0.2);
-  padding-left: 5px;
-}
-
-/* Mobile Touch Virtual Gamepad */
-.mobile-touch-controls {
-  display: none;
-  position: absolute;
-  bottom: 15px;
-  left: 0;
-  width: 100%;
-  padding: 0 15px;
-  pointer-events: none;
-}
-
-@media (max-width: 860px) {
-  .mobile-touch-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
+/* Responsive landing screen */
+@media (max-width: 600px) {
+  .landing-screen {
+    padding: 20px;
   }
 
-  .mobile-touch-controls * {
-    pointer-events: auto;
+  .landing-name {
+    font-size: 2.2rem;
   }
 
-  .hud-nav-bar {
-    display: none;
+  .landing-role {
+    font-size: 1rem;
   }
 
-  .hud-telemetry-panel {
-    bottom: auto;
-    top: 75px;
-    width: 220px;
-    padding: 8px 10px;
+  .landing-inst {
+    font-size: 0.85rem;
   }
-
-  .flight-instructions {
-    display: none;
-  }
-
-  .hud-radar-panel {
-    bottom: auto;
-    top: 75px;
-    right: 15px;
-    padding: 6px;
-  }
-
-  .radar-screen {
-    width: 80px;
-    height: 80px;
-  }
-
-  /* Virtual D-pad */
-  .dpad-zone {
-    position: relative;
-    width: 130px;
-    height: 130px;
-  }
-
-  .touch-btn {
-    position: absolute;
-    width: 42px;
-    height: 42px;
-    background: rgba(15, 23, 42, 0.7);
-    border: 1.5px solid var(--neon-cyan);
-    color: var(--neon-cyan);
-    font-size: 16px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .touch-btn.up { top: 0; left: 44px; }
-  .touch-btn.left { top: 44px; left: 0; }
-  .touch-btn.right { top: 44px; left: 88px; }
-  .touch-btn.down { top: 88px; left: 44px; }
-
-  /* Virtual Action Buttons */
-  .action-zone {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .touch-action-btn {
-    width: 65px;
-    height: 65px;
-    border-radius: 50%;
-    border: 2px solid var(--neon-pink);
-    background: rgba(236, 72, 153, 0.25);
-    color: #fff;
-    font-size: 11px;
-    font-weight: 700;
-  }
-
-  .touch-action-btn.dock {
-    border-color: var(--neon-emerald);
-    background: rgba(16, 185, 129, 0.25);
-  }
-}
-
-/* ============================================================================
-   TOP HUD CONTROLS — FORCE CLICKABILITY
-   ============================================================================ */
-
-#hud-overlay {
-  position: relative;
-  z-index: 100;
-  pointer-events: none;
-}
-
-.hud-top-bar {
-  position: absolute;
-  z-index: 101;
-  pointer-events: none;
-}
-
-.hud-controls-top {
-  position: relative;
-  z-index: 102;
-  pointer-events: auto !important;
-}
-
-.hud-controls-top .hud-btn {
-  position: relative;
-  z-index: 103;
-  pointer-events: auto !important;
-  cursor: pointer;
-}
-
-/* ============================================================================
-   DESTINY 2 CELESTIAL HOVER CARD (DIRECTOR PLANET INSPECTION AESTHETIC)
-   ============================================================================ */
-.destiny-hover-card {
-  position: fixed;
-  width: 320px;
-  background: rgba(11, 17, 30, 0.94);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-top: 2.5px solid #38bdf8;
-  border-radius: 4px;
-  padding: 16px 18px 14px 18px;
-  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85), 0 0 24px rgba(56, 189, 248, 0.18);
-  backdrop-filter: blur(14px);
-  pointer-events: auto;
-  cursor: pointer;
-  z-index: 120;
-  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
-  animation: destinyCardFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
-  user-select: none;
-}
-
-@keyframes destinyCardFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.destiny-hover-card:hover {
-  transform: translateY(-2px) scale(1.02);
-  border-color: rgba(56, 189, 248, 0.65);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 32px rgba(56, 189, 248, 0.32);
-}
-
-/* Sleek geometric corner notches */
-.destiny-card-corner {
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  border-color: rgba(255, 255, 255, 0.4);
-  border-style: solid;
-}
-
-.destiny-card-corner.top-left { top: -1px; left: -1px; border-width: 1.5px 0 0 1.5px; }
-.destiny-card-corner.top-right { top: -1px; right: -1px; border-width: 1.5px 1.5px 0 0; }
-.destiny-card-corner.btm-left { bottom: -1px; left: -1px; border-width: 0 0 1.5px 1.5px; }
-.destiny-card-corner.btm-right { bottom: -1px; right: -1px; border-width: 0 1.5px 1.5px 0; }
-
-.destiny-card-header {
-  margin-bottom: 8px;
-}
-
-.destiny-card-code {
-  font-size: 10px;
-  letter-spacing: 1.8px;
-  text-transform: uppercase;
-  color: #94a3b8;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 5px;
-  font-weight: 600;
-}
-
-.destiny-diamond {
-  color: #38bdf8;
-  font-size: 9px;
-}
-
-.destiny-card-name {
-  font-size: 19px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  color: #f8fafc;
-  margin-bottom: 3px;
-  line-height: 1.2;
-}
-
-.destiny-card-type {
-  font-size: 11.5px;
-  color: #38bdf8;
-  letter-spacing: 0.5px;
-  font-weight: 500;
-}
-
-.destiny-card-divider {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 10px 0 11px 0;
-}
-
-.destiny-divider-line {
-  flex: 1;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.destiny-divider-diamond {
-  font-size: 7px;
-  color: rgba(255, 255, 255, 0.35);
-}
-
-.destiny-card-desc {
-  font-size: 12px;
-  line-height: 1.6;
-  color: #cbd5e1;
-  margin-bottom: 14px;
-}
-
-/* Destiny 2 Style Call To Action Prompt */
-.destiny-card-cta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 14px;
-  background: rgba(56, 189, 248, 0.1);
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  border-radius: 3px;
-  transition: all 0.2s ease;
-}
-
-.destiny-hover-card:hover .destiny-card-cta {
-  background: rgba(56, 189, 248, 0.22);
-  border-color: #38bdf8;
-  box-shadow: 0 0 14px rgba(56, 189, 248, 0.3);
-}
-
-.destiny-cta-diamond {
-  color: #38bdf8;
-  font-size: 9px;
-  animation: destinyPulse 1.8s infinite ease-in-out;
-}
-
-@keyframes destinyPulse {
-  0%, 100% { opacity: 0.6; transform: scale(0.9); }
-  50% { opacity: 1; transform: scale(1.25); }
-}
-
-.destiny-cta-text {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: #f0f9ff;
-  text-transform: uppercase;
-}
-
-.destiny-cta-chevron {
-  font-size: 15px;
-  font-weight: 700;
-  color: #38bdf8;
-  transition: transform 0.2s ease;
-}
-
-.destiny-hover-card:hover .destiny-cta-chevron {
-  transform: translateX(3px);
 }
