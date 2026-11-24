@@ -126,163 +126,489 @@ window.AstroCelestial = {
     return group;
   },
 
-  // --------------------------------------------------------------------------
-  // 2. RELATIVISTIC BINARY BLACK HOLES (GW150914 / SUPERMASSIVE BINARY ANALOG)
-  // Two detailed low-poly black holes with event horizons, glowing accretion disks,
-  // gravitational lensing arcs, tidal plasma bridge, and propagating GW ripples
+ // --------------------------------------------------------------------------
+  // 2. RELATIVISTIC BINARY BLACK HOLES (GARGANTUA / GW150914 ANALOG)
+  // High-detail low-poly binary black holes featuring Interstellar-style
+  // gravitationally lensed accretion disks, photon spheres, multi-layered
+  // particle systems, tidal plasma streams, and slow quadrupole GW ripples
   // --------------------------------------------------------------------------
   createBinaryBlackHoles(scene, pos) {
     const group = new THREE.Group();
     group.position.set(pos.x, pos.y, pos.z);
 
     // Warm, intense point light radiating from the mutual accretion zone
-    const light = new THREE.PointLight(0xf59e0b, 3.8, 160);
+    const light = new THREE.PointLight(0xf59e0b, 4.5, 190);
     group.add(light);
 
-    // Helper: Build a single detailed low-poly black hole with horizon, disk & lensing arc
-    const createSingleBlackHole = (radius, diskColorInner, diskColorOuter, tiltX, tiltZ) => {
+    // Procedural crisp diamond-glow texture for low-poly compatible particles
+    const createParticleTexture = () => {
+      if (typeof document === "undefined") return null;
+      const canvas = document.createElement("canvas");
+      canvas.width = 32;
+      canvas.height = 32;
+      const ctx = canvas.getContext("2d");
+      const grad = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+      grad.addColorStop(0.0, "rgba(255, 255, 255, 1.0)");
+      grad.addColorStop(0.35, "rgba(255, 240, 180, 0.85)");
+      grad.addColorStop(0.7, "rgba(245, 158, 11, 0.25)");
+      grad.addColorStop(1.0, "rgba(0, 0, 0, 0.0)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 32, 32);
+      const tex = new THREE.CanvasTexture(canvas);
+      return tex;
+    };
+    const particleTex = createParticleTexture();
+
+    // Helper: Create vertex-displaced low-poly ring so flatShading reveals swirling plasma ridges
+    const createFacetedRing = (innerR, outerR, thetaSegs, phiSegs, waveAmp, waveFreq, thetaStart = 0, thetaLen = Math.PI * 2) => {
+      const geo = new THREE.RingGeometry(innerR, outerR, thetaSegs, phiSegs, thetaStart, thetaLen);
+      const posAttr = geo.attributes.position;
+      for (let i = 0; i < posAttr.count; i++) {
+        const vx = posAttr.getX(i);
+        const vy = posAttr.getY(i);
+        const r = Math.sqrt(vx * vx + vy * vy);
+        const theta = Math.atan2(vy, vx);
+        const normR = (r - innerR) / Math.max(0.001, outerR - innerR);
+        // Sculpted angular ridges + subtle dome curve for low-poly relief
+        const ridge = Math.sin(theta * waveFreq + normR * 4.5) * waveAmp * Math.sin(normR * Math.PI);
+        posAttr.setZ(i, ridge);
+      }
+      geo.computeVertexNormals();
+      return geo;
+    };
+
+    // Helper: Build a single Interstellar-style low-poly black hole
+    const createSingleBlackHole = (radius, palette, tiltX, tiltZ, particleCount = 260) => {
       const bhGroup = new THREE.Group();
 
-      // A. Event Horizon: True pitch-black faceted void absorbing light
+      // A. Event Horizon: True pitch-black faceted void absorbing all light
       const horizonGeo = new THREE.IcosahedronGeometry(radius, 2);
       const horizonMat = new THREE.MeshBasicMaterial({
-        color: 0x010204
+        color: 0x010103
       });
       const horizon = new THREE.Mesh(horizonGeo, horizonMat);
       bhGroup.add(horizon);
 
-      // B. Relativistic Ergosphere / Gravitational Wireframe Shell
-      const ergoGeo = new THREE.IcosahedronGeometry(radius * 1.22, 1);
-      const ergoMat = new THREE.MeshBasicMaterial({
-        color: 0xfbbf24,
+      // B. Dual Relativistic Ergosphere Shells (Frame-dragging low-poly geodesic cages)
+      const innerErgoGeo = new THREE.IcosahedronGeometry(radius * 1.11, 1);
+      const innerErgoMat = new THREE.MeshBasicMaterial({
+        color: 0xfef08a,
         wireframe: true,
         transparent: true,
-        opacity: 0.28
+        opacity: 0.22
       });
-      const ergo = new THREE.Mesh(ergoGeo, ergoMat);
-      bhGroup.add(ergo);
+      const innerErgo = new THREE.Mesh(innerErgoGeo, innerErgoMat);
+      bhGroup.add(innerErgo);
 
-      // C. Inner Photon Ring (Luminous border where photons orbit unstable paths)
-      const photonGeo = new THREE.TorusGeometry(radius * 1.05, 0.12, 6, 28);
+      const outerErgoGeo = new THREE.IcosahedronGeometry(radius * 1.28, 1);
+      const outerErgoMat = new THREE.MeshBasicMaterial({
+        color: palette.mid,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.16
+      });
+      const outerErgo = new THREE.Mesh(outerErgoGeo, outerErgoMat);
+      bhGroup.add(outerErgo);
+
+      // C. Photon Sphere & Relativistic Doppler Crescent
+      const photonGeo = new THREE.TorusGeometry(radius * 1.04, 0.11, 6, 32);
       const photonMat = new THREE.MeshBasicMaterial({
         color: 0xffffff,
         transparent: true,
-        opacity: 0.95
+        opacity: 0.98
       });
       const photonRing = new THREE.Mesh(photonGeo, photonMat);
       photonRing.rotation.x = Math.PI / 2;
       bhGroup.add(photonRing);
 
-      // D. Accretion Disk Assembly (Tilted low-poly swirling plasma)
-      const diskGroup = new THREE.Group();
-      diskGroup.rotation.x = tiltX;
-      diskGroup.rotation.z = tiltZ;
+      // Secondary tilted photon halo ring for multi-angle relativistic glow
+      const photonHaloGeo = new THREE.TorusGeometry(radius * 1.07, 0.06, 5, 28);
+      const photonHaloMat = new THREE.MeshBasicMaterial({
+        color: palette.core,
+        transparent: true,
+        opacity: 0.7
+      });
+      const photonHalo = new THREE.Mesh(photonHaloGeo, photonHaloMat);
+      bhGroup.add(photonHalo);
 
-      // Inner White-Hot Ring
-      const innerDiskGeo = new THREE.RingGeometry(radius * 1.15, radius * 2.2, 24, 1);
-      const innerDiskMat = new THREE.MeshStandardMaterial({
-        color: diskColorInner,
-        emissive: diskColorInner,
-        emissiveIntensity: 1.6,
+      // D. Multi-Tiered Interstellar Equatorial Accretion Disk Assembly
+      const diskAssembly = new THREE.Group();
+      diskAssembly.rotation.x = tiltX;
+      diskAssembly.rotation.z = tiltZ;
+
+      // Tier 1: Blinding White-Gold Innermost Stable Circular Orbit (ISCO)
+      const iscoGeo = createFacetedRing(radius * 1.12, radius * 1.75, 28, 2, 0.12, 7);
+      const iscoMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        emissive: palette.core,
+        emissiveIntensity: 2.0,
         flatShading: true,
-        roughness: 0.3,
+        roughness: 0.2,
         side: THREE.DoubleSide
       });
-      const innerDisk = new THREE.Mesh(innerDiskGeo, innerDiskMat);
-      innerDisk.rotation.x = Math.PI / 2;
-      diskGroup.add(innerDisk);
+      const iscoDisk = new THREE.Mesh(iscoGeo, iscoMat);
+      iscoDisk.rotation.x = Math.PI / 2;
+      diskAssembly.add(iscoDisk);
 
-      // Outer Fiery Plasma Rim
-      const outerDiskGeo = new THREE.RingGeometry(radius * 2.15, radius * 3.4, 24, 2);
-      const outerDiskMat = new THREE.MeshStandardMaterial({
-        color: diskColorOuter,
-        emissive: diskColorOuter,
-        emissiveIntensity: 0.9,
+      // Tier 2: Bright Golden-Amber Turbulent Mid Disk
+      const midDiskGeo = createFacetedRing(radius * 1.72, radius * 2.55, 32, 3, 0.22, 5);
+      const midDiskMat = new THREE.MeshStandardMaterial({
+        color: palette.mid,
+        emissive: palette.mid,
+        emissiveIntensity: 1.35,
         flatShading: true,
-        roughness: 0.4,
+        roughness: 0.35,
+        side: THREE.DoubleSide
+      });
+      const midDisk = new THREE.Mesh(midDiskGeo, midDiskMat);
+      midDisk.rotation.x = Math.PI / 2;
+      diskAssembly.add(midDisk);
+
+      // Tier 3: Deep Fiery Crimson/Orange Outer Accretion Rim
+      const outerDiskGeo = createFacetedRing(radius * 2.5, radius * 3.55, 32, 2, 0.28, 4);
+      const outerDiskMat = new THREE.MeshStandardMaterial({
+        color: palette.outer,
+        emissive: palette.outer,
+        emissiveIntensity: 0.85,
+        flatShading: true,
+        roughness: 0.5,
+        transparent: true,
+        opacity: 0.9,
         side: THREE.DoubleSide
       });
       const outerDisk = new THREE.Mesh(outerDiskGeo, outerDiskMat);
       outerDisk.rotation.x = Math.PI / 2;
-      diskGroup.add(outerDisk);
+      diskAssembly.add(outerDisk);
 
-      // Outer dust ring wireframe accents
-      const dustRingGeo = new THREE.TorusGeometry(radius * 3.35, 0.2, 4, 24);
-      const dustRingMat = new THREE.MeshBasicMaterial({
-        color: 0xf59e0b,
+      // Tier 4: Translucent Outer Plasma Veil & Low-Poly Wireframe Dust Filaments
+      const veilGeo = createFacetedRing(radius * 3.45, radius * 4.3, 28, 1, 0.35, 3);
+      const veilMat = new THREE.MeshBasicMaterial({
+        color: palette.outer,
         wireframe: true,
         transparent: true,
-        opacity: 0.5
+        opacity: 0.32
       });
-      const dustRing = new THREE.Mesh(dustRingGeo, dustRingMat);
-      dustRing.rotation.x = Math.PI / 2;
-      diskGroup.add(dustRing);
+      const veilDisk = new THREE.Mesh(veilGeo, veilMat);
+      veilDisk.rotation.x = Math.PI / 2;
+      diskAssembly.add(veilDisk);
 
-      bhGroup.add(diskGroup);
+      const outerDustTorus = new THREE.Mesh(
+        new THREE.TorusGeometry(radius * 3.6, 0.14, 4, 32),
+        new THREE.MeshBasicMaterial({
+          color: palette.mid,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.45
+        })
+      );
+      outerDustTorus.rotation.x = Math.PI / 2;
+      diskAssembly.add(outerDustTorus);
 
-      // E. Gravitational Lensing Halo (Curved optical illusion arc over the poles)
+      // Low-Poly Orbiting Plasma Clumps / Hotspots embedded in the disk
+      const shardGroup = new THREE.Group();
+      const shardGeo = new THREE.OctahedronGeometry(0.24, 0);
+      const shardMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        emissive: palette.core,
+        emissiveIntensity: 1.8,
+        flatShading: true
+      });
+      for (let s = 0; s < 14; s++) {
+        const shard = new THREE.Mesh(shardGeo, shardMat);
+        const sAngle = (s / 14) * Math.PI * 2 + (s % 3) * 0.4;
+        const sDist = radius * (1.35 + (s % 5) * 0.42);
+        shard.position.set(
+          Math.cos(sAngle) * sDist,
+          (Math.sin(s * 2.1) * 0.18),
+          Math.sin(sAngle) * sDist
+        );
+        const scale = 0.6 + (s % 4) * 0.35;
+        shard.scale.set(scale * 1.5, scale * 0.6, scale);
+        shard.rotation.set(s, s * 0.7, 0);
+        shardGroup.add(shard);
+      }
+      diskAssembly.add(shardGroup);
+
+      // E. Interstellar Gravitational Lensing Arches (Gargantua Warped Far-Side Disk)
+      // Light from the far side of the disk bends over the top AND under the bottom
       const lensGroup = new THREE.Group();
-      lensGroup.rotation.x = tiltX;
-      lensGroup.rotation.z = tiltZ;
 
-      const upperArcGeo = new THREE.TorusGeometry(radius * 1.9, 0.28, 6, 20, Math.PI);
-      const lensMat = new THREE.MeshBasicMaterial({
-        color: 0xf59e0b,
+      const buildLensedArch = (innerR, outerR, thetaStart, thetaLen, zBow, waveAmp, colorHex, emissiveHex, intensity, opacity) => {
+        const geo = new THREE.RingGeometry(innerR, outerR, 28, 3, thetaStart, thetaLen);
+        const posAttr = geo.attributes.position;
+        for (let i = 0; i < posAttr.count; i++) {
+          const vx = posAttr.getX(i);
+          const vy = posAttr.getY(i);
+          const r = Math.sqrt(vx * vx + vy * vy);
+          const theta = Math.atan2(vy, vx);
+          const normR = (r - innerR) / Math.max(0.001, outerR - innerR);
+          // Bow the lensed sheet gently around the black hole shadow in 3D + low-poly facets
+          const archCurve = Math.sin(Math.abs(theta)) * zBow * (1.0 - normR * 0.5);
+          const facet = Math.sin(theta * 8 + normR * 3) * waveAmp;
+          posAttr.setZ(i, archCurve + facet);
+        }
+        geo.computeVertexNormals();
+
+        const mat = new THREE.MeshStandardMaterial({
+          color: colorHex,
+          emissive: emissiveHex,
+          emissiveIntensity: intensity,
+          flatShading: true,
+          roughness: 0.25,
+          transparent: true,
+          opacity,
+          side: THREE.DoubleSide
+        });
+        return new THREE.Mesh(geo, mat);
+      };
+
+      // Primary Upper Lensed Halo (Sweeping over the north pole of the shadow)
+      const upperInnerLens = buildLensedArch(
+        radius * 1.06, radius * 1.52,
+        0, Math.PI,
+        0.95, 0.08,
+        0xffffff, palette.core, 1.85, 0.95
+      );
+      const upperOuterLens = buildLensedArch(
+        radius * 1.48, radius * 2.22,
+        0.04, Math.PI - 0.08,
+        0.75, 0.14,
+        palette.mid, palette.outer, 1.25, 0.85
+      );
+      const upperWireRib = new THREE.Mesh(
+        new THREE.TorusGeometry(radius * 2.22, 0.08, 4, 24, Math.PI),
+        new THREE.MeshBasicMaterial({
+          color: palette.core,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.55
+        })
+      );
+
+      // Secondary Lower Lensed Halo (Tighter inverted Einstein arch beneath the shadow)
+      const lowerInnerLens = buildLensedArch(
+        radius * 1.06, radius * 1.38,
+        Math.PI, Math.PI,
+        0.8, 0.06,
+        0xffffff, palette.core, 1.65, 0.9
+      );
+      const lowerOuterLens = buildLensedArch(
+        radius * 1.35, radius * 1.82,
+        Math.PI + 0.06, Math.PI - 0.12,
+        0.6, 0.11,
+        palette.mid, palette.outer, 1.05, 0.78
+      );
+
+      // Subtle orthogonal lensed rib so the Einstein halo retains 3D presence from side angles
+      const orthoLensGeo = new THREE.TorusGeometry(radius * 1.65, 0.16, 4, 24);
+      const orthoLensMat = new THREE.MeshBasicMaterial({
+        color: palette.mid,
         wireframe: true,
         transparent: true,
-        opacity: 0.65
+        opacity: 0.24
       });
-      const upperArc = new THREE.Mesh(upperArcGeo, lensMat);
-      upperArc.position.y = 0.2;
-      lensGroup.add(upperArc);
+      const orthoLens = new THREE.Mesh(orthoLensGeo, orthoLensMat);
+      orthoLens.rotation.y = Math.PI / 2;
 
-      const lowerArcGeo = new THREE.TorusGeometry(radius * 1.9, 0.28, 6, 20, Math.PI);
-      const lowerArc = new THREE.Mesh(lowerArcGeo, lensMat);
-      lowerArc.rotation.x = Math.PI;
-      lowerArc.position.y = -0.2;
-      lensGroup.add(lowerArc);
-
+      lensGroup.add(upperInnerLens, upperOuterLens, upperWireRib, lowerInnerLens, lowerOuterLens, orthoLens);
+      lensGroup.rotation.z = tiltZ * 0.6;
       bhGroup.add(lensGroup);
+
+      // F. Accretion Disk Swirling Ember Particle System
+      const pPositions = new Float32Array(particleCount * 3);
+      const pColors = new Float32Array(particleCount * 3);
+      const pMeta = []; // stores { angle, dist, speed, yOffset, baseDist }
+
+      const cCore = new THREE.Color(0xffffff);
+      const cMid = new THREE.Color(palette.core);
+      const cOuter = new THREE.Color(palette.outer);
+
+      for (let i = 0; i < particleCount; i++) {
+        const t = Math.pow(Math.random(), 0.75); // denser near the inner photon ring
+        const dist = radius * (1.15 + t * 3.1);
+        const angle = Math.random() * Math.PI * 2;
+        const yOffset = (Math.random() - 0.5) * (0.25 + t * 0.85);
+        // Keplerian differential speed: inner particles orbit noticeably faster
+        const speed = (1.8 / Math.sqrt(dist / radius)) * (0.85 + Math.random() * 0.3);
+
+        pPositions[i * 3] = Math.cos(angle) * dist;
+        pPositions[i * 3 + 1] = yOffset;
+        pPositions[i * 3 + 2] = Math.sin(angle) * dist;
+
+        const col = new THREE.Color();
+        if (t < 0.35) {
+          col.lerpColors(cCore, cMid, t / 0.35);
+        } else {
+          col.lerpColors(cMid, cOuter, (t - 0.35) / 0.65);
+        }
+        pColors[i * 3] = col.r;
+        pColors[i * 3 + 1] = col.g;
+        pColors[i * 3 + 2] = col.b;
+
+        pMeta.push({ angle, dist, baseDist: dist, speed, yOffset, phase: Math.random() * Math.PI * 2 });
+      }
+
+      const pGeo = new THREE.BufferGeometry();
+      pGeo.setAttribute("position", new THREE.BufferAttribute(pPositions, 3));
+      pGeo.setAttribute("color", new THREE.BufferAttribute(pColors, 3));
+
+      const pMat = new THREE.PointsMaterial({
+        size: 0.55,
+        map: particleTex,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.9,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+      });
+      const diskParticles = new THREE.Points(pGeo, pMat);
+      diskAssembly.add(diskParticles);
+
+      bhGroup.add(diskAssembly);
 
       return {
         group: bhGroup,
-        ergo,
-        diskGroup,
-        lensGroup
+        innerErgo,
+        outerErgo,
+        photonHalo,
+        diskAssembly,
+        iscoDisk,
+        midDisk,
+        outerDisk,
+        veilDisk,
+        shardGroup,
+        lensGroup,
+        diskParticles,
+        pMeta,
+        radius
       };
     };
 
-    // Primary Black Hole (Larger mass M1)
-    const bh1 = createSingleBlackHole(4.4, 0xfef08a, 0xe11d48, 0.35, 0.15);
+    // Primary Supermassive Black Hole (M1 - Gargantua White-Gold & Amber Palette)
+    const bh1 = createSingleBlackHole(
+      4.5,
+      { core: 0xfef08a, mid: 0xf59e0b, outer: 0xd97706 },
+      0.32,
+      0.14,
+      300
+    );
     group.add(bh1.group);
 
-    // Secondary Black Hole (Companion mass M2)
-    const bh2 = createSingleBlackHole(3.3, 0xfde047, 0xd97706, -0.3, -0.25);
+    // Companion Black Hole (M2 - Hot Gold & Crimson-Orange Palette)
+    const bh2 = createSingleBlackHole(
+      3.3,
+      { core: 0xfde047, mid: 0xea580c, outer: 0xbe123c },
+      -0.28,
+      -0.22,
+      220
+    );
     group.add(bh2.group);
 
-    // Tidal Relativistic Plasma Bridge connecting the two black holes
-    const bridgePoints = [];
-    for (let i = 0; i <= 16; i++) {
-      bridgePoints.push(new THREE.Vector3(0, 0, 0));
-    }
-    const bridgeGeo = new THREE.BufferGeometry().setFromPoints(bridgePoints);
-    const bridgeMat = new THREE.LineBasicMaterial({
-      color: 0xf59e0b,
-      transparent: true,
-      opacity: 0.85
-    });
-    const bridgeLine = new THREE.Line(bridgeGeo, bridgeMat);
-    group.add(bridgeLine);
+    // Multi-Strand Relativistic Tidal Plasma Bridge connecting the two horizons
+    const bridgeSegments = 24;
+    const createBridgeStrand = (colorHex, opacity) => {
+      const pts = [];
+      for (let i = 0; i <= bridgeSegments; i++) {
+        pts.push(new THREE.Vector3(0, 0, 0));
+      }
+      const geo = new THREE.BufferGeometry().setFromPoints(pts);
+      const mat = new THREE.LineBasicMaterial({
+        color: colorHex,
+        transparent: true,
+        opacity
+      });
+      const line = new THREE.Line(geo, mat);
+      group.add(line);
+      return line;
+    };
 
-    // Expanding Gravitational Wave Quadrupole Ripples (Spacetime distortions)
+    const bridgeCoreStrand = createBridgeStrand(0xfef08a, 0.9);
+    const bridgeUpperStrand = createBridgeStrand(0xf59e0b, 0.55);
+    const bridgeLowerStrand = createBridgeStrand(0xea580c, 0.55);
+
+    // Flowing Tidal Bridge Plasma Particles (Matter siphoned from M2 toward M1)
+    const bridgeParticleCount = 95;
+    const bpPositions = new Float32Array(bridgeParticleCount * 3);
+    const bpColors = new Float32Array(bridgeParticleCount * 3);
+    const bpMeta = [];
+
+    for (let i = 0; i < bridgeParticleCount; i++) {
+      const progress = Math.random();
+      bpMeta.push({
+        progress,
+        speed: 0.14 + Math.random() * 0.16,
+        radialSpread: (Math.random() - 0.5) * 1.4,
+        verticalSpread: (Math.random() - 0.5) * 1.2,
+        spiralOffset: Math.random() * Math.PI * 2
+      });
+      const c = new THREE.Color().setHSL(0.08 + progress * 0.06, 1.0, 0.55 + progress * 0.35);
+      bpColors[i * 3] = c.r;
+      bpColors[i * 3 + 1] = c.g;
+      bpColors[i * 3 + 2] = c.b;
+    }
+
+    const bpGeo = new THREE.BufferGeometry();
+    bpGeo.setAttribute("position", new THREE.BufferAttribute(bpPositions, 3));
+    bpGeo.setAttribute("color", new THREE.BufferAttribute(bpColors, 3));
+    const bpMat = new THREE.PointsMaterial({
+      size: 0.65,
+      map: particleTex,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.95,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    });
+    const bridgeParticles = new THREE.Points(bpGeo, bpMat);
+    group.add(bridgeParticles);
+
+    // Ambient Relativistic Dust & Hawking Sparkles across the binary system
+    const ambientCount = 140;
+    const ambPositions = new Float32Array(ambientCount * 3);
+    const ambColors = new Float32Array(ambientCount * 3);
+    const ambMeta = [];
+
+    for (let i = 0; i < ambientCount; i++) {
+      const r = 10 + Math.random() * 38;
+      const theta = Math.random() * Math.PI * 2;
+      const y = (Math.random() - 0.5) * 18;
+      ambPositions[i * 3] = Math.cos(theta) * r;
+      ambPositions[i * 3 + 1] = y;
+      ambPositions[i * 3 + 2] = Math.sin(theta) * r;
+
+      const c = new THREE.Color(i % 2 === 0 ? 0xfef08a : 0xf59e0b);
+      ambColors[i * 3] = c.r;
+      ambColors[i * 3 + 1] = c.g;
+      ambColors[i * 3 + 2] = c.b;
+
+      ambMeta.push({ r, theta, y, speed: (0.04 + Math.random() * 0.06) * (i % 2 === 0 ? 1 : -1) });
+    }
+
+    const ambGeo = new THREE.BufferGeometry();
+    ambGeo.setAttribute("position", new THREE.BufferAttribute(ambPositions, 3));
+    ambGeo.setAttribute("color", new THREE.BufferAttribute(ambColors, 3));
+    const ambMat = new THREE.PointsMaterial({
+      size: 0.45,
+      map: particleTex,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.6,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    });
+    const ambientParticles = new THREE.Points(ambGeo, ambMat);
+    group.add(ambientParticles);
+
+    // Expanding Gravitational Wave Quadrupole Ripples (Slow, majestic spacetime distortions)
     const gwRipples = [];
-    for (let i = 0; i < 5; i++) {
-      const rGeo = new THREE.RingGeometry(8 + i * 7, 9.6 + i * 7, 24);
+    for (let i = 0; i < 6; i++) {
+      const baseInner = 9 + i * 6.5;
+      const rGeo = new THREE.RingGeometry(baseInner, baseInner + 1.3, 32, 1);
       const rMat = new THREE.MeshBasicMaterial({
-        color: 0xf59e0b,
+        color: i % 2 === 0 ? 0xf59e0b : 0xfbbf24,
         wireframe: true,
         transparent: true,
-        opacity: 0.6,
+        opacity: 0.5,
         side: THREE.DoubleSide
       });
       const rMesh = new THREE.Mesh(rGeo, rMat);
@@ -294,60 +620,154 @@ window.AstroCelestial = {
     group.userData = {
       id: "b1913",
       name: "Gravitational Waves",
-      radius: 34,
+      radius: 36,
       time: 0,
-      orbitRadius1: 13.5,
-      orbitRadius2: 17.0,
-      update(delta) {
+      orbitRadius1: 14.0,
+      orbitRadius2: 17.5,
+      update(delta, camera) {
         this.time += delta;
-        const orbitSpeed = 1.25;
+
+        // Decreased orbital speed for heavy, majestic supermassive binary motion
+        const orbitSpeed = 0.32;
         const angle = this.time * orbitSpeed;
 
         // Dynamic Keplerian orbital positions around barycenter
         const x1 = Math.cos(angle) * this.orbitRadius1;
         const z1 = Math.sin(angle) * this.orbitRadius1;
-        const y1 = Math.sin(angle * 2) * 2.2;
+        const y1 = Math.sin(angle * 2) * 1.8;
         bh1.group.position.set(x1, y1, z1);
 
         const x2 = -Math.cos(angle) * this.orbitRadius2;
         const z2 = -Math.sin(angle) * this.orbitRadius2;
-        const y2 = -Math.sin(angle * 2) * 2.2;
+        const y2 = -Math.sin(angle * 2) * 1.8;
         bh2.group.position.set(x2, y2, z2);
 
-        // Intrinsic rotations (Accretion disk spin & ergosphere dragging)
-        bh1.diskGroup.rotation.y += delta * 3.8;
-        bh1.ergo.rotation.y += delta * 2.2;
-        bh1.ergo.rotation.z += delta * 1.1;
+        // Helper to animate differential accretion disk spin, ergosphere, lensing & particles
+        const animateBlackHole = (bh, spinDir) => {
+          // Differential Keplerian disk rotation (inner plasma spins faster than outer rim)
+          bh.iscoDisk.rotation.z += delta * 2.6 * spinDir;
+          bh.midDisk.rotation.z += delta * 1.65 * spinDir;
+          bh.outerDisk.rotation.z += delta * 0.95 * spinDir;
+          bh.veilDisk.rotation.z += delta * 0.55 * spinDir;
+          bh.shardGroup.rotation.y += delta * 1.4 * spinDir;
 
-        bh2.diskGroup.rotation.y += delta * 4.6;
-        bh2.ergo.rotation.y += delta * 2.6;
-        bh2.ergo.rotation.x -= delta * 1.4;
+          // Counter-rotating relativistic ergosphere cages
+          bh.innerErgo.rotation.y += delta * 1.3 * spinDir;
+          bh.innerErgo.rotation.z += delta * 0.6;
+          bh.outerErgo.rotation.y -= delta * 0.85 * spinDir;
+          bh.outerErgo.rotation.x += delta * 0.45;
 
-        // Dynamic Tidal Plasma Bridge between the two horizons
-        const posAttr = bridgeLine.geometry.attributes.position;
-        for (let i = 0; i <= 16; i++) {
-          const t = i / 16;
-          // Cubic Bezier-like curve curving through barycenter
-          const cx = (1 - t) * x1 + t * x2;
-          const cy = (1 - t) * y1 + t * y2 + Math.sin(t * Math.PI + this.time * 4) * 2.5;
-          const cz = (1 - t) * z1 + t * z2;
-          posAttr.setXYZ(i, cx, cy, cz);
+          // Subtle photon halo precession
+          bh.photonHalo.rotation.x = Math.sin(this.time * 0.7) * 0.25;
+          bh.photonHalo.rotation.y += delta * 0.9;
+
+          // Orient Gargantua lensing arches toward camera if camera reference is provided
+          if (camera && camera.position) {
+            const worldPos = new THREE.Vector3();
+            bh.group.getWorldPosition(worldPos);
+            const dx = camera.position.x - worldPos.x;
+            const dz = camera.position.z - worldPos.z;
+            bh.lensGroup.rotation.y = Math.atan2(dx, dz);
+          }
+
+          // Update swirling disk ember particles
+          const posArr = bh.diskParticles.geometry.attributes.position;
+          for (let i = 0; i < bh.pMeta.length; i++) {
+            const m = bh.pMeta[i];
+            m.angle += delta * m.speed * spinDir;
+            // Subtle radial breathing / spiral inward drift
+            const radialDrift = Math.sin(this.time * 1.2 + m.phase) * 0.25;
+            const curDist = m.baseDist + radialDrift;
+            const curY = m.yOffset + Math.cos(this.time * 1.8 + m.phase) * 0.08;
+            posArr.setXYZ(
+              i,
+              Math.cos(m.angle) * curDist,
+              curY,
+              Math.sin(m.angle) * curDist
+            );
+          }
+          posArr.needsUpdate = true;
+        };
+
+        animateBlackHole(bh1, 1);
+        animateBlackHole(bh2, 1.15);
+
+        // Update Multi-Strand Tidal Plasma Bridge between the two horizons
+        const coreAttr = bridgeCoreStrand.geometry.attributes.position;
+        const upperAttr = bridgeUpperStrand.geometry.attributes.position;
+        const lowerAttr = bridgeLowerStrand.geometry.attributes.position;
+
+        for (let i = 0; i <= bridgeSegments; i++) {
+          const t = i / bridgeSegments;
+          const archEnv = Math.sin(t * Math.PI);
+          const bx = (1 - t) * x2 + t * x1;
+          const by = (1 - t) * y2 + t * y1 + Math.sin(t * Math.PI * 2 + this.time * 1.8) * 1.8 * archEnv;
+          const bz = (1 - t) * z2 + t * z1 + Math.cos(t * Math.PI + this.time * 1.4) * 1.4 * archEnv;
+
+          coreAttr.setXYZ(i, bx, by, bz);
+          upperAttr.setXYZ(i, bx, by + 0.65 * archEnv, bz + 0.45 * archEnv);
+          lowerAttr.setXYZ(i, bx, by - 0.65 * archEnv, bz - 0.45 * archEnv);
         }
-        posAttr.needsUpdate = true;
+        coreAttr.needsUpdate = true;
+        upperAttr.needsUpdate = true;
+        lowerAttr.needsUpdate = true;
 
-        // Animate gravitational wave ripples expanding outward from barycenter
+        // Update Flowing Tidal Bridge Particles (siphoning from BH2 -> BH1)
+        const bpAttr = bridgeParticles.geometry.attributes.position;
+        for (let i = 0; i < bpMeta.length; i++) {
+          const m = bpMeta[i];
+          m.progress = (m.progress + delta * m.speed) % 1.0;
+          const t = m.progress;
+          const archEnv = Math.sin(t * Math.PI);
+
+          const baseX = (1 - t) * x2 + t * x1;
+          const baseY = (1 - t) * y2 + t * y1 + Math.sin(t * Math.PI * 2 + this.time * 1.8) * 1.8 * archEnv;
+          const baseZ = (1 - t) * z2 + t * z1 + Math.cos(t * Math.PI + this.time * 1.4) * 1.4 * archEnv;
+
+          const swirl = this.time * 2.5 + m.spiralOffset + t * 6.0;
+          bpAttr.setXYZ(
+            i,
+            baseX + Math.cos(swirl) * m.radialSpread * archEnv,
+            baseY + Math.sin(swirl) * m.verticalSpread * archEnv,
+            baseZ + Math.sin(swirl) * m.radialSpread * archEnv
+          );
+        }
+        bpAttr.needsUpdate = true;
+
+        // Update Ambient Relativistic Dust
+        const ambAttr = ambientParticles.geometry.attributes.position;
+        for (let i = 0; i < ambMeta.length; i++) {
+          const m = ambMeta[i];
+          m.theta += delta * m.speed;
+          ambAttr.setXYZ(
+            i,
+            Math.cos(m.theta) * m.r,
+            m.y + Math.sin(this.time * 0.6 + i) * 0.4,
+            Math.sin(m.theta) * m.r
+          );
+        }
+        ambAttr.needsUpdate = true;
+
+        // Decreased Gravitational Wave Propagation Speed + Quadrupole Strain Oscillation
+        const gwSpeed = 0.22;
         gwRipples.forEach((r, idx) => {
-          const t = (this.time * 0.75 + idx * 0.4) % 2.0;
-          r.scale.set(1 + t * 2.4, 1 + t * 2.4, 1);
-          r.material.opacity = Math.max(0, 0.7 - t * 0.32);
+          const cycle = 2.4;
+          const t = (this.time * gwSpeed + idx * (cycle / gwRipples.length)) % cycle;
+          const normT = t / cycle;
+          const baseScale = 1 + normT * 2.3;
+          // Quadrupole h+ strain: stretches along one axis while squeezing perpendicular axis
+          const strain = Math.sin(this.time * 1.4 + idx) * 0.06 * (1 - normT * 0.5);
+          r.scale.set(baseScale * (1 + strain), baseScale * (1 - strain), 1);
+          r.rotation.z = angle * 0.5;
+          r.material.opacity = Math.sin(normT * Math.PI) * 0.55;
         });
       }
     };
 
     scene.add(group);
     return group;
-  },  
-  
+  },
+
   // Backward compatibility alias
   createBinaryPulsar(scene, pos) {
     return this.createBinaryBlackHoles(scene, pos);
