@@ -26,30 +26,15 @@
   <!-- CRT Retro Scanline Grid Effect -->
   <div class="crt-scanlines"></div>
 
-  <!-- 3D WebGL Canvas Viewport -->
-  <div id="canvas-container"></div>
-
   <!-- React 18 Application Root -->
   <div id="react-root"></div>
 
   <!-- Application Logic Scripts (Relative Paths) -->
   <script src="./js/data.js"></script>
   <script src="./js/celestial.js"></script>
-  <script src="./js/scene.js"></script>
 
   <!-- React JSX Application (Transpiled client-side via Babel for static GitHub Pages) -->
   <script type="text/babel" src="./js/app.jsx"></script>
-
-  <!-- Initialize 3D Universe on Load -->
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      if (window.AstroScene && window.THREE) {
-        window.AstroScene.init('canvas-container');
-      } else {
-        console.warn("Three.js or AstroScene initializing...");
-      }
-    });
-  </script>
 
   <!-- Star Background -->
   <script>
