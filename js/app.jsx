@@ -92,21 +92,33 @@ function AstroApp() {
     // model geometry remain intact; only this launch-scene instance is dimmed.
     modelRoots.forEach((root) => {
       if (!root) return;
-
+    
       root.traverse((object) => {
-        if (object.isLight) {
-          object.intensity *= 0.32;
-        }
-
+        if (object.isLight) object.intensity *= 0.32;
         if (!object.material) return;
-
+    
         const materials = Array.isArray(object.material)
           ? object.material
           : [object.material];
-
+    
+        // Check whether this object belongs to the Green Bank Telescope
+        let isTelescope = false;
+        let parent = object;
+    
+        while (parent) {
+          if (parent.userData?.isTelescope) {
+            isTelescope = true;
+            break;
+          }
+          parent = parent.parent;
+        }
+    
         materials.forEach((material) => {
           material.transparent = true;
-          material.opacity = (material.opacity ?? 1) * 0.34;
+    
+          const opacity = isTelescope ? 0.75 : 0.34;
+          material.opacity = (material.opacity ?? 1) * opacity;
+    
           material.depthWrite = false;
           material.needsUpdate = true;
         });
