@@ -155,9 +155,9 @@ window.AstroCelestial = {
 // --------------------------------------------------------------------------
   // 2. RELATIVISTIC BINARY BLACK HOLES (GARGANTUA / GW150914 ANALOG)
   // Low-poly binary black holes with unified Gargantua gold-amber palette,
-  // clean pitch-black horizons (no filled shells/shields around them),
-  // striated Interstellar-style accretion disks, filament lensing arcs,
-  // multi-layer particle effects, tidal plasma bridge, and slow GW ripples
+  // camera-facing circular event horizons & photon rings, glowing lensing
+  // halos, striated Interstellar-style accretion disks, proportionally
+  // dimmer companion, tidal plasma bridge, and slow GW ripples
   // --------------------------------------------------------------------------
   createBinaryBlackHoles(scene, pos) {
     const group = new THREE.Group();
@@ -227,13 +227,13 @@ window.AstroCelestial = {
       for (let i = 0; i < bandCount; i++) {
         const t = i / bandCount;
         const r = innerPx + (half - innerPx) * (0.04 + t * 0.92);
-        const startAngle = ((i * 2.39996 + seedOffset) % (Math.PI * 2));
+        const startAngle = (i * 2.39996 + seedOffset) % (Math.PI * 2);
         const arcLen = Math.PI * (0.55 + ((i * 7) % 10) * 0.14);
 
         const isDarkLane = i % 5 === 0 && t > 0.15;
         ctx.beginPath();
         ctx.arc(half, half, r, startAngle, startAngle + arcLen);
-        ctx.lineWidth = isDarkLane ? 2.8 : (1.2 + (1 - t) * 2.6);
+        ctx.lineWidth = isDarkLane ? 2.8 : 1.2 + (1 - t) * 2.6;
 
         if (isDarkLane) {
           ctx.strokeStyle = `rgba(30, 12, 2, ${0.38 * (1 - t * 0.6)})`;
@@ -252,8 +252,41 @@ window.AstroCelestial = {
       return tex;
     };
 
+    // Procedural soft radial glow texture for gravitational lensing halos
+    const createLensGlowTexture = (innerRatio) => {
+      if (typeof document === "undefined") return null;
+      const size = 256;
+      const half = size / 2;
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d");
+
+      ctx.clearRect(0, 0, size, size);
+
+      const innerPx = half * innerRatio;
+      const grad = ctx.createRadialGradient(half, half, innerPx, half, half, half);
+      grad.addColorStop(0.0, "rgba(255, 255, 255, 0.0)");
+      grad.addColorStop(0.08, "rgba(255, 252, 235, 0.85)");
+      grad.addColorStop(0.26, "rgba(254, 240, 138, 0.62)");
+      grad.addColorStop(0.55, "rgba(245, 158, 11, 0.30)");
+      grad.addColorStop(0.82, "rgba(180, 83, 9, 0.10)");
+      grad.addColorStop(1.0, "rgba(0, 0, 0, 0.0)");
+
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(half, half, half, 0, Math.PI * 2);
+      ctx.fill();
+
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.needsUpdate = true;
+      return tex;
+    };
+
     const mainDiskTex = createAccretionDiskTexture(0.26, 0);
     const shearDiskTex = createAccretionDiskTexture(0.28, 3.14);
+    const upperLensGlowTex = createLensGlowTexture(0.55);
+    const lowerLensGlowTex = createLensGlowTexture(0.64);
 
     // Helper: Create slightly faceted low-poly disk geometry with subtle radial waves
     const createFacetedDiskGeo = (innerR, outerR, thetaSegs, phiSegs, waveAmp, waveFreq) => {
@@ -272,27 +305,29 @@ window.AstroCelestial = {
       return geo;
     };
 
-    // Helper: Build a single Interstellar-style low-poly black hole
-    const createSingleBlackHole = (radius, tiltX, tiltZ, particleCount = 340) => {
+    // Helper: Build a single Interstellar-style black hole with proportional brightness
+    const createSingleBlackHole = (radius, tiltX, tiltZ, particleCount = 340, brightness = 1.0) => {
       const bhGroup = new THREE.Group();
 
-      // A. Event Horizon: Clean, pitch-black low-poly void (no surrounding solid shells)
-      const horizonGeo = new THREE.IcosahedronGeometry(radius, 2);
+      // A. Event Horizon: Camera-facing pitch-black circle (always reads as a clean circle)
+      const horizonGeo = new THREE.CircleGeometry(radius, 36);
       const horizonMat = new THREE.MeshBasicMaterial({
-        color: 0x010102
+        color: 0x010102,
+        side: THREE.DoubleSide
       });
       const horizon = new THREE.Mesh(horizonGeo, horizonMat);
       bhGroup.add(horizon);
 
-      // B. Razor-Sharp Photon Ring (Luminous white-gold light boundary hugging the shadow)
-      const photonGeo = new THREE.TorusGeometry(radius * 1.03, 0.085, 6, 36);
+      // B. Razor-Sharp Photon Ring (Camera-facing luminous light boundary hugging the shadow)
+      const photonGeo = new THREE.TorusGeometry(radius * 1.03, 0.085, 8, 40);
       const photonMat = new THREE.MeshBasicMaterial({
         color: gargantuaPalette.whiteHot,
         transparent: true,
-        opacity: 0.96
+        opacity: 0.96 * brightness,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
       });
       const photonRing = new THREE.Mesh(photonGeo, photonMat);
-      photonRing.rotation.x = Math.PI / 2;
       bhGroup.add(photonRing);
 
       // C. Interstellar Striated Equatorial Accretion Disk Assembly
@@ -306,7 +341,7 @@ window.AstroCelestial = {
         map: mainDiskTex,
         color: 0xffffff,
         transparent: true,
-        opacity: 0.96,
+        opacity: 0.96 * brightness,
         side: THREE.DoubleSide,
         depthWrite: false,
         blending: THREE.AdditiveBlending
@@ -321,7 +356,7 @@ window.AstroCelestial = {
         map: shearDiskTex,
         color: gargantuaPalette.core,
         transparent: true,
-        opacity: 0.58,
+        opacity: 0.58 * brightness,
         side: THREE.DoubleSide,
         depthWrite: false,
         blending: THREE.AdditiveBlending
@@ -337,7 +372,7 @@ window.AstroCelestial = {
         map: mainDiskTex,
         color: gargantuaPalette.whiteHot,
         transparent: true,
-        opacity: 0.85,
+        opacity: 0.85 * brightness,
         side: THREE.DoubleSide,
         depthWrite: false,
         blending: THREE.AdditiveBlending
@@ -374,7 +409,7 @@ window.AstroCelestial = {
         const fMat = new THREE.LineBasicMaterial({
           color: cfg.color,
           transparent: true,
-          opacity: cfg.opacity,
+          opacity: cfg.opacity * brightness,
           blending: THREE.AdditiveBlending
         });
         const fLoop = new THREE.LineLoop(fGeo, fMat);
@@ -382,8 +417,36 @@ window.AstroCelestial = {
         filamentRings.push({ mesh: fLoop, speed: cfg.speed });
       });
 
-      // D. Interstellar Gravitational Lensing Halo (Thin Light Filaments + Particles ONLY — no filled meshes)
+      // D. Interstellar Gravitational Lensing Halo (Soft Accretion-Style Glow + Light Filaments + Particles)
       const lensGroup = new THREE.Group();
+
+      // Soft glowing upper lensing band (matches accretion disk warmth & additive bloom)
+      const upperGlowGeo = new THREE.RingGeometry(radius * 1.02, radius * 1.85, 36, 1, 0.04, Math.PI - 0.08);
+      const upperGlowMat = new THREE.MeshBasicMaterial({
+        map: upperLensGlowTex,
+        color: gargantuaPalette.core,
+        transparent: true,
+        opacity: 0.72 * brightness,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+      });
+      const upperGlowMesh = new THREE.Mesh(upperGlowGeo, upperGlowMat);
+      lensGroup.add(upperGlowMesh);
+
+      // Soft glowing lower lensing band
+      const lowerGlowGeo = new THREE.RingGeometry(radius * 1.02, radius * 1.56, 32, 1, Math.PI + 0.06, Math.PI - 0.12);
+      const lowerGlowMat = new THREE.MeshBasicMaterial({
+        map: lowerLensGlowTex,
+        color: gargantuaPalette.mid,
+        transparent: true,
+        opacity: 0.56 * brightness,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+      });
+      const lowerGlowMesh = new THREE.Mesh(lowerGlowGeo, lowerGlowMat);
+      lensGroup.add(lowerGlowMesh);
 
       const addLensedLightArc = (arcRadius, startAng, endAng, segs, zBow, colorHex, opacity) => {
         const pts = [];
@@ -403,7 +466,7 @@ window.AstroCelestial = {
         const mat = new THREE.LineBasicMaterial({
           color: colorHex,
           transparent: true,
-          opacity,
+          opacity: opacity * brightness,
           blending: THREE.AdditiveBlending
         });
         lensGroup.add(new THREE.Line(geo, mat));
@@ -421,7 +484,7 @@ window.AstroCelestial = {
       addLensedLightArc(radius * 1.48, Math.PI + 0.18, Math.PI * 2 - 0.18, 22, 0.42, gargantuaPalette.mid, 0.3);
 
       // Glowing particles flowing along the upper & lower gravitationally lensed light bends
-      const lensParticleCount = 90;
+      const lensParticleCount = Math.max(30, Math.round(90 * brightness));
       const lpPositions = new Float32Array(lensParticleCount * 3);
       const lpColors = new Float32Array(lensParticleCount * 3);
       const lpMeta = [];
@@ -456,14 +519,13 @@ window.AstroCelestial = {
         map: particleTex,
         vertexColors: true,
         transparent: true,
-        opacity: 0.85,
+        opacity: 0.85 * brightness,
         depthWrite: false,
         blending: THREE.AdditiveBlending
       });
       const lensParticles = new THREE.Points(lpGeo, lpMat);
       lensGroup.add(lensParticles);
 
-      lensGroup.rotation.z = tiltZ * 0.65;
       bhGroup.add(lensGroup);
 
       // E. Accretion Disk Swirling Ember Particle System (Keplerian differential shear)
@@ -517,7 +579,7 @@ window.AstroCelestial = {
         map: particleTex,
         vertexColors: true,
         transparent: true,
-        opacity: 0.92,
+        opacity: 0.92 * brightness,
         depthWrite: false,
         blending: THREE.AdditiveBlending
       });
@@ -528,6 +590,8 @@ window.AstroCelestial = {
 
       return {
         group: bhGroup,
+        horizon,
+        photonRing,
         diskAssembly,
         mainDisk,
         shearDisk,
@@ -541,11 +605,12 @@ window.AstroCelestial = {
       };
     };
 
-    // Primary Black Hole (M1) & Companion Black Hole (M2) — identical Gargantua color palette
-    const bh1 = createSingleBlackHole(4.5, 0.3, 0.14, 360);
+    // Primary Black Hole (M1) & Smaller, Proportionally Dimmer Companion (M2)
+    // Area/particle ratio: (3.3 / 4.5)^2 ≈ 0.54 -> fewer particles and proportionally dimmer glow
+    const bh1 = createSingleBlackHole(4.5, 0.3, 0.14, 360, 1.0);
     group.add(bh1.group);
 
-    const bh2 = createSingleBlackHole(3.3, -0.26, -0.2, 260);
+    const bh2 = createSingleBlackHole(3.3, -0.26, -0.2, 195, 0.56);
     group.add(bh2.group);
 
     // Multi-Strand Relativistic Tidal Plasma Bridge connecting the two horizons
@@ -701,13 +766,11 @@ window.AstroCelestial = {
             f.mesh.rotation.y += delta * f.speed * spinDir;
           });
 
-          // Orient lensing light arcs toward the camera if provided
+          // Keep event horizon, photon ring, and lensing halo circular & facing the camera
           if (camera && camera.position) {
-            const worldPos = new THREE.Vector3();
-            bh.group.getWorldPosition(worldPos);
-            const dx = camera.position.x - worldPos.x;
-            const dz = camera.position.z - worldPos.z;
-            bh.lensGroup.rotation.y = Math.atan2(dx, dz);
+            bh.horizon.lookAt(camera.position);
+            bh.photonRing.lookAt(camera.position);
+            bh.lensGroup.lookAt(camera.position);
           }
 
           // Animate particles streaming over the gravitationally lensed arcs
@@ -828,7 +891,6 @@ window.AstroCelestial = {
   createBinaryPulsar(scene, pos) {
     return this.createBinaryBlackHoles(scene, pos);
   },
-
 
 
 
