@@ -59,14 +59,16 @@
   content: "";
   position: absolute;
   inset: -120px -180px;
+
   background: radial-gradient(
     ellipse at center,
-    rgba(8, 20, 48, 0.95) 0%,
-    rgba(12, 30, 68, 0.85) 35%,
-    rgba(15, 35, 75, 0.55) 55%,
-    rgba(15, 35, 75, 0.20) 75%,
+    rgba(15, 23, 42, 0.97) 0%,
+    rgba(15, 23, 42, 0.88) 35%,
+    rgba(9, 13, 22, 0.72) 60%,
+    rgba(9, 13, 22, 0.30) 80%,
     transparent 100%
   );
+
   border-radius: 50%;
   z-index: -1;
   pointer-events: none;
