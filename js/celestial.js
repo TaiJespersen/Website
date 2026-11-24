@@ -346,8 +346,8 @@ window.AstroCelestial = {
 
     scene.add(group);
     return group;
-  },
-
+  },  
+  
   // Backward compatibility alias
   createBinaryPulsar(scene, pos) {
     return this.createBinaryBlackHoles(scene, pos);
@@ -468,7 +468,7 @@ window.AstroCelestial = {
       legA.rotation.x = 0.22;
       legA.rotation.z = side * -0.2; // Added an outward lean to brace the wide dish
       alidadeTurret.add(legA);
-    
+
       const legB = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.5, 6.5, 5), steelTrussMat);
       legB.position.set(side * 4.5, 3.2, 1.4); // Pushed outward
       legB.rotation.x = -0.22;
@@ -520,24 +520,24 @@ window.AstroCelestial = {
     boomLeg2.rotation.x = 0.75;
     boomLeg2.rotation.z = 0.15;
     boomGroup.add(boomLeg2);
-  
+
     // Focal Cabin & Gregorian Subreflector (Mounted directly to the main boom legs)
     const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.2, 1.6), steelTrussMat);
-    
+
     // Positioned perfectly over the very center of the dish bowl
     cabin.position.set(0, 10.0, 0.2);  
     cabin.rotation.x = -0.25; // Tilted downward so the receiver stares into the center of the dish
-    
+
     const subReflector = new THREE.Mesh(new THREE.DodecahedronGeometry(0.8), dishPanelMat);
     subReflector.position.set(0, -0.8, 0);
     cabin.add(subReflector);
-    
+
     // Active receiver laser strobe
     const strobeMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
     const strobe = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.4), strobeMat);
     strobe.position.set(0, -1.6, 0);
     cabin.add(strobe);
-    
+
     boomGroup.add(cabin);
 
     dishMount.add(boomGroup); // Attaching it back to the dish!
@@ -602,7 +602,7 @@ window.AstroCelestial = {
     // Connect the radio observatory to the pulsars
     const obsPos = celestialObjects.observatory.position.clone();
     obsPos.y += 29.4;
-    
+
     const targets = [
       celestialObjects.j1713.position,
       celestialObjects.b1913.position,
@@ -699,7 +699,7 @@ window.AstroCelestial = {
     }
     planetGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-    const planetMat = new THREE.MeshStandardMaterial({
+      const planetMat = new THREE.MeshStandardMaterial({
       vertexColors: true,
       flatShading: true,
       roughness: 0.9,
@@ -1049,7 +1049,7 @@ window.AstroCelestial = {
       }
     };
 
-    // Body 1: Primary Cratered Chondrite Moon (Slate grey)
+      // Body 1: Primary Cratered Chondrite Moon (Slate grey)
     const body1Group = new THREE.Group();
     const body1 = new THREE.Mesh(
       new THREE.IcosahedronGeometry(9.5, 2),
@@ -1319,5 +1319,19 @@ window.AstroCelestial = {
     };
 
     scene.add(group);
+  },
+
+
+  // --------------------------------------------------------------------------
+  // LAUNCH SCREEN SELECTION
+  // Creates only the three models used behind the portfolio landing screen.
+  // --------------------------------------------------------------------------
+  createLaunchScene(scene) {
+    return [
+      this.createMillisecondPulsar(scene, { x: -43, y: 12, z: -150 }),
+      this.createBinaryBlackHoles(scene, { x: 43, y: 2, z: -165 }),
+      this.createRadioObservatory(scene, { x: 0, y: -38, z: -205 })
+    ];
   }
+
 };
