@@ -399,18 +399,7 @@ window.AstroCelestial = {
         palette.mid, palette.outer, 1.05, 0.78
       );
 
-      // Subtle orthogonal lensed rib so the Einstein halo retains 3D presence from side angles
-      const orthoLensGeo = new THREE.TorusGeometry(radius * 1.65, 0.16, 4, 24);
-      const orthoLensMat = new THREE.MeshBasicMaterial({
-        color: palette.mid,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.24
-      });
-      const orthoLens = new THREE.Mesh(orthoLensGeo, orthoLensMat);
-      orthoLens.rotation.y = Math.PI / 2;
-
-      lensGroup.add(upperInnerLens, upperOuterLens, upperWireRib, lowerInnerLens, lowerOuterLens, orthoLens);
+      lensGroup.add(upperInnerLens, upperOuterLens, upperWireRib, lowerInnerLens, lowerOuterLens);
       lensGroup.rotation.z = tiltZ * 0.6;
       bhGroup.add(lensGroup);
 
