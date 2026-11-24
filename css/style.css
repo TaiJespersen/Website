@@ -58,15 +58,16 @@
 .landing-card::before {
   content: "";
   position: absolute;
-  inset: -120px -180px;
+  inset: -180px -250px;
 
   background: radial-gradient(
     ellipse at center,
     rgba(15, 23, 42, 1.0) 0%,
-    rgba(15, 23, 42, 1.0) 30%,
-    rgba(15, 23, 42, 0.85) 50%,
-    rgba(15, 23, 42, 0.50) 70%,
-    rgba(15, 23, 42, 0.0) 100%
+    rgba(15, 23, 42, 0.95) 25%,
+    rgba(15, 23, 42, 0.75) 45%,
+    rgba(15, 23, 42, 0.45) 65%,
+    rgba(15, 23, 42, 0.15) 85%,
+    rgba(15, 23, 42, 0) 100%
   );
 
   border-radius: 50%;
