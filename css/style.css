@@ -26,7 +26,10 @@
     Roboto, 'Inter', sans-serif;
 }
 
-/* Three.js celestial background */
+/* ============================================================================
+   THREE.JS CELESTIAL BACKGROUND
+   ============================================================================ */
+
 #launch-cosmos {
   position: absolute;
   inset: 0;
@@ -41,13 +44,40 @@
   display: block;
   width: 100%;
   height: 100%;
+
+  /*
+     Fade celestial objects behind the landing text.
+
+     This masks the canvas itself rather than adding a colored
+     overlay, preserving the original background completely.
+  */
+
+  -webkit-mask-image: radial-gradient(
+    ellipse 42% 48% at 50% 55%,
+    rgba(0, 0, 0, 0.12) 0%,
+    rgba(0, 0, 0, 0.18) 35%,
+    rgba(0, 0, 0, 0.35) 55%,
+    rgba(0, 0, 0, 0.65) 78%,
+    rgba(0, 0, 0, 1) 100%
+  );
+
+  mask-image: radial-gradient(
+    ellipse 42% 48% at 50% 55%,
+    rgba(0, 0, 0, 0.12) 0%,
+    rgba(0, 0, 0, 0.18) 35%,
+    rgba(0, 0, 0, 0.35) 55%,
+    rgba(0, 0, 0, 0.65) 78%,
+    rgba(0, 0, 0, 1) 100%
+  );
 }
 
-/* Landing screen content with blue radial text backdrop */
+/* ============================================================================
+   LANDING SCREEN CONTENT
+   ============================================================================ */
+
 .landing-card {
   position: relative;
   z-index: 1;
-  isolation: isolate;
   background: transparent;
   border: none;
   box-shadow: none;
@@ -55,26 +85,10 @@
   text-align: center;
 }
 
-.landing-card::before {
-  content: "";
-  position: absolute;
-  inset: -180px -250px;
+/* ============================================================================
+   LANDING SCREEN ENTRANCE ANIMATION
+   ============================================================================ */
 
-  background: radial-gradient(
-    ellipse at center,
-    rgba(15, 23, 42, 1.0) 0%,
-    rgba(15, 23, 42, 0.95) 25%,
-    rgba(15, 23, 42, 0.75) 45%,
-    rgba(15, 23, 42, 0.45) 65%,
-    rgba(15, 23, 42, 0.15) 85%,
-    rgba(15, 23, 42, 0) 100%
-  );
-
-  border-radius: 50%;
-  z-index: -1;
-  pointer-events: none;
-}
-/* Landing screen entrance animation */
 @keyframes landingFadeIn {
   from {
     opacity: 0;
@@ -86,7 +100,10 @@
   }
 }
 
-/* Landing screen typography */
+/* ============================================================================
+   LANDING SCREEN TYPOGRAPHY
+   ============================================================================ */
+
 .landing-name {
   font-size: 2.75rem;
   font-weight: 700;
@@ -119,7 +136,10 @@
   margin-right: auto;
 }
 
-/* Landing screen buttons */
+/* ============================================================================
+   LANDING SCREEN BUTTONS
+   ============================================================================ */
+
 .landing-actions {
   display: flex;
   gap: 16px;
@@ -172,7 +192,10 @@
   font-size: 1.05rem;
 }
 
-/* Responsive landing screen */
+/* ============================================================================
+   RESPONSIVE LANDING SCREEN
+   ============================================================================ */
+
 @media (max-width: 600px) {
   .landing-screen {
     padding: 20px;
