@@ -168,7 +168,7 @@ const closeModal = () => {
 
             <h1 className="landing-name">Tai Jespersen</h1>
             <p className="landing-role">PhD Student · Gravitational Wave & Pulsar Astronomy</p>
-            <p className="landing-inst">Center for Gravitational Cosmology and Astrophysics · UW-Milwaukee</p>
+            <p className="landing-inst">Center for Gravitation, Cosmology, and Astrophysics · UW-Milwaukee</p>
 
             <p className="landing-bio-snippet">
               
