@@ -1,310 +1,350 @@
+
 // ============================================================================
-// REACT APPLICATION: ASTRO-OS VIDEOGAME HUD, RADAR & TERMINAL MODALS
+// REACT APPLICATION: ASTRO-OS 3D RESEARCH ENVIRONMENT & ACADEMIC PORTFOLIO
 // Framework: React 18 (Loaded via CDN / Static GitHub Pages Ready)
 // ============================================================================
 
-const { useState, useEffect, useRef } = React;
+const { useState, useEffect } = React;
 
 function AstroApp() {
+
   // =========================================
   // 1. STATE DECLARATIONS
   // =========================================
-  const [activeModal, setActiveModal] = useState(null);
-  const [selectedTarget, setSelectedTarget] = useState(window.AstroData.destinations[0]);
-  const [telemetry, setTelemetry] = useState({ speed: 0, coords: { x: 0, y: 0, z: 40 } });
-  const [nearest, setNearest] = useState(null);
-  const [canDock, setCanDock] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
-  const [viewMode, setViewMode] = useState('landing'); 
-  const [pubCategory, setPubCategory] = useState('all');
-  const [copiedBibId, setCopiedBibId] = useState(null);
-  const [simTab, setSimTab] = useState('hellings-downs'); 
-  const [contactState, setContactState] = useState({ name: '', email: '', message: '', status: 'idle' });
-  const [audioPulsarActive, setAudioPulsarActive] = useState(false);
-  const [markers, setMarkers] = useState([]);
-  const [hoveredDest, setHoveredDest] = useState(null);
-  const initialCoordsRef = useRef({ x: 0, y: 0, z: 40 });
+
+  const [viewMode, setViewMode] = useState('landing');
+  const [telemetry, setTelemetry] = useState({
+    speed: 0,
+    coords: { x: 0, y: 0, z: 40 }
+  });
 
   // =========================================
-  // 2. EFFECTS & DISPATCHERS
+  // 2. THREE.JS TELEMETRY DISPATCHER
   // =========================================
+
   useEffect(() => {
-    // Expose state dispatcher to Three.js game loop
+
+    // Expose telemetry dispatcher to Three.js game loop
     window.AstroAppDispatch = (action) => {
+
       if (action.type === 'UPDATE_TELEMETRY') {
         setTelemetry(action.payload);
-        if (action.payload.markers) {
-          setMarkers(action.payload.markers);
-        }
-        
-        // Find nearest destination
-        let closest = null;
-        let minDist = Infinity;
-        window.AstroData.destinations.forEach(d => {
-          if (typeof d.currentDistance === 'number' && d.currentDistance < minDist) {
-            minDist = d.currentDistance;
-            closest = d;
-          }
-        });
-
-        setNearest(closest);
-        setCanDock(minDist < 42);
-      } else if (action.type === 'TARGET_DESTINATION') {
-        setSelectedTarget(action.payload);
-        if (window.astroAudio) window.astroAudio.playLockOn();
-      } else if (action.type === 'HOVER_DESTINATION') {
-        setHoveredDest(action.payload);
-      } else if (action.type === 'OPEN_DESTINATION_MODAL') {
-        setSelectedTarget(action.payload);
-        openModal(action.payload.modalId);
       }
+
     };
 
-    // Keyboard shortcuts
-    const handleKeyDown = (e) => {
-      if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
-
-      if (e.key === 'Escape') {
-        closeModal();
-      } else if (e.key === 'e' || e.key === 'E') {
-        if (canDock && nearest) {
-          openModal(nearest.modalId);
-        }
-      } else if (['1', '2', '3', '4', '5'].includes(e.key)) {
-        const dest = window.AstroData.destinations.find(d => d.key === e.key);
-        if (dest) {
-          warpTo(dest);
-        }
-      } else if (e.key === 'm' || e.key === 'M') {
-        toggleSound();
-      }
+    return () => {
+      delete window.AstroAppDispatch;
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [canDock, nearest]);
+  }, []);
 
   // =========================================
-  // 3. HELPER FUNCTIONS
+  // 3. MAIN RENDER / UI
   // =========================================
-  const toggleSound = () => {
-    const muted = window.astroAudio.toggleMute();
-    setIsMuted(muted);
-  };
 
-  const warpTo = (dest) => {
-      setSelectedTarget(dest);
-      if (window.AstroShip) {
-        // Initiate warp and pass the callback
-        window.AstroShip.warpTo(dest.coords, () => {
-          setCanDock(true);
-          // Automatically open the terminal menu for this destination!
-          openModal(dest.modalId); 
-        });
-      }
-    };
-
-  const openModal = (modalId) => {
-    setActiveModal(modalId);
-    if (window.astroAudio) window.astroAudio.playDock();
-
-    if (modalId === 'modal-magnetar') {
-      setTimeout(() => {
-        window.AstroSimulations.hellingsDowns.init('hd-canvas', 'hd-slider', 'hd-readout');
-        window.AstroSimulations.dedispersion.init('dm-canvas', 'dm-slider', 'dm-readout');
-      }, 100);
-    }
-  };
-
-const closeModal = () => {
-  setActiveModal(null);
-  if (window.astroAudio) window.astroAudio.playBlip(440, 0.04);
-
-};
-
-  const copyBibtex = (pub) => {
-    navigator.clipboard.writeText(pub.bibtex);
-    setCopiedBibId(pub.id);
-    if (window.astroAudio) window.astroAudio.playBlip(1040, 0.05);
-    setTimeout(() => setCopiedBibId(null), 2500);
-  };
-
-  const playPulsarSound = (freqHz) => {
-    setAudioPulsarActive(true);
-    window.astroAudio.playPulsarTone(freqHz, 2.8);
-    setTimeout(() => setAudioPulsarActive(false), 2800);
-  };
-
-  const handleContactSubmit = (e) => {
-    e.preventDefault();
-    setContactState(prev => ({ ...prev, status: 'transmitting' }));
-    if (window.astroAudio) window.astroAudio.playLockOn();
-
-    setTimeout(() => {
-      setContactState(prev => ({ ...prev, status: 'sent', name: '', email: '', message: '' }));
-      if (window.astroAudio) window.astroAudio.playDock();
-      setTimeout(() => setContactState(prev => ({ ...prev, status: 'idle' })), 4000);
-    }, 1200);
-  };
-
-  const filteredPublications = pubCategory === 'all'
-    ? window.AstroData.publications
-    : window.AstroData.publications.filter(p => p.category === pubCategory);
-
-  // =========================================
-  // 4. MAIN RENDER / UI
-  // =========================================
   return (
+
     <div className={`astro-app ${viewMode === 'reader' ? 'reader-mode-active' : ''}`}>
-      
-      {/* --- VIEW 1: LANDING SCREEN --- */}
+
+      {/* =========================================
+          VIEW 1: LANDING SCREEN
+      ========================================= */}
+
       {viewMode === 'landing' && (
+
         <div className="landing-screen">
+
           <div className="landing-card">
 
-            <h1 className="landing-name">Tai Jespersen</h1>
-            <p className="landing-role">PhD Student · Gravitational Wave & Pulsar Astronomy</p>
-            <p className="landing-inst">Center for Gravitation, Cosmology, and Astrophysics · UW-Milwaukee</p>
+            <h1 className="landing-name">
+              Tai Jespersen
+            </h1>
+
+            <p className="landing-role">
+              PhD Student · Gravitational Wave & Pulsar Astronomy
+            </p>
+
+            <p className="landing-inst">
+              Center for Gravitation, Cosmology, and Astrophysics · UW-Milwaukee
+            </p>
 
             <p className="landing-bio-snippet">
-              
             </p>
 
             <div className="landing-actions">
-              <button className="landing-btn primary" onClick={() => setViewMode('reader')}>
+
+              <button
+                className="landing-btn primary"
+                onClick={() => setViewMode('reader')}
+              >
                 <span className="btn-icon">✦</span>
                 <span>About Me & Portfolio</span>
               </button>
-              <button 
-                className="landing-btn secondary" 
-                onClick={() => {
-                  setViewMode('3d');
-                  if (window.AstroAudio) window.AstroAudio.initContext();
-                }}
+
+              <button
+                className="landing-btn secondary"
+                onClick={() => setViewMode('3d')}
               >
                 <span>Research Projects</span>
               </button>
+
             </div>
+
           </div>
+
         </div>
+
       )}
 
-      {/* --- About Me --- */}
+      {/* =========================================
+          VIEW 2: ABOUT ME / ACADEMIC DOSSIER
+      ========================================= */}
+
       {viewMode === 'reader' && (
+
         <div className="reader-container">
+
           <header className="reader-header">
+
             <div className="reader-brand">
-              <div className="reader-pretitle">ACADEMIC DOSSIER & CURRICULUM VITAE</div>
-              <h1>{window.AstroData.researcher.name}</h1>
-              <p className="reader-tagline">{window.AstroData.researcher.title}</p>
-              <p className="reader-inst">{window.AstroData.researcher.institution}</p>
+
+              <div className="reader-pretitle">
+                ACADEMIC DOSSIER & CURRICULUM VITAE
+              </div>
+
+              <h1>
+                {window.AstroData.researcher.name}
+              </h1>
+
+              <p className="reader-tagline">
+                {window.AstroData.researcher.title}
+              </p>
+
+              <p className="reader-inst">
+                {window.AstroData.researcher.institution}
+              </p>
+
               <div className="reader-contacts">
-                <a href={`mailto:${window.AstroData.researcher.email}`} className="reader-contact-pill">
+
+                <a
+                  href={`mailto:${window.AstroData.researcher.email}`}
+                  className="reader-contact-pill"
+                >
                   ✉️ {window.AstroData.researcher.email}
                 </a>
-                <a href="https://orcid.org/0009-0007-4226-0037" target="_blank" rel="noreferrer" className="reader-contact-pill">
+
+                <a
+                  href="https://orcid.org/0009-0007-4226-0037"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="reader-contact-pill"
+                >
                   🆔 ORCID: 0009-0007-4226-0037
                 </a>
+
               </div>
+
             </div>
-            <button className="reader-exit-btn" onClick={() => setViewMode('3d')}>
+
+            <button
+              className="reader-exit-btn"
+              onClick={() => setViewMode('3d')}
+            >
               ✦ Research Projects
             </button>
+
           </header>
 
           <main className="reader-body">
-            {/* Bio */}
+
+            {/* BIO */}
+
             <section className="reader-section">
+
               <div className="section-header-row">
                 <span className="section-spark">✦</span>
                 <h2>OVERVIEW</h2>
               </div>
+
               <div className="reader-bio-card">
+
                 {window.AstroData.researcher.bio.map((p, i) => (
                   <p key={i}>{p}</p>
                 ))}
+
               </div>
+
             </section>
 
-            {/* Publications */}
+            {/* PUBLICATIONS */}
+
             <section className="reader-section">
+
               <div className="section-header-row">
                 <span className="section-spark">✦</span>
                 <h2>PUBLICATIONS & PREPRINTS</h2>
               </div>
+
               <div className="reader-pubs-list">
+
                 {window.AstroData.publications.map(pub => (
+
                   <div key={pub.id} className="pub-card">
+
                     <div className="pub-badge-row">
-                      <span className="pub-badge">{pub.badge}</span>
-                      <span className="pub-year">{pub.year}</span>
-                      <span className="pub-journal">{pub.journal}</span>
+
+                      <span className="pub-badge">
+                        {pub.badge}
+                      </span>
+
+                      <span className="pub-year">
+                        {pub.year}
+                      </span>
+
+                      <span className="pub-journal">
+                        {pub.journal}
+                      </span>
+
                     </div>
-                    <h3 className="pub-title">{pub.title}</h3>
-                    <p className="pub-authors">{pub.authors}</p>
-                    <p className="pub-abstract">{pub.abstract}</p>
+
+                    <h3 className="pub-title">
+                      {pub.title}
+                    </h3>
+
+                    <p className="pub-authors">
+                      {pub.authors}
+                    </p>
+
+                    <p className="pub-abstract">
+                      {pub.abstract}
+                    </p>
+
                     <div className="pub-actions">
-                      <a href={`https://arxiv.org/abs/${pub.arxiv}`} target="_blank" rel="noreferrer" className="reader-action-btn">
+
+                      <a
+                        href={`https://arxiv.org/abs/${pub.arxiv}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="reader-action-btn"
+                      >
                         arXiv:{pub.arxiv}
                       </a>
-                      <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noreferrer" className="reader-action-btn">
+
+                      <a
+                        href={`https://doi.org/${pub.doi}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="reader-action-btn"
+                      >
                         DOI Link
                       </a>
-                      <button className="reader-action-btn copy-btn" onClick={() => copyBibtex(pub)}>
-                        {copiedBibId === pub.id ? '✓ Copied BibTeX' : 'Copy BibTeX'}
-                      </button>
+
                     </div>
+
                   </div>
+
                 ))}
+
               </div>
+
             </section>
 
-            {/* Academic Positions */}
+            {/* EDUCATION */}
+
             <section className="reader-section">
+
               <div className="section-header-row">
                 <span className="section-spark">✦</span>
                 <h2>EDUCATION</h2>
               </div>
+
               <div className="appointments-card">
+
                 {window.AstroData.researcher.appointments.map((app, i) => (
+
                   <div key={i} className="appointment-row">
-                    <span className="app-period">{app.period}</span>
+
+                    <span className="app-period">
+                      {app.period}
+                    </span>
+
                     <div className="app-details">
-                      <span className="app-role">{app.role}</span>
-                      <span className="app-inst">{app.institution}</span>
+
+                      <span className="app-role">
+                        {app.role}
+                      </span>
+
+                      <span className="app-inst">
+                        {app.institution}
+                      </span>
+
                     </div>
+
                   </div>
+
                 ))}
+
               </div>
+
             </section>
 
-            {/* Teaching */}
+            {/* TEACHING */}
+
             <section className="reader-section">
+
               <div className="section-header-row">
                 <span className="section-spark">✦</span>
                 <h2>TEACHING</h2>
               </div>
+
               <div className="teaching-list">
+
                 {window.AstroData.teaching.map((t, i) => (
+
                   <div key={i} className="teaching-item">
+
                     <div className="teach-hdr">
-                      <span className="teach-id">{t.courseId}</span>
-                      <span className="teach-term">{t.term}</span>
+
+                      <span className="teach-id">
+                        {t.courseId}
+                      </span>
+
+                      <span className="teach-term">
+                        {t.term}
+                      </span>
+
                     </div>
+
                     <h4>{t.title}</h4>
+
                     <p>{t.desc}</p>
+
                   </div>
+
                 ))}
+
               </div>
+
             </section>
 
-            {/* CV Download CTA */}
+            {/* CV DOWNLOAD */}
+
             <section className="reader-section cv-section">
+
               <div className="cv-card">
+
                 <div className="cv-info">
+
                   <h3>Curriculum Vitae</h3>
-                  <p>Download or view the complete updated CV with comprehensive research history, publications, and presentations.</p>
+
+                  <p>
+                    Download or view the complete updated CV with comprehensive
+                    research history, publications, and presentations.
+                  </p>
+
                 </div>
+
                 <button
                   className="cv-button"
                   onClick={() =>
@@ -316,434 +356,63 @@ const closeModal = () => {
                 >
                   📄 View Complete CV (PDF)
                 </button>
+
               </div>
+
             </section>
+
           </main>
+
         </div>
+
       )}
 
-      {/* --- Research Cosmos (3D Mode) --- */}
+      {/* =========================================
+          VIEW 3: RESEARCH COSMOS (3D MODE)
+      ========================================= */}
+
       {viewMode === '3d' && (
+
         <div id="hud-overlay">
-          {/* Top Bar */}
+
+          {/* TOP BAR */}
+
           <header className="hud-top-bar">
+
             <div className="hud-brand">
             </div>
 
             <div className="hud-controls-top">
-              <button
-                className={`hud-btn sound-toggle ${isMuted ? 'muted' : 'active'}`}
-                onClick={toggleSound}
-                title="Toggle Web Audio SFX & Ambient Music (Key: M)"
-              >
-                {isMuted ? '🔇 Sound Off' : '🔊 Sound On'}
-              </button>
+
               <button
                 className="hud-btn reader-toggle"
                 onClick={() => setViewMode('reader')}
-                title="Switch to 2D Document Reader"
+                title="Switch to About Me"
               >
                 About Me
               </button>
+
             </div>
+
           </header>
 
-          {/* Destiny 2 Style Celestial Inspection Hover Card */}
-          {hoveredDest && hoveredDest.dest && !activeModal && (
-            <div
-              className="destiny-hover-card"
-              style={{
-                left: `${Math.min(window.innerWidth - 350, Math.max(20, hoveredDest.screenX + 22))}px`,
-                top: `${Math.min(window.innerHeight - 250, Math.max(25, hoveredDest.screenY - 60))}px`
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedTarget(hoveredDest.dest);
-                openModal(hoveredDest.dest.modalId);
-              }}
-            >
-              <div className="destiny-card-corner top-left"></div>
-              <div className="destiny-card-corner top-right"></div>
-              <div className="destiny-card-corner btm-left"></div>
-              <div className="destiny-card-corner btm-right"></div>
-
-              <div className="destiny-card-header">
-                <div className="destiny-card-code">
-                  <span className="destiny-diamond">◆</span>
-                  <span>DESTINATION // {hoveredDest.dest.code}</span>
-                </div>
-                <h3 className="destiny-card-name">{hoveredDest.dest.name}</h3>
-                <div className="destiny-card-type">{hoveredDest.dest.type}</div>
-              </div>
-
-              <div className="destiny-card-divider">
-                <span className="destiny-divider-line"></span>
-                <span className="destiny-divider-diamond">◆</span>
-                <span className="destiny-divider-line"></span>
-              </div>
-
-              <p className="destiny-card-desc">
-                {hoveredDest.dest.description || hoveredDest.dest.subtitle}
-              </p>
-
-              <div className="destiny-card-cta">
-                <span className="destiny-cta-diamond">◆</span>
-                <span className="destiny-cta-text">CLICK TO EXPLORE</span>
-                <span className="destiny-cta-chevron">›</span>
-              </div>
-            </div>
-          )}
-
-          {/* Docking Proximity Banner */}
-          {canDock && nearest && (
-            <div className="docking-prompt-banner" onClick={() => openModal(nearest.modalId)}>
-              <div className="dock-flash"></div>
-              <div className="dock-text">
-                <span className="dock-key">[PRESS E OR CLICK TO ACCESS]</span>
-                <span className="dock-dest">{nearest.name.toUpperCase()} // {nearest.subtitle}</span>
-              </div>
-            </div>
-          )}
         </div>
+
       )}
 
-      
-      {/* --- Research Projects --- */}
-      {activeModal && (
-        <div className="modal-backdrop" onClick={closeModal}>
-          <div className="modal-container" onClick={e => e.stopPropagation()}>
-            <div className="modal-scanline-fx"></div>
-
-            {/* Modal Header */}
-            <div className="modal-header">
-              <div className="modal-title-box">
-                <h2>{selectedTarget?.name} // ARCHIVAL CONSOLE</h2>
-              </div>
-              <button className="modal-close-btn" onClick={closeModal}>✕ [ESC]</button>
-            </div>
-
-            <div className="modal-body">
-              {/* MODAL 1: PSR J1713+0747 */}
-              {activeModal === 'modal-j1713' && (
-                <div className="terminal-panel">
-                  <div className="terminal-alert-box">
-                    <span className="alert-badge">STOCHASTIC GWB DETECTED</span>
-                    <p>Precision timing of PSR J1713+0747 over 28 years with Arecibo and the Green Bank Telescope provides the backbone of the NANOGrav 15-year evidence for low-frequency gravitational waves.</p>
-                  </div>
-
-                  <div className="terminal-stats-grid">
-                    <div className="t-stat">
-                      <div className="t-stat-val neon-cyan">4.57 ms</div>
-                      <div className="t-stat-lbl">Rotational Spin Period</div>
-                    </div>
-                    <div className="t-stat">
-                      <div className="t-stat-val neon-amber">218.8 Hz</div>
-                      <div className="t-stat-lbl">Pulse Frequency</div>
-                    </div>
-                    <div className="t-stat">
-                      <div className="t-stat-val neon-pink">&lt; 85 ns</div>
-                      <div className="t-stat-lbl">Timing Residual RMS</div>
-                    </div>
-                    <div className="t-stat">
-                      <div className="t-stat-val neon-emerald">1.34 M☉</div>
-                      <div className="t-stat-lbl">Inferred Neutron Star Mass</div>
-                    </div>
-                  </div>
-
-                  <div className="sonification-card">
-                    <div className="son-info">
-                      <h4>ACOUSTIC PULSAR SONIFICATION</h4>
-                      <p>Millisecond pulsars spin hundreds of times per second. Listen to the actual acoustic tone of PSR J1713+0747 generated via procedural synthesis:</p>
-                    </div>
-                    <button
-                      className={`hud-btn son-btn ${audioPulsarActive ? 'pulsing' : ''}`}
-                      onClick={() => playPulsarSound(218.8)}
-                    >
-                      {audioPulsarActive ? '🔊 PULSING AT 218.8 HZ...' : '▶ AUDIFY PULSAR (218.8 HZ)'}
-                    </button>
-                  </div>
-
-                  <div className="research-summary-text">
-                    <h3>NANOGrav 15-Year Research Breakthrough</h3>
-                    <p>In June 2023, the NANOGrav Collaboration published compelling evidence for a cosmic background of gravitational waves at nanohertz frequencies (wavelengths spanning light-years).</p>
-                    <p>Unlike ground-based detectors like LIGO, which observe stellar-mass black holes merging in fractions of a second, Pulsar Timing Arrays detect the cosmic roar of supermassive black hole binaries—pairs with millions to billions of solar masses slowly orbiting in the centers of merging galaxies.</p>
-                  </div>
-                </div>
-              )}
-              {/* ----------------------------------------------------------- */}
-              {/* MODAL 2: PSR B1913+16 (Publications, Papers & BibTeX) */}
-              {/* ----------------------------------------------------------- */}
-              {activeModal === 'modal-b1913' && (
-                <div className="terminal-panel">
-                  <div className="filter-pills-row">
-                    <button
-                      className={`filter-pill ${pubCategory === 'all' ? 'active' : ''}`}
-                      onClick={() => setPubCategory('all')}
-                    >ALL PAPERS ({window.AstroData.publications.length})</button>
-                    <button
-                      className={`filter-pill ${pubCategory === 'nanograv' ? 'active' : ''}`}
-                      onClick={() => setPubCategory('nanograv')}
-                    >NANOGRAV / PTA</button>
-                    <button
-                      className={`filter-pill ${pubCategory === 'compact' ? 'active' : ''}`}
-                      onClick={() => setPubCategory('compact')}
-                    >NEUTRON STARS & GLITCHES</button>
-                    <button
-                      className={`filter-pill ${pubCategory === 'software' ? 'active' : ''}`}
-                      onClick={() => setPubCategory('software')}
-                    >GPU & ALGORITHMS</button>
-                  </div>
-
-                  <div className="publications-stream">
-                    {filteredPublications.map(pub => (
-                      <div key={pub.id} className="pub-card-terminal">
-                        <div className="pub-meta-line">
-                          <span className="pub-tag">{pub.badge}</span>
-                          <span className="pub-year-badge">{pub.year}</span>
-                          <span className="pub-journal-name neon-cyan">{pub.journal}</span>
-                        </div>
-                        <h3 className="pub-heading">{pub.title}</h3>
-                        <p className="pub-author-line">{pub.authors}</p>
-                        <p className="pub-abstract-text">{pub.abstract}</p>
-
-                        <div className="pub-button-bar">
-                          <a href={`https://arxiv.org/abs/${pub.arxiv}`} target="_blank" rel="noreferrer" className="hud-btn mini-btn">
-                            arXiv:{pub.arxiv}
-                          </a>
-                          <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noreferrer" className="hud-btn mini-btn">
-                            DOI: {pub.doi}
-                          </a>
-                          <button className="hud-btn mini-btn" onClick={() => copyBibtex(pub)}>
-                            {copiedBibId === pub.id ? '✓ COPIED TO CLIPBOARD' : '📋 COPY BIBTEX'}
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* ----------------------------------------------------------- */}
-              {/* MODAL 3: MAGNETAR SGR 1806-20 (Interactive Physics Toys) */}
-              {/* ----------------------------------------------------------- */}
-              {activeModal === 'modal-magnetar' && (
-                <div className="terminal-panel">
-                  <div className="sim-tab-header">
-                    <button
-                      className={`sim-tab-btn ${simTab === 'hellings-downs' ? 'active' : ''}`}
-                      onClick={() => {
-                        setSimTab('hellings-downs');
-                        setTimeout(() => window.AstroSimulations.hellingsDowns.init('hd-canvas', 'hd-slider', 'hd-readout'), 50);
-                      }}
-                    >
-                      🌌 HELLINGS-DOWNS CORRELATION LAB
-                    </button>
-                    <button
-                      className={`sim-tab-btn ${simTab === 'dedispersion' ? 'active' : ''}`}
-                      onClick={() => {
-                        setSimTab('dedispersion');
-                        setTimeout(() => window.AstroSimulations.dedispersion.init('dm-canvas', 'dm-slider', 'dm-readout'), 50);
-                      }}
-                    >
-                      📡 INTERSTELLAR DM DEDISPERSER LAB
-                    </button>
-                  </div>
-
-                  {simTab === 'hellings-downs' ? (
-                    <div className="simulation-wrapper">
-                      <div className="sim-instruction-text">
-                        The Hellings-Downs curve proves that correlation between pulsar pairs matches Einstein's general relativity quadrupole signature:
-                      </div>
-
-                      <div className="sim-canvas-box">
-                        <canvas id="hd-canvas" style={{ width: '100%', height: '280px' }}></canvas>
-                      </div>
-
-                      <div className="sim-controls-panel">
-                        <div className="slider-row">
-                          <label>PULSAR PAIR ANGLE (θ):</label>
-                          <input type="range" id="hd-slider" min="0" max="180" defaultValue="45" step="1" />
-                        </div>
-                        <div className="curve-type-buttons">
-                          <button className="hud-btn mini-btn" onClick={() => window.AstroSimulations.hellingsDowns.setCurveType('quadrupole')}>
-                            QUADRUPOLE (GRAV WAVES)
-                          </button>
-                          <button className="hud-btn mini-btn" onClick={() => window.AstroSimulations.hellingsDowns.setCurveType('monopole')}>
-                            MONOPOLE (CLOCK ERROR)
-                          </button>
-                          <button className="hud-btn mini-btn" onClick={() => window.AstroSimulations.hellingsDowns.setCurveType('dipole')}>
-                            DIPOLE (SOLAR EPHEMERIS)
-                          </button>
-                        </div>
-                        <div id="hd-readout" className="sim-readout-grid"></div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="simulation-wrapper">
-                      <div className="sim-instruction-text">
-                        Tune the Dispersion Measure (DM) slider to dedisperse smeared radio pulses across 1.2 to 1.8 GHz:
-                      </div>
-
-                      <div className="sim-canvas-box">
-                        <canvas id="dm-canvas" style={{ width: '100%', height: '280px' }}></canvas>
-                      </div>
-
-                      <div className="sim-controls-panel">
-                        <div className="slider-row">
-                          <label>DISPERSION MEASURE (DM):</label>
-                          <input type="range" id="dm-slider" min="0" max="80" defaultValue="15" step="0.5" />
-                          <button className="hud-btn mini-btn neon-btn" onClick={() => window.AstroSimulations.dedispersion.autoDedisperse()}>
-                            ⚡ AUTO-DEDISPERSE
-                          </button>
-                        </div>
-                        <div id="dm-readout" className="sim-readout-grid"></div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* ----------------------------------------------------------- */}
-              {/* MODAL 4: GREEN BANK & ARECIBO (Bio, Grants & CV) */}
-              {/* ----------------------------------------------------------- */}
-              {activeModal === 'modal-observatory' && (
-                <div className="terminal-panel">
-                  <div className="dossier-bio-section">
-                    <h3>CURRICULUM VITAE & SCIENTIFIC APPOINTMENTS</h3>
-                    {window.AstroData.researcher.bio.map((p, idx) => (
-                      <p key={idx}>{p}</p>
-                    ))}
-                  </div>
-
-                  <div className="appointments-timeline">
-                    <h4>ACADEMIC POSITIONS & EDUCATION</h4>
-                    {window.AstroData.researcher.appointments.map((app, i) => (
-                      <div key={i} className="timeline-item">
-                        <span className="time-period neon-amber">{app.period}</span>
-                        <span className="time-role">{app.role}</span>
-                        <span className="time-inst">{app.institution}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="grants-section">
-                    <h4>PRIMARY TELESCOPE ALLOCATIONS</h4>
-                    <div className="grants-grid">
-                      {window.AstroData.researcher.telescopeGrants.map((grant, i) => (
-                        <div key={i} className="grant-card">
-                          <div className="grant-facility neon-cyan">{grant.facility}</div>
-                          <div className="grant-hrs neon-pink">{grant.hours} ({grant.cycle})</div>
-                          <div className="grant-project">{grant.title}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="cv-download-box">
-                    <button
-                      className="hud-btn neon-btn"
-                      onClick={() =>
-                        window.open(
-                          "/Website/CV___Tai_Jespersen__Updated_Sep__2026_.pdf",
-                          "_blank"
-                        )
-                      }
-                    >
-                      📄 VIEW DOSSIER CV
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* ----------------------------------------------------------- */}
-              {/* MODAL 5: EARTH RELAY (Contact & Subspace Transmission) */}
-              {/* ----------------------------------------------------------- */}
-              {activeModal === 'modal-relay' && (
-                <div className="terminal-panel">
-                  <div className="subspace-form-wrapper">
-                    <h3>SUB-SPACE TRANSMISSION CONSOLE</h3>
-                    <p>Transmit an inquiry to Tai:</p>
-
-                    <form onSubmit={handleContactSubmit} className="subspace-form">
-                      <div className="form-group">
-                        <label>CALLSIGN / SENDER NAME:</label>
-                        <input
-                          type="text"
-                          required
-                          value={contactState.name}
-                          onChange={e => setContactState({ ...contactState, name: e.target.value })}
-                          placeholder="e.g. Prof. Thorne / Collaborator"
-                        />
-                      </div>
-
-                      <div className="form-group">
-                        <label>TRANSMISSION RETURN FREQ (EMAIL):</label>
-                        <input
-                          type="email"
-                          required
-                          value={contactState.email}
-                          onChange={e => setContactState({ ...contactState, email: e.target.value })}
-                          placeholder="caller@observatory.edu"
-                        />
-                      </div>
-
-                      <div className="form-group">
-                        <label>TRANSMISSION PAYLOAD (MESSAGE):</label>
-                        <textarea
-                          rows="4"
-                          required
-                          value={contactState.message}
-                          onChange={e => setContactState({ ...contactState, message: e.target.value })}
-                          placeholder="Enter transmission data..."
-                        ></textarea>
-                      </div>
-
-                      <button
-                        type="submit"
-                        className="hud-btn neon-btn transmit-btn"
-                        disabled={contactState.status === 'transmitting'}
-                      >
-                        {contactState.status === 'transmitting'
-                          ? '🛰️ BEAMING TO EARTH UPLINK...'
-                          : contactState.status === 'sent'
-                            ? '✓ TRANSMISSION RECEIVED & LOGGED!'
-                            : '📡 TRANSMIT MESSAGE'}
-                      </button>
-                    </form>
-
-                    <div className="direct-links-card">
-                      <h4>DIRECT SCIENTIFIC CHANNELS:</h4>
-                      <div className="links-row">
-                        <a href="mailto:jespers5@uwm.edu" className="link-badge">
-                          ✉️ Email
-                        </a>
-                        <a href="https://orcid.org/0009-0007-4226-0037" target="_blank" rel="noreferrer" className="link-badge">
-                          🆔 ORCID
-                        </a>
-                        <a href="https://scholar.google.com" target="_blank" rel="noreferrer" className="link-badge">
-                          🎓 Google Scholar
-                        </a>
-                        <a href="https://github.com" target="_blank" rel="noreferrer" className="link-badge">
-                          💻 GitHub
-                        </a>
-                        <a href="https://arxiv.org" target="_blank" rel="noreferrer" className="link-badge">
-                          📑 arXiv Profile
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
+
   );
+
 }
 
-// Bootstrap React into DOM
+
+// ============================================================================
+// BOOTSTRAP REACT INTO DOM
+// ============================================================================
+
 const rootElement = document.getElementById('react-root');
+
 if (rootElement) {
   ReactDOM.createRoot(rootElement).render(<AstroApp />);
 }
