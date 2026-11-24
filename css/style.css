@@ -43,15 +43,33 @@
   height: 100%;
 }
 
-/* Landing screen content */
+/* Landing screen content with blue radial text backdrop */
 .landing-card {
   position: relative;
   z-index: 1;
+  isolation: isolate;
   background: transparent;
   border: none;
   box-shadow: none;
   backdrop-filter: none;
   text-align: center;
+}
+
+.landing-card::before {
+  content: "";
+  position: absolute;
+  inset: -120px -180px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(8, 20, 48, 0.95) 0%,
+    rgba(12, 30, 68, 0.85) 35%,
+    rgba(15, 35, 75, 0.55) 55%,
+    rgba(15, 35, 75, 0.20) 75%,
+    transparent 100%
+  );
+  border-radius: 50%;
+  z-index: -1;
+  pointer-events: none;
 }
 
 /* Landing screen entrance animation */
