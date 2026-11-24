@@ -171,8 +171,7 @@ const closeModal = () => {
             <p className="landing-inst">Center for Gravitational Cosmology and Astrophysics · UW-Milwaukee</p>
 
             <p className="landing-bio-snippet">
-              Investigating the nanohertz gravitational-wave universe through millisecond pulsar timing arrays,
-              searching archival radio surveys, and exploring relativistic compact objects.
+              
             </p>
 
             <div className="landing-actions">
