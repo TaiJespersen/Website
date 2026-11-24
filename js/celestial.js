@@ -1897,8 +1897,8 @@ window.AstroCelestial = {
   // --------------------------------------------------------------------------
   createLaunchScene(scene) {
     return [
-      this.createMillisecondPulsar(scene, { x: -65, y: 22, z: -150 }),
-      this.createBinaryBlackHoles(scene, { x: 73, y: 2, z: -165 }),
+      this.createMillisecondPulsar(scene, { x: -65, y: 42, z: -180 }),
+      this.createBinaryBlackHoles(scene, { x: 73, y: 2, z: -105 }),
       this.createRadioObservatory(scene, { x: -100, y: -38, z: -205 })
     ];
   }
