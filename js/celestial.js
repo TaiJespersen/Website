@@ -155,8 +155,8 @@ window.AstroCelestial = {
 // --------------------------------------------------------------------------
   // 2. RELATIVISTIC BINARY BLACK HOLES (GARGANTUA / GW150914 ANALOG)
   // Low-poly binary black holes with unified Gargantua gold-amber palette,
-  // camera-facing circular event horizons & photon rings, glowing lensing
-  // halos, striated Interstellar-style accretion disks, proportionally
+  // 3D depth-occluding event horizons & camera-facing photon rings, glowing
+  // lensing halos, striated Interstellar-style accretion disks, proportionally
   // dimmer companion, tidal plasma bridge, and slow GW ripples
   // --------------------------------------------------------------------------
   createBinaryBlackHoles(scene, pos) {
@@ -309,13 +309,16 @@ window.AstroCelestial = {
     const createSingleBlackHole = (radius, tiltX, tiltZ, particleCount = 340, brightness = 1.0) => {
       const bhGroup = new THREE.Group();
 
-      // A. Event Horizon: Camera-facing pitch-black circle (always reads as a clean circle)
-      const horizonGeo = new THREE.CircleGeometry(radius, 36);
+      // A. Event Horizon: Opaque 3D pitch-black sphere (writes full depth to occlude everything behind it)
+      const horizonGeo = new THREE.SphereGeometry(radius, 32, 32);
       const horizonMat = new THREE.MeshBasicMaterial({
-        color: 0x010102,
-        side: THREE.DoubleSide
+        color: 0x000000,
+        transparent: false,
+        depthWrite: true,
+        depthTest: true
       });
       const horizon = new THREE.Mesh(horizonGeo, horizonMat);
+      horizon.renderOrder = 0;
       bhGroup.add(horizon);
 
       // B. Razor-Sharp Photon Ring (Camera-facing luminous light boundary hugging the shadow)
@@ -328,6 +331,7 @@ window.AstroCelestial = {
         depthWrite: false
       });
       const photonRing = new THREE.Mesh(photonGeo, photonMat);
+      photonRing.renderOrder = 1;
       bhGroup.add(photonRing);
 
       // C. Interstellar Striated Equatorial Accretion Disk Assembly
@@ -343,11 +347,13 @@ window.AstroCelestial = {
         transparent: true,
         opacity: 0.96 * brightness,
         side: THREE.DoubleSide,
+        depthTest: true,
         depthWrite: false,
         blending: THREE.AdditiveBlending
       });
       const mainDisk = new THREE.Mesh(mainDiskGeo, mainDiskMat);
       mainDisk.rotation.x = Math.PI / 2;
+      mainDisk.renderOrder = 1;
       diskAssembly.add(mainDisk);
 
       // Secondary Counter-Phased Turbulent Plasma Layer (adds 3D volume & shimmering shear)
@@ -358,12 +364,14 @@ window.AstroCelestial = {
         transparent: true,
         opacity: 0.58 * brightness,
         side: THREE.DoubleSide,
+        depthTest: true,
         depthWrite: false,
         blending: THREE.AdditiveBlending
       });
       const shearDisk = new THREE.Mesh(shearDiskGeo, shearDiskMat);
       shearDisk.rotation.x = Math.PI / 2;
       shearDisk.position.y = 0.06;
+      shearDisk.renderOrder = 1;
       diskAssembly.add(shearDisk);
 
       // Intense White-Hot Innermost Stable Circular Orbit (ISCO) Core Glow
@@ -374,11 +382,13 @@ window.AstroCelestial = {
         transparent: true,
         opacity: 0.85 * brightness,
         side: THREE.DoubleSide,
+        depthTest: true,
         depthWrite: false,
         blending: THREE.AdditiveBlending
       });
       const iscoDisk = new THREE.Mesh(iscoGeo, iscoMat);
       iscoDisk.rotation.x = Math.PI / 2;
+      iscoDisk.renderOrder = 1;
       diskAssembly.add(iscoDisk);
 
       // Concentric Low-Poly Luminous Plasma Filaments (crisp orbital gas streaks)
@@ -410,9 +420,12 @@ window.AstroCelestial = {
           color: cfg.color,
           transparent: true,
           opacity: cfg.opacity * brightness,
+          depthTest: true,
+          depthWrite: false,
           blending: THREE.AdditiveBlending
         });
         const fLoop = new THREE.LineLoop(fGeo, fMat);
+        fLoop.renderOrder = 1;
         diskAssembly.add(fLoop);
         filamentRings.push({ mesh: fLoop, speed: cfg.speed });
       });
@@ -580,10 +593,12 @@ window.AstroCelestial = {
         vertexColors: true,
         transparent: true,
         opacity: 0.92 * brightness,
+        depthTest: true,
         depthWrite: false,
         blending: THREE.AdditiveBlending
       });
       const diskParticles = new THREE.Points(pGeo, pMat);
+      diskParticles.renderOrder = 1;
       diskAssembly.add(diskParticles);
 
       bhGroup.add(diskAssembly);
@@ -766,9 +781,8 @@ window.AstroCelestial = {
             f.mesh.rotation.y += delta * f.speed * spinDir;
           });
 
-          // Keep event horizon, photon ring, and lensing halo circular & facing the camera
+          // Keep photon ring and lensing halo circular & facing the camera
           if (camera && camera.position) {
-            bh.horizon.lookAt(camera.position);
             bh.photonRing.lookAt(camera.position);
             bh.lensGroup.lookAt(camera.position);
           }
@@ -891,7 +905,6 @@ window.AstroCelestial = {
   createBinaryPulsar(scene, pos) {
     return this.createBinaryBlackHoles(scene, pos);
   },
-
 
 
 
