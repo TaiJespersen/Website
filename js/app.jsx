@@ -161,10 +161,6 @@ const closeModal = () => {
       {viewMode === 'landing' && (
         <div className="landing-screen">
           <div className="landing-card">
-            <div className="landing-badge">
-              <span className="landing-sparkle">✦</span>
-              <span>OBSERVATIONAL ASTRONOMY & ASTROPHYSICS</span>
-            </div>
 
             <h1 className="landing-name">Tai Jespersen</h1>
             <p className="landing-role">PhD Student · Gravitational Wave & Pulsar Astronomy</p>
