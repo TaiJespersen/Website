@@ -1,325 +1,674 @@
+
 // ============================================================================
-// THREE.JS SCENE, STARFIELD, CAMERA CONTROLLER & GAME LOOP
+// ASTRO-OS ACADEMIC PORTFOLIO
+// Complete React application
+//
+// Required scripts in index.html, in this order:
+// 1. Three.js
+// 2. React
+// 3. ReactDOM
+// 4. Babel
+// 5. data.js
+// 6. celestial.js
+// 7. app.jsx
+//
+// This version does NOT use AstroScene, AstroShip, or the old navigation system.
 // ============================================================================
 
-window.AstroScene = {
-  scene: null,
-  camera: null,
-  renderer: null,
-  clock: null,
-  celestialObjects: {},
-  canvasContainer: null,
+const { useState, useEffect } = React;
 
-  // Camera settings
-  cameraOffset: new THREE.Vector3(0, 5.5, 16),
-  lookAtOffset: new THREE.Vector3(0, 1.2, -8),
-  currentCameraPos: new THREE.Vector3(),
-  currentLookAt: new THREE.Vector3(),
+function AstroApp() {
+  const [viewMode, setViewMode] = useState("landing");
 
-  init(containerId) {
-    this.canvasContainer = document.getElementById(containerId);
-    if (!this.canvasContainer) return;
+  // --------------------------------------------------------------------------
+  // LOAD WEBSITE DATA
+  // --------------------------------------------------------------------------
 
-    // Scene
-    this.scene = new THREE.Scene();
-    this.scene.fog = new THREE.FogExp2(0x05070f, 0.0004);
+  const astroData = window.AstroData || {};
+  const researcher = astroData.researcher || {};
 
-    // Camera
-    this.camera = new THREE.PerspectiveCamera(
-      60,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      2000
-    );
-    this.currentCameraPos.copy(this.cameraOffset);
+  const publications = Array.isArray(astroData.publications)
+    ? astroData.publications
+    : [];
 
-    // Renderer
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.2;
-    this.canvasContainer.appendChild(this.renderer.domElement);
+  const teaching = Array.isArray(astroData.teaching)
+    ? astroData.teaching
+    : [];
 
-    this.clock = new THREE.Clock();
+  const biography = Array.isArray(researcher.bio)
+    ? researcher.bio
+    : researcher.bio
+      ? [researcher.bio]
+      : [];
 
-    // Lighting
-    this.setupLighting();
+  const appointments = Array.isArray(researcher.appointments)
+    ? researcher.appointments
+    : [];
 
-    // Starfield
-    this.createStarfield();
+  // --------------------------------------------------------------------------
+  // THREE.JS LAUNCH SCREEN
+  // --------------------------------------------------------------------------
 
-    // Celestial Universe
-    this.celestialObjects = window.AstroCelestial.createUniverse(this.scene);
+  useEffect(() => {
+    if (viewMode !== "landing") return undefined;
 
-    // Ship
-    window.AstroShip.init(this.scene);
+    const container = document.getElementById("launch-cosmos");
 
-    // Event Listeners
-    window.addEventListener('resize', () => this.onResize());
-    this.setupInteractivity();
-
-    // Start Game Loop
-    this.animate();
-  },
-
-  setupLighting() {
-    // Ambient light
-    const ambientLight = new THREE.AmbientLight(0x1e293b, 1.8);
-    this.scene.add(ambientLight);
-
-    // Main Directional Sun / Galactic core light
-    const sunLight = new THREE.DirectionalLight(0xfffbeb, 2.2);
-    sunLight.position.set(100, 80, 50);
-    this.scene.add(sunLight);
-
-    // Cyan Fill light
-    const fillLight = new THREE.DirectionalLight(0x0284c7, 1.2);
-    fillLight.position.set(-80, -40, -100);
-    this.scene.add(fillLight);
-  },
-
-  createStarfield() {
-    const starCount = 1400;
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(starCount * 3);
-    const colors = new Float32Array(starCount * 3);
-
-    const colorChoices = [
-      new THREE.Color(0x00f0ff), // Cyan
-      new THREE.Color(0xffffff), // White
-      new THREE.Color(0xf59e0b), // Amber
-      new THREE.Color(0xc084fc)  // Violet
-    ];
-
-    for (let i = 0; i < starCount; i++) {
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(Math.random() * 2 - 1);
-      const r = 600 + Math.random() * 800;
-
-      positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-      positions[i * 3 + 2] = r * Math.cos(phi);
-
-      const color = colorChoices[Math.floor(Math.random() * colorChoices.length)];
-      colors[i * 3] = color.r;
-      colors[i * 3 + 1] = color.g;
-      colors[i * 3 + 2] = color.b;
+    if (!container) {
+      console.error("Launch screen error: #launch-cosmos was not found.");
+      return undefined;
     }
 
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    if (!window.THREE) {
+      console.error("Launch screen error: Three.js did not load.");
+      return undefined;
+    }
 
-  const canvas = document.createElement('canvas');
-  canvas.width = 64;
-  canvas.height = 64;
-  
-  const ctx = canvas.getContext('2d');
-  ctx.beginPath();
-  ctx.arc(32, 32, 30, 0, Math.PI * 2);
-  ctx.fillStyle = 'white';
-  ctx.fill();
-  
-  const starTexture = new THREE.CanvasTexture(canvas);
-    
-    const material = new THREE.PointsMaterial({
-      size: 5,
-      vertexColors: true,
-      map: starTexture,
-      transparent: true,
-      alphaTest: 0.1,
-      opacity: 1.0
-    });
+    if (!window.AstroCelestial) {
+      console.error("Launch screen error: celestial.js did not load.");
+      return undefined;
+    }
 
-    const starPoints = new THREE.Points(geometry, material);
-    this.scene.add(starPoints);
-  },
+    if (
+      typeof window.AstroCelestial.createLaunchScene !== "function"
+    ) {
+      console.error(
+        "Launch screen error: createLaunchScene() is missing from celestial.js."
+      );
+      return undefined;
+    }
 
-  onResize() {
-    if (!this.camera || !this.renderer) return;
-    this.camera.aspect = window.innerWidth / window.innerHeight;
-    this.camera.updateProjectionMatrix();
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-  },
+    const THREE = window.THREE;
 
-  setupInteractivity() {
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-    let currentlyHoveredId = null;
+    let renderer;
+    let modelRoots = [];
+    let animationFrameId = null;
+    let disposed = false;
 
-    // Hover Raycasting for Destiny 2 Planet Selection Inspection Box
-    window.addEventListener('pointermove', (e) => {
-      // If cursor is over an open modal or interactive button, suppress celestial hover
-      if (e.target.closest('.modal-container') || e.target.closest('.hud-controls-top') || e.target.closest('.docking-prompt-banner')) {
-        if (currentlyHoveredId) {
-          currentlyHoveredId = null;
-          document.body.style.cursor = 'default';
-          if (window.AstroAppDispatch) {
-            window.AstroAppDispatch({ type: 'HOVER_DESTINATION', payload: null });
+    try {
+      // Scene
+      const scene = new THREE.Scene();
+
+      // Camera
+      const camera = new THREE.PerspectiveCamera(
+        48,
+        Math.max(container.clientWidth, 1) /
+          Math.max(container.clientHeight, 1),
+        0.1,
+        1200
+      );
+
+      camera.position.set(0, 0, 0);
+      camera.lookAt(0, 0, -1);
+
+      // Renderer
+      renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: true,
+        powerPreference: "low-power"
+      });
+
+      renderer.setPixelRatio(
+        Math.min(window.devicePixelRatio || 1, 1.75)
+      );
+
+      renderer.setSize(
+        Math.max(container.clientWidth, 1),
+        Math.max(container.clientHeight, 1)
+      );
+
+      renderer.setClearColor(0x000000, 0);
+
+      if ("outputColorSpace" in renderer && THREE.SRGBColorSpace) {
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+      }
+
+      if (
+        "toneMapping" in renderer &&
+        THREE.ACESFilmicToneMapping !== undefined
+      ) {
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.15;
+      }
+
+      renderer.domElement.setAttribute("aria-hidden", "true");
+      renderer.domElement.style.display = "block";
+      renderer.domElement.style.width = "100%";
+      renderer.domElement.style.height = "100%";
+
+      container.appendChild(renderer.domElement);
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 1.25);
+      scene.add(ambientLight);
+
+      const keyLight = new THREE.DirectionalLight(0xffffff, 1.35);
+      keyLight.position.set(-35, 55, 45);
+      scene.add(keyLight);
+
+      const rimLight = new THREE.DirectionalLight(0x8b9cff, 0.65);
+      rimLight.position.set(45, -25, -80);
+      scene.add(rimLight);
+
+      // Create the launch-screen models.
+      modelRoots = window.AstroCelestial.createLaunchScene(scene) || [];
+
+      if (!Array.isArray(modelRoots)) {
+        throw new Error(
+          "createLaunchScene() did not return an array of model objects."
+        );
+      }
+
+      // Fade the models so they remain subtle behind the landing card.
+      modelRoots.forEach((root) => {
+        if (!root || typeof root.traverse !== "function") return;
+
+        root.traverse((object) => {
+          if (object.isLight) {
+            object.intensity *= 0.32;
           }
-        }
-        return;
-      }
 
-      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-      raycaster.setFromCamera(mouse, this.camera);
+          if (!object.material) return;
 
-      // Check for hover over interactive celestial destinations (Green Bank, J1713, Binary Black Holes)
-      const targets = Object.values(this.celestialObjects).filter(o => o.userData && o.userData.id);
-      const intersects = raycaster.intersectObjects(targets, true);
+          const materials = Array.isArray(object.material)
+            ? object.material
+            : [object.material];
 
-      if (intersects.length > 0) {
-        let hitObject = intersects[0].object;
-        while (hitObject.parent && !hitObject.userData.id) {
-          hitObject = hitObject.parent;
-        }
-
-        if (hitObject.userData && hitObject.userData.id) {
-          const dest = window.AstroData.destinations.find(d => d.id === hitObject.userData.id);
-          if (dest) {
-            document.body.style.cursor = 'pointer';
-            if (currentlyHoveredId !== dest.id) {
-              currentlyHoveredId = dest.id;
-              if (window.astroAudio) window.astroAudio.playBlip(720, 0.03);
-            }
-            if (window.AstroAppDispatch) {
-              window.AstroAppDispatch({
-                type: 'HOVER_DESTINATION',
-                payload: {
-                  dest: dest,
-                  screenX: e.clientX,
-                  screenY: e.clientY
-                }
-              });
-            }
-            return;
-          }
-        }
-      }
-
-      // If no interactive celestial object is hovered
-      if (currentlyHoveredId) {
-        currentlyHoveredId = null;
-        document.body.style.cursor = 'default';
-        if (window.AstroAppDispatch) {
-          window.AstroAppDispatch({ type: 'HOVER_DESTINATION', payload: null });
-        }
-      }
-    });
-
-    // Click Raycasting: Clicking celestial object directly opens the associated modal popup (like pressing E)
-    window.addEventListener('click', (e) => {
-      // Don't raycast if clicking UI buttons or active modal
-      if (e.target.closest('.modal-container') || e.target.closest('.hud-controls-top') || e.target.closest('.docking-prompt-banner') || e.target.closest('.waypoint-badge')) return;
-
-      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-      raycaster.setFromCamera(mouse, this.camera);
-
-      const targets = Object.values(this.celestialObjects).filter(o => o.userData && o.userData.id);
-      const intersects = raycaster.intersectObjects(targets, true);
-
-      if (intersects.length > 0) {
-        let hitObject = intersects[0].object;
-        while (hitObject.parent && !hitObject.userData.id) {
-          hitObject = hitObject.parent;
-        }
-
-        if (hitObject.userData && hitObject.userData.id) {
-          const dest = window.AstroData.destinations.find(d => d.id === hitObject.userData.id);
-          if (dest && window.AstroAppDispatch) {
-            window.AstroAppDispatch({ type: 'OPEN_DESTINATION_MODAL', payload: dest });
-          }
-        }
-      }
-    });
-  },
-
-  // Project a 3D world coordinate to 2D screen pixels for HUD bracket markers
-  projectToScreen(vector3) {
-    const p = vector3.clone().project(this.camera);
-    const halfW = window.innerWidth / 2;
-    const halfH = window.innerHeight / 2;
-    return {
-      x: (p.x * halfW) + halfW,
-      y: -(p.y * halfH) + halfH,
-      inFront: p.z < 1.0
-    };
-  },
-
-  animate() {
-    requestAnimationFrame(() => this.animate());
-    const delta = Math.min(this.clock.getDelta(), 0.1);
-
-    // Update player ship
-    window.AstroShip.update(delta);
-
-    // Update celestial objects
-    Object.values(this.celestialObjects).forEach(obj => {
-      if (obj.userData && typeof obj.userData.update === 'function') {
-        obj.userData.update(delta);
-      }
-    });
-
-    // Camera follow with spring-arm damping
-    if (window.AstroShip.mesh) {
-      const ship = window.AstroShip.mesh;
-      const targetCamPos = this.cameraOffset.clone().applyEuler(ship.rotation).add(ship.position);
-      const targetLook = this.lookAtOffset.clone().applyEuler(ship.rotation).add(ship.position);
-
-      // Camera lerp
-      this.currentCameraPos.lerp(targetCamPos, 0.08);
-      this.currentLookAt.lerp(targetLook, 0.12);
-
-      this.camera.position.copy(this.currentCameraPos);
-      this.camera.lookAt(this.currentLookAt);
-
-      // Dynamic FOV based on ship speed
-      const speed = window.AstroShip.velocity.length();
-      const baseFov = 60;
-      const speedFov = baseFov + (speed / 45) * 15;
-      this.camera.fov += (speedFov - this.camera.fov) * 0.1;
-      this.camera.updateProjectionMatrix();
-
-      // Check proximity & screen projection to destinations
-      const screenMarkers = [];
-      window.AstroData.destinations.forEach(dest => {
-        const destPos = new THREE.Vector3(dest.coords.x, dest.coords.y, dest.coords.z);
-        const dist = destPos.distanceTo(ship.position);
-        dest.currentDistance = dist;
-
-        const screen = this.projectToScreen(destPos);
-        screenMarkers.push({
-          id: dest.id,
-          key: dest.key,
-          name: dest.name,
-          icon: dest.icon,
-          color: dest.color,
-          distance: Math.round(dist),
-          x: Math.round(screen.x),
-          y: Math.round(screen.y),
-          inFront: screen.inFront
+          materials.forEach((material) => {
+            material.transparent = true;
+            material.opacity = (material.opacity ?? 1) * 0.34;
+            material.depthWrite = false;
+            material.needsUpdate = true;
+          });
         });
       });
 
-      // Notify React HUD
-      if (window.AstroAppDispatch) {
-        window.AstroAppDispatch({
-          type: 'UPDATE_TELEMETRY',
-          payload: {
-            speed: Math.round(ship.speed * 32),
-            coords: {
-              x: Math.round(ship.position.x),
-              y: Math.round(ship.position.y),
-              z: Math.round(ship.position.z)
-            },
-            markers: screenMarkers
+      // Animation
+      const clock = new THREE.Clock();
+
+      const resizeRenderer = () => {
+        if (disposed) return;
+
+        const width = Math.max(container.clientWidth, 1);
+        const height = Math.max(container.clientHeight, 1);
+
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(width, height);
+
+        renderer.setPixelRatio(
+          Math.min(window.devicePixelRatio || 1, 1.75)
+        );
+      };
+
+      const animate = () => {
+        if (disposed) return;
+
+        animationFrameId = window.requestAnimationFrame(animate);
+
+        const delta = Math.min(clock.getDelta(), 0.05);
+
+        modelRoots.forEach((root) => {
+          if (
+            root &&
+            root.userData &&
+            typeof root.userData.update === "function"
+          ) {
+            root.userData.update(delta);
           }
         });
-      }
-    }
 
-    this.renderer.render(this.scene, this.camera);
-  }
-};
+        renderer.render(scene, camera);
+      };
+
+      window.addEventListener("resize", resizeRenderer);
+
+      resizeRenderer();
+      animate();
+
+      // Cleanup when the visitor leaves the landing screen.
+      return () => {
+        disposed = true;
+
+        if (animationFrameId !== null) {
+          window.cancelAnimationFrame(animationFrameId);
+        }
+
+        window.removeEventListener("resize", resizeRenderer);
+
+        modelRoots.forEach((root) => {
+          if (!root) return;
+
+          scene.remove(root);
+
+          if (typeof root.traverse !== "function") return;
+
+          root.traverse((object) => {
+            if (
+              object.geometry &&
+              typeof object.geometry.dispose === "function"
+            ) {
+              object.geometry.dispose();
+            }
+
+            if (!object.material) return;
+
+            const materials = Array.isArray(object.material)
+              ? object.material
+              : [object.material];
+
+            materials.forEach((material) => {
+              if (
+                material &&
+                typeof material.dispose === "function"
+              ) {
+                material.dispose();
+              }
+            });
+          });
+        });
+
+        renderer.dispose();
+
+        if (renderer.domElement.parentNode === container) {
+          container.removeChild(renderer.domElement);
+        }
+      };
+    } catch (error) {
+      console.error("Launch screen initialization failed:", error);
+
+      if (renderer) {
+        renderer.dispose();
+
+        if (renderer.domElement.parentNode === container) {
+          container.removeChild(renderer.domElement);
+        }
+      }
+
+      return undefined;
+    }
+  }, [viewMode]);
+
+  // --------------------------------------------------------------------------
+  // APPLICATION
+  // --------------------------------------------------------------------------
+
+  return (
+    <div
+      className={`astro-app ${
+        viewMode === "reader" ? "reader-mode-active" : ""
+      }`}
+    >
+
+      {/* ================================================================== */}
+      {/* LANDING SCREEN                                                     */}
+      {/* ================================================================== */}
+
+      {viewMode === "landing" && (
+        <div className="landing-screen">
+
+          {/* Three.js background */}
+          <div id="launch-cosmos" aria-hidden="true" />
+
+          {/* Main landing content */}
+          <div className="landing-card">
+
+            <h1 className="landing-name">
+              Tai Jespersen
+            </h1>
+
+            <p className="landing-role">
+              PhD Student · Gravitational Wave &amp; Pulsar Astronomy
+            </p>
+
+            <p className="landing-inst">
+              Center for Gravitation, Cosmology, and Astrophysics
+              · UW-Milwaukee
+            </p>
+
+            <p className="landing-bio-snippet">
+              Computational astrophysics · Pulsar astronomy ·
+              Compact objects
+            </p>
+
+            <div className="landing-actions">
+              <button
+                className="landing-btn primary"
+                onClick={() => setViewMode("reader")}
+              >
+                <span className="btn-icon">✦</span>
+                <span>About Me &amp; Portfolio</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ================================================================== */}
+      {/* ABOUT ME / ACADEMIC PORTFOLIO                                      */}
+      {/* ================================================================== */}
+
+      {viewMode === "reader" && (
+        <div className="reader-container">
+
+          {/* ---------------------------------------------------------------- */}
+          {/* HEADER                                                           */}
+          {/* ---------------------------------------------------------------- */}
+
+          <header className="reader-header">
+
+            <div className="reader-brand">
+
+              <div className="reader-pretitle">
+                ACADEMIC DOSSIER &amp; CURRICULUM VITAE
+              </div>
+
+              <h1>
+                {researcher.name || "Tai Jespersen"}
+              </h1>
+
+              <p className="reader-tagline">
+                {researcher.title || "PhD Student"}
+              </p>
+
+              <p className="reader-inst">
+                {researcher.institution || "University of Wisconsin-Milwaukee"}
+              </p>
+
+              <div className="reader-contacts">
+
+                {researcher.email && (
+                  <a
+                    href={`mailto:${researcher.email}`}
+                    className="reader-contact-pill"
+                  >
+                    ✉️ {researcher.email}
+                  </a>
+                )}
+
+                <a
+                  href="https://orcid.org/0009-0007-4226-0037"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="reader-contact-pill"
+                >
+                  🆔 ORCID: 0009-0007-4226-0037
+                </a>
+
+                <a
+                  href="https://linkedin.com/in/tai-jespersen"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="reader-contact-pill"
+                >
+                  LinkedIn
+                </a>
+
+              </div>
+            </div>
+
+            <button
+              className="reader-exit-btn"
+              onClick={() => setViewMode("landing")}
+            >
+              ← Back to Home
+            </button>
+
+          </header>
+
+          {/* ---------------------------------------------------------------- */}
+          {/* MAIN CONTENT                                                     */}
+          {/* ---------------------------------------------------------------- */}
+
+          <main className="reader-body">
+
+            {/* OVERVIEW */}
+
+            <section className="reader-section">
+
+              <div className="section-header-row">
+                <span className="section-spark">✦</span>
+                <h2>OVERVIEW</h2>
+              </div>
+
+              <div className="reader-bio-card">
+                {biography.map((paragraph, index) => (
+                  <p key={index}>
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+
+            </section>
+
+            {/* PUBLICATIONS */}
+
+            <section className="reader-section">
+
+              <div className="section-header-row">
+                <span className="section-spark">✦</span>
+                <h2>PUBLICATIONS &amp; PREPRINTS</h2>
+              </div>
+
+              <div className="reader-pubs-list">
+
+                {publications.map((publication, index) => (
+                  <div
+                    key={publication.id || index}
+                    className="pub-card"
+                  >
+
+                    <div className="pub-badge-row">
+
+                      {publication.badge && (
+                        <span className="pub-badge">
+                          {publication.badge}
+                        </span>
+                      )}
+
+                      {publication.year && (
+                        <span className="pub-year">
+                          {publication.year}
+                        </span>
+                      )}
+
+                      {publication.journal && (
+                        <span className="pub-journal">
+                          {publication.journal}
+                        </span>
+                      )}
+
+                    </div>
+
+                    <h3 className="pub-title">
+                      {publication.title}
+                    </h3>
+
+                    <p className="pub-authors">
+                      {publication.authors}
+                    </p>
+
+                    <p className="pub-abstract">
+                      {publication.abstract}
+                    </p>
+
+                    <div className="pub-actions">
+
+                      {publication.arxiv && (
+                        <a
+                          href={`https://arxiv.org/abs/${publication.arxiv}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="reader-action-btn"
+                        >
+                          arXiv:{publication.arxiv}
+                        </a>
+                      )}
+
+                      {publication.doi && (
+                        <a
+                          href={`https://doi.org/${publication.doi}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="reader-action-btn"
+                        >
+                          DOI Link
+                        </a>
+                      )}
+
+                    </div>
+
+                  </div>
+                ))}
+
+                {publications.length === 0 && (
+                  <p>No publications are currently listed.</p>
+                )}
+
+              </div>
+            </section>
+
+            {/* EDUCATION */}
+
+            <section className="reader-section">
+
+              <div className="section-header-row">
+                <span className="section-spark">✦</span>
+                <h2>EDUCATION</h2>
+              </div>
+
+              <div className="appointments-card">
+
+                {appointments.map((appointment, index) => (
+                  <div
+                    key={index}
+                    className="appointment-row"
+                  >
+
+                    <span className="app-period">
+                      {appointment.period}
+                    </span>
+
+                    <div className="app-details">
+
+                      <span className="app-role">
+                        {appointment.role}
+                      </span>
+
+                      <span className="app-inst">
+                        {appointment.institution}
+                      </span>
+
+                    </div>
+                  </div>
+                ))}
+
+                {appointments.length === 0 && (
+                  <p>No education entries are currently listed.</p>
+                )}
+
+              </div>
+            </section>
+
+            {/* TEACHING */}
+
+            <section className="reader-section">
+
+              <div className="section-header-row">
+                <span className="section-spark">✦</span>
+                <h2>TEACHING</h2>
+              </div>
+
+              <div className="teaching-list">
+
+                {teaching.map((teachingItem, index) => (
+                  <div
+                    key={index}
+                    className="teaching-item"
+                  >
+
+                    <div className="teach-hdr">
+
+                      <span className="teach-id">
+                        {teachingItem.courseId}
+                      </span>
+
+                      <span className="teach-term">
+                        {teachingItem.term}
+                      </span>
+
+                    </div>
+
+                    <h4>
+                      {teachingItem.title}
+                    </h4>
+
+                    <p>
+                      {teachingItem.desc}
+                    </p>
+
+                  </div>
+                ))}
+
+                {teaching.length === 0 && (
+                  <p>No teaching entries are currently listed.</p>
+                )}
+
+              </div>
+            </section>
+
+            {/* CV */}
+
+            <section className="reader-section cv-section">
+
+              <div className="cv-card">
+
+                <div className="cv-info">
+
+                  <h3>
+                    Curriculum Vitae
+                  </h3>
+
+                  <p>
+                    View the complete updated CV, including research
+                    experience, publications, presentations, and education.
+                  </p>
+
+                </div>
+
+                <a
+                  className="cv-button"
+                  href="/Website/CV___Tai_Jespersen__Updated_Sep__2026_.pdf"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  📄 View Complete CV (PDF)
+                </a>
+
+              </div>
+            </section>
+
+          </main>
+        </div>
+      )}
+
+    </div>
+  );
+}
+
+// ============================================================================
+// START REACT
+// ============================================================================
+
+const rootElement = document.getElementById("react-root");
+
+if (rootElement) {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(<AstroApp />);
+} else {
+  console.error(
+    "React initialization failed: #react-root was not found in index.html."
+  );
+}
