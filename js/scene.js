@@ -88,7 +88,7 @@ window.AstroScene = {
     this.createStarfield();
 
     // Create celestial models
-    const objects = window.AstroCelestial.createUniverse(this.scene);
+    const objects = window.AstroCelestial.createLaunchScene(this.scene);
 
     this.celestialObjects = Array.isArray(objects)
       ? objects
