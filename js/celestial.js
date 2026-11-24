@@ -422,6 +422,7 @@ window.AstroCelestial = {
     // B. The Green Bank Telescope (GBT 100m) - Scaled to sit on mountain summit
     // ------------------------------------------------------------------------
     const gbtGroup = new THREE.Group();
+    gbtGroup.userData.isTelescope = true;
     gbtGroup.position.set(0, 19.4, 0); // Positioned atop the northern summit plateau
 
     const dishPanelMat = new THREE.MeshStandardMaterial({
